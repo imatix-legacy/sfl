@@ -24,7 +24,8 @@ released in a stand alone version, retrieved from:
 
 on 2016-04-27.
 
-See the [documentation](website/index.htm) for more information.
+See the [documentation](http://imatix-legacy.github.io/sfl/) for 
+more information.
 
 ## `pub`
 
