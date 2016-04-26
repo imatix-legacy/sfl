@@ -24,7 +24,7 @@ released in a stand alone version, retrieved from:
 
 on 2016-04-27.
 
-See the [documentation](website/index.html) for more information.
+See the [documentation](website/index.htm) for more information.
 
 ## `pub`
 
