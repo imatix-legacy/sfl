@@ -42,7 +42,8 @@ The `src` directory was created from the unpacked contents of
 `pub/src/sflsrc21.tgz`, for ease of reference.  
 
 The build scripts were built with
-[otto](https://github.com/imatix-legacy/otto) from [src/buildsfl.txt].
+[otto](https://github.com/imatix-legacy/otto) from
+[src/buildsfl.txt](src/buildsfl.txt).
 
 ## `website`
 
