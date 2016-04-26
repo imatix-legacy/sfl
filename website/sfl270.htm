@@ -1,0 +1,49 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>strfree</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl269.htm">&lt;</A>
+ | <A href="sfl271.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.10
+</TABLE>
+<HR>
+<A NAME="strfree">&nbsp;</A>
+<H3><A NAME="TOC283"><TT>strfree</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+char **
+strfree (
+    char **string)
+</PRE>
+<H4>Synopsis</H4>
+<P> Releases memory occupied by a string. Call this function only
+   when you previously allocated the string using malloc or
+   <A href="sfl269.htm#strdupl">strdupl</A>(). You pass the address of a char pointer; this
+   function sets the pointer to NULL. This is a safety measure
+   meant to make it safe to try to free non-allocated strings. In
+   your code, initialise all such pointers to NULL. Returns the
+   address of the modified pointer.
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+    ASSERT (string);
+    if (*string)
+      {
+        free (*string);
+        *string = NULL;
+      }
+    return (string);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl269.htm">&lt;</A>
+ | <A href="sfl271.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-99 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,51 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>xml_free</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl474.htm">&lt;</A>
+ | <A href="sfl476.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="xml_free">&nbsp;</A>
+<H3><A NAME="TOC488"><TT>xml_free</TT></A></H3>
+<PRE>
+#include "sflxml.h"
+void
+xml_free (
+    XML_ITEM *item)
+</PRE>
+<H4>Synopsis</H4>
+<P>Frees all memory used by an XML_ITEM item and its children.
+<H4>Source Code - (sflxml.c)</H4>
+<PRE>
+{
+    ASSERT (item);
+
+    /*  Free attribute nodes for the item                                    */
+    while (!list_empty (&amp;item-&gt; attrs))
+        <A href="sfl489.htm#xml_free_attr">xml free attr</A> (item-&gt; attrs.next);
+
+    /*  Free child nodes for the item                                        */
+    while (!list_empty (&amp;item-&gt; children))
+        <A href="sfl475.htm#xml_free">xml free</A> (item-&gt; children.next);
+
+    /*  Now free this item itself                                            */
+    <A href="sfl180.htm#list_unlink">list unlink</A> (item);                 /*  Unlink from its parent list      */
+    mem_free (item-&gt; name);             /*  Free strings, if not null        */
+    mem_free (item-&gt; value);
+    mem_free (item);                    /*  And free the item itself         */
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl474.htm">&lt;</A>
+ | <A href="sfl476.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

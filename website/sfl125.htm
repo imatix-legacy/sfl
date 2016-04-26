@@ -1,0 +1,47 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>file_is_writeable</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl124.htm">&lt;</A>
+ | <A href="sfl126.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="file_is_writeable">&nbsp;</A>
+<H3><A NAME="TOC138"><TT>file_is_writeable</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+Bool
+file_is_writeable (
+    const char *filename)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns TRUE if the current process can write the specified
+   file or directory. The filename may end in a slash (/ or \)
+   only if it is a directory.
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+    ASSERT (filename);
+
+    if (<A href="sfl128.htm#file_is_directory">file is directory</A> (filename))
+        return ((file_mode (<A href="sfl242.htm#clean_path">clean path</A> (filename)) &amp; S_IWRITE) != 0);
+    else
+    if (strlast (filename) == '/')
+        return (FALSE);
+    else
+        return ((file_mode (filename) &amp; S_IREAD) != 0);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl124.htm">&lt;</A>
+ | <A href="sfl126.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

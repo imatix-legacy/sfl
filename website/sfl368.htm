@@ -1,0 +1,98 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>sockmsg</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl367.htm">&lt;</A>
+ | <A href="sfl369.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="sockmsg">&nbsp;</A>
+<H3><A NAME="TOC381"><TT>sockmsg</TT></A></H3>
+<PRE>
+#include "sflsock.h"
+const char *
+sockmsg (void)
+</PRE>
+<H4>Synopsis</H4>
+<P> Returns a string describing the cause of the last fatal error
+   to occur a socket. Should be called directly after a socket i/o
+   operation; if you do other i/o operations or allow other
+   threads to proceed in the meantime, the returned string may be
+   incorrect.
+<H4>Source Code - (sflsock.c)</H4>
+<PRE>
+{
+#if (defined (__WINDOWS__))
+    char
+        *message;
+
+    switch (WSAGetLastError ())
+      {
+        case WSAEINTR:           message = "WSAEINTR";           break;
+        case WSAEBADF:           message = "WSAEBADF";           break;
+        case WSAEACCES:          message = "WSAEACCES";          break;
+        case WSAEFAULT:          message = "WSAEFAULT";          break;
+        case WSAEINVAL:          message = "WSAEINVAL";          break;
+        case WSAEMFILE:          message = "WSAEMFILE";          break;
+        case WSAEWOULDBLOCK:     message = "WSAEWOULDBLOCK";     break;
+        case WSAEINPROGRESS:     message = "WSAEINPROGRESS";     break;
+        case WSAEALREADY:        message = "WSAEALREADY";        break;
+        case WSAENOTSOCK:        message = "WSAENOTSOCK";        break;
+        case WSAEDESTADDRREQ:    message = "WSAEDESTADDRREQ";    break;
+        case WSAEMSGSIZE:        message = "WSAEMSGSIZE";        break;
+        case WSAEPROTOTYPE:      message = "WSAEPROTOTYPE";      break;
+        case WSAENOPROTOOPT:     message = "WSAENOPROTOOPT";     break;
+        case WSAEPROTONOSUPPORT: message = "WSAEPROTONOSUPPORT"; break;
+        case WSAESOCKTNOSUPPORT: message = "WSAESOCKTNOSUPPORT"; break;
+        case WSAEOPNOTSUPP:      message = "WSAEOPNOTSUPP";      break;
+        case WSAEPFNOSUPPORT:    message = "WSAEPFNOSUPPORT";    break;
+        case WSAEAFNOSUPPORT:    message = "WSAEAFNOSUPPORT";    break;
+        case WSAEADDRINUSE:      message = "WSAEADDRINUSE";      break;
+        case WSAEADDRNOTAVAIL:   message = "WSAEADDRNOTAVAIL";   break;
+        case WSAENETDOWN:        message = "WSAENETDOWN";        break;
+        case WSAENETUNREACH:     message = "WSAENETUNREACH";     break;
+        case WSAENETRESET:       message = "WSAENETRESET";       break;
+        case WSAECONNABORTED:    message = "WSAECONNABORTED";    break;
+        case WSAECONNRESET:      message = "WSAECONNRESET";      break;
+        case WSAENOBUFS:         message = "WSAENOBUFS";         break;
+        case WSAEISCONN:         message = "WSAEISCONN";         break;
+        case WSAENOTCONN:        message = "WSAENOTCONN";        break;
+        case WSAESHUTDOWN:       message = "WSAESHUTDOWN";       break;
+        case WSAETOOMANYREFS:    message = "WSAETOOMANYREFS";    break;
+        case WSAETIMEDOUT:       message = "WSAETIMEDOUT";       break;
+        case WSAECONNREFUSED:    message = "WSAECONNREFUSED";    break;
+        case WSAELOOP:           message = "WSAELOOP";           break;
+        case WSAENAMETOOLONG:    message = "WSAENAMETOOLONG";    break;
+        case WSAEHOSTDOWN:       message = "WSAEHOSTDOWN";       break;
+        case WSAEHOSTUNREACH:    message = "WSAEHOSTUNREACH";    break;
+        case WSAENOTEMPTY:       message = "WSAENOTEMPTY";       break;
+        case WSAEPROCLIM:        message = "WSAEPROCLIM";        break;
+        case WSAEUSERS:          message = "WSAEUSERS";          break;
+        case WSAEDQUOT:          message = "WSAEDQUOT";          break;
+        case WSAESTALE:          message = "WSAESTALE";          break;
+        case WSAEREMOTE:         message = "WSAEREMOTE";         break;
+        case WSAEDISCON:         message = "WSAEDISCON";         break;
+        case WSASYSNOTREADY:     message = "WSASYSNOTREADY";     break;
+        case WSAVERNOTSUPPORTED: message = "WSAVERNOTSUPPORTED"; break;
+        case WSANOTINITIALISED:  message = "WSANOTINITIALISED";  break;
+        default:                 message = "No error";
+      }
+    return (message);
+#else
+    return (strerror (errno));
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl367.htm">&lt;</A>
+ | <A href="sfl369.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

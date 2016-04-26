@@ -1,0 +1,188 @@
+<HTML><HEAD><!--Revised: 18 Mar 1997 By: Pieter Hintjens-->
+<TITLE>Installing The SMT Kernel</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<P><IMG SRC="smt100.gif" ALT="SMT Logo" WIDTH=80 HEIGHT=60>
+SMT 2.21</P><P>
+ | <A HREF="/index.htm"> iMatix home page</A>
+ | <A HREF="index.htm">&lt;&lt;</A> | <A HREF="smt16.htm">&lt;</A>
+ | <A HREF="smt18.htm">&gt;</A> | <A HREF="smt82.htm">&gt;&gt;</A></P>
+<HR>
+<H2><A NAME="TOC58">Installing The SMT Kernel</A></H2>
+
+<H3><A NAME="TOC59">Availability and Distribution</A></H3>
+
+<P>We supply the SMT kernel as two archives: a source kit and a
+documentation kit (in HTML).  These files are available for
+download by HTTP from our <A HREF="http://www.imatix.com/">website</A> on a permanent basis.
+You need to recompile the SMT for your specific system, using an
+ANSI C compiler.  We don't provide binary kits.
+
+<P>To install and use the SMT kernel you must first install the
+<A HREF="http://www.imatix.com/html/sfl/">SFL package</A>.  SMT requires at least version 1.4 of the
+SFL.  To write SMT programs you also need to install the
+<A HREF="http://www.imatix.com/html/lr/">Libero</A> tool.
+
+<H4>Getting The Source Archive</H3>
+
+<P>The SMT source archive is supplied as a <A HREF="http://www.imatix.com/pub/smt/src/smtsrc22.zip">zip file</A>
+and a <A HREF="http://www.imatix.com/pub/smt/src/smtsrc22.tgz">GNU gzip+tar file</A>.  Note that the zipped files
+are in MS-DOS format (carriage-return, linefeed) while the gzip+tar
+file is in UNIX format (linefeed only).  The unzip command allows
+you to extract correctly for the system you are running on.
+These are the files in the /pub/smt/src directory:
+<PRE>
+<A HREF="http://www.imatix.com/pub/smt/src/smtsrc22.tgz">smtsrc22.tgz </A>   171132 97/03/20 20:47:54  Gzip/tar archive
+<A HREF="http://www.imatix.com/pub/smt/src/smtsrc22.zip">smtsrc22.zip </A>   217726 97/03/20 20:47:54  ZIP archive
+</PRE>
+
+<P>If you have trouble accessing the iMatix site, send us an
+<A HREF="mailto:info@imatix.com">e-mail</A> and we'll send you the SMT archives by return
+e-mail, using the uuencode format.
+
+<H4>Getting The The Documentation Kit</H3>
+
+<P>The SMT documentation is supplied as HTML files, available
+on-line or off-line as a single .zip file that you can install on
+a hard disk for rapid access: <A HREF="http://www.imatix.com/pub/smt/doc/smtdoc22.zip">smtdoc.zip</A>, also available as a
+<A HREF="http://www.imatix.com/pub/smt/doc/smtdoc22.tgz">GNU gzipped file</A>.  These are the files in the
+/pub/smt/doc directory:
+<PRE>
+<A HREF="http://www.imatix.com/pub/smt/doc/smtbig22.tgz">smtbig22.tgz </A>    77143 97/03/20 20:47:58  Gzip/tar archive
+<A HREF="http://www.imatix.com/pub/smt/doc/smtbig22.zip">smtbig22.zip </A>    76790 97/03/20 20:47:58  ZIP archive
+<A HREF="http://www.imatix.com/pub/smt/doc/smtdoc22.tgz">smtdoc22.tgz </A>   149054 97/03/20 20:47:56  Gzip/tar archive
+<A HREF="http://www.imatix.com/pub/smt/doc/smtdoc22.zip">smtdoc22.zip </A>   238530 97/03/20 20:47:56  ZIP archive
+</PRE>
+
+<P>We recommend that you unzip or gunzip/detar the documentation
+archive into a subdirectory.  Then, point your browser at the
+<TT>index.htm</TT> file to access the documentation.  We use
+relative addressing in all HTML documents, so that links work just
+as well on a local hard-disk (without a web server) as on-line on
+our website.  In a windowing environment is it easy and useful to
+create an icon that launches a Web browser on this file.
+
+<H3><A NAME="TOC60">Installation for UNIX Systems</A></H3>
+
+<P>To install the SMT kernel on a UNIX system you need to:
+<OL>
+<LI>Install the <A HREF="http://www.imatix.com/html/sfl/">SFL package</A>: you will want to place
+<TT>libsfl.a</TT> and <TT>sfl.h</TT> in the current directory.
+
+<LI>Download the SMT source archive and decompress it.
+<LI>Run the 'build' script to compile the SMT sources and build
+the libsmt.a archive file and various executables.
+</OL>
+
+<H4>Decompressing The Source Archive</H4>
+
+<P>To unzip the <A HREF="http://www.imatix.com/pub/smt/src/smtsrc22.zip">smtsrc.zip</A> file, you need the Infozip
+<A HREF="http://quest.jpl.nasa.gov/Info-Zip/Info-Zip.html">unzip</A> tool:
+<PRE>$ mkdir temp
+$ mv smtsrc22.zip temp
+$ cd temp
+$ unzip -a smtsrc22
+</PRE>
+
+<P>To decompress the <A HREF="http://www.imatix.com/pub/smt/src/smtsrc22.tgz">smtsrc.tgz</A> file you need GNU gzip/gunzip
+and tar:
+<PRE>$ mkdir temp
+$ mv smtsrc22.tgz temp
+$ cd temp
+$ gzip -d smtsrc22.tgz
+  or
+$ gunzip smtsrc22.tgz
+$ tar -xvf smtsrc22.tar
+</PRE>
+
+<P>You can also, in extreme cases, unzip the files on a PC and
+transfer the individual files to the UNIX system.
+
+<H4>Compiling The SMT Sources</H4>
+
+<P>To compile the SMT sources, use this command:
+<PRE>$ chmod +x build
+$ build
+</PRE>
+
+<P>If you get warnings or error messages, this is usually a bad
+sign.  Some compilers issue warnings just because you ask for ANSI
+compilation.  If you get any other error messages, please let us
+know.
+
+<P>The SMT source archive includes a script, <TT><B>c</B></TT>,
+that you can (and should) use to compile an individual SMT source.
+This script invokes the ANSI C compiler to produce an object code
+file. It detects the platform and invokes the compiler with the
+necessary switches for ANSI C compilation.  On some systems this
+is the normal behaviour for the <B>cc</B> command.  On other
+systems it is not normal.  You should make the <TT>c</TT> script
+executable, (preferrably) install it in a shared directory like
+/usr/local/bin, and try it out:
+<PRE>$ chmod a+rx c
+$ mv c /usr/local/bin
+$ c
+</PRE>
+
+<P>The <TT>c</TT> script is also included in the SFL package.
+
+<H3><A NAME="TOC61">Installation for Digital VMS Systems</A></H3>
+
+<P>SMT has not been tested on Digital VMS systems.  However, it
+should be portable, especially to later versions of VMS that are
+POSIX compliant.  To install the SMT on a Digital VMS system you
+need to:
+<OL>
+<LI>Install the SFL package: you will want to place
+<TT>libsfl.olb</TT> and <TT>sfl.h</TT> in the current
+directory.
+<LI>Download the source archive and decompress it.
+<LI>Run the 'build.txt' command file to build the libsmt.olb
+library file and the various executables.
+</OL>
+
+<H4>Decompressing The Source Archive</H4>
+
+<P>To unzip the <A HREF="http://www.imatix.com/pub/smt/src/smtsrc22.zip">smtsrc.zip</A> file, you need the Infozip
+<A HREF="http://quest.jpl.nasa.gov/Info-Zip/Info-Zip.html">unzip</A> tool:
+<PRE>$ create/dir [.temp]
+$ ren smtsrc22.zip [.temp]
+$ set def [.temp]
+$ unzip -a smtsrc22
+</PRE>
+
+<P>You can also, in extreme cases, unzip the files on a PC and
+transfer the individual files to the VMS system.
+
+<H4>Compiling The SMT Sources</H4>
+
+<P>To compile the SMT sources, use this command:
+<PRE>$ @build.txt
+</PRE>
+
+<P>Note: this command file has not yet been tested, so it would be
+a little surprising if it worked.  Nonetheless, the work it does
+is simple: compile all .c programs, then link a couple of main
+programs.  If you get warnings or error messages, this is a bad
+sign - please let us know.
+
+<H3><A NAME="TOC62">Installation for Windows</A></H3>
+
+<P>Our preferred way of working is to build the SFL as a static
+library, and do the same for the SMT kernel.  Using a typical
+Windows-hosted compiler, we create two projects.  Then, we create a
+project for each main program.  For instance, we create a project
+each for the echod and echocli programs.  In these projects, we
+refer to the SFL and SMT library files.  While the SFL and SMT
+libraries compile find under 16-bit Windows, the link phase usually
+gives problems, and we prefer to work with a 32-bit memory model.
+All SMT programs, including the Xitami web server, run as 32-bit
+console processes under Windows NT and 95.
+
+<HR><P>
+ | <A HREF="index.htm">&lt;&lt;</A> | <A HREF="smt16.htm">&lt;</A>
+ | <A HREF="smt18.htm">&gt;</A> | <A HREF="smt82.htm">&gt;&gt;</A></P>
+<P><A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix"></A>
+Designed by <A HREF="/html/pieter.htm">Pieter Hintjens</A>
+&#169; 1996 iMatix</P>
+</BODY></HTML>

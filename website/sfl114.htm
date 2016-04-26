@@ -1,0 +1,90 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>file_cycle_needed</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl113.htm">&lt;</A>
+ | <A href="sfl115.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="file_cycle_needed">&nbsp;</A>
+<H3><A NAME="TOC127"><TT>file_cycle_needed</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+Bool
+file_cycle_needed (
+    const char *filename,
+    int how)
+</PRE>
+<H4>Synopsis</H4>
+<P>Checks whether the file should be cycled or not. Returns TRUE
+   if the file needs to be cycled, FALSE if not. The how argument
+   must be one of: <TABLE BORDER NOWRAP> <TR><TD
+   ALIGN="LEFT"><B>CYCLE ALWAYS</B>  <TD ALIGN="LEFT">Cycle file
+   unconditionally <TR><TD ALIGN="LEFT"><B>CYCLE HOURLY</B>  <TD
+   ALIGN="LEFT">Cycle file if hour has changed <TR><TD
+   ALIGN="LEFT"><B>CYCLE DAILY</B>  <TD ALIGN="LEFT">Cycle file if
+   day has changed <TR><TD ALIGN="LEFT"><B>CYCLE WEEKLY</B>  <TD
+   ALIGN="LEFT">Cycle file if week has changed <TR><TD
+   ALIGN="LEFT"><B>CYCLE MONTHLY</B>  <TD ALIGN="LEFT">Cycle file
+   if month has changed <TR><TD ALIGN="LEFT"><B>CYCLE NEVER</B>
+   <TD ALIGN="LEFT">Don't cycle the file </TABLE> If the specified
+   file does not exist or is not accessible, returns FALSE.
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+    long
+        curr_time,                      /*  Current time                     */
+        curr_date,                      /*  Current date                     */
+        file_date,                      /*  Timestamp of file                */
+        file_time;                      /*  Datestamp of file                */
+    Bool
+        cycle;                          /*  Do we want to cycle the file?    */
+
+    ASSERT (filename);
+    if (!<A href="sfl110.htm#file_exists">file exists</A> (filename))        /*  Not found - nothing more to do   */
+        return (FALSE);
+
+    file_time = <A href="sfl70.htm#timer_to_time">timer to time</A> (<A href="sfl132.htm#get_file_time">get file time</A> (filename));
+    file_date = <A href="sfl69.htm#timer_to_date">timer to date</A> (<A href="sfl132.htm#get_file_time">get file time</A> (filename));
+    curr_time = <A href="sfl53.htm#time_now">time now</A> ();
+    curr_date = <A href="sfl52.htm#date_now">date now</A> ();
+
+    switch (how)
+      {
+        case CYCLE_ALWAYS:
+            cycle = TRUE;
+            break;
+        case CYCLE_HOURLY:
+            cycle = GET_HOUR (file_time) != GET_HOUR (curr_time);
+            break;
+        case CYCLE_DAILY:
+            cycle = GET_DAY (file_date) != GET_DAY (curr_date);
+            break;
+        case CYCLE_WEEKLY:
+            cycle = <A href="sfl59.htm#week_of_year">week of year</A> (file_date) != <A href="sfl59.htm#week_of_year">week of year</A> (curr_date);
+            break;
+        case CYCLE_MONTHLY:
+            cycle = GET_MONTH (file_date) != GET_MONTH (curr_date);
+            break;
+        case CYCLE_NEVER:
+            cycle = FALSE;
+            break;
+        default:
+            cycle = FALSE;
+      }
+    return (cycle);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl113.htm">&lt;</A>
+ | <A href="sfl115.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

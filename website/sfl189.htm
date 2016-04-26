@@ -1,0 +1,80 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>mem_alloc_</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl188.htm">&lt;</A>
+ | <A href="sfl190.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.10
+</TABLE>
+<HR>
+<A NAME="mem_alloc_">&nbsp;</A>
+<H3><A NAME="TOC202"><TT>mem_alloc_</TT></A></H3>
+<PRE>
+#include "sflmem.h"
+void *
+mem_alloc_ (
+    MEMTRN     *trn,                    /*  Associated transaction           */
+    size_t      size,                   /*  Desired size of memory block     */
+    const char *filename,               /*  Name of source file making call  */
+    size_t      lineno                  /*  Line number in calling source    */
+)
+</PRE>
+<H4>Synopsis</H4>
+<P>Allocates a memory block. Use the mem_alloc() macro to call
+   this function! Use <A href="sfl193.htm#mem_free_">mem free </A>() to free blocks allocated
+   with this function. Returns a pointer to the allocated memory
+   block, or NULL if there was not enough memory available. The
+   supplied source file name is assumed to be in a static area.
+   The requested block size must be greater than zero bytes.
+<H4>Source Code - (sflmem.c)</H4>
+<PRE>
+{
+    MEMHDR
+       *ptr;                            /*  Allocated memory block           */
+
+    /*  Allocate block with extra space for the header                       */
+    ASSERT (size &gt; 0);                  /*  Cannot allocate zero bytes!      */
+
+    ptr = malloc (RESERVE_SIZE + size);
+    if (ptr == NULL)                    /*  If nothing free, do a hunt       */
+      {                                 /*    and try again...               */
+        mem_scavenge ();
+        ptr = malloc (RESERVE_SIZE + size);
+        if (ptr == NULL)
+            return (NULL);              /*  Really in trouble now!           */
+      }
+#   if (defined (MEM_TRACE))
+    <A href="sfl449.htm#trace">trace</A> ("%s (%d): alloc %d bytes-&gt;%p",
+            filename? filename: "-", lineno, size, ptr);
+#   endif
+
+    ptr-&gt; tag  = MEMTAG;                /*  Initialise block header          */
+    ptr-&gt; size = size;                  /*  Size of block                    */
+    ptr-&gt; file = filename;              /*  Who allocated it                 */
+    ptr-&gt; line = lineno;                /*    and where                      */
+
+    if (!trn)                           /*  If no transaction then use the   */
+        trn = &amp;mem_list;                /*  main block list                  */
+
+    list_reset (ptr);                   /*  Set up new block as list         */
+    list_relink_before (ptr,            /*  Add to list of blocks            */
+                        &amp;trn-&gt; memhdr);
+
+    mem_total += size;                  /*  Keep count of space used         */
+    mem_alloc_count += 1;               /*    and number of allocations      */
+
+    return (HDR_2_CLIENT (ptr));        /*   and return client address       */
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl188.htm">&lt;</A>
+ | <A href="sfl190.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-99 iMatix Corporation</TABLE>
+</BODY></HTML>

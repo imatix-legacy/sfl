@@ -1,0 +1,70 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>cgi_parse_query_vars</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl409.htm">&lt;</A>
+ | <A href="sfl411.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="cgi_parse_query_vars">&nbsp;</A>
+<H3><A NAME="TOC423"><TT>cgi_parse_query_vars</TT></A></H3>
+<PRE>
+#include "sflhttp.h"
+int
+cgi_parse_query_vars (
+    SYMTAB *symtab,
+    const char *query,
+    const char *prefix)
+</PRE>
+<H4>Synopsis</H4>
+<P>Parses a CGI query string and loads the resulting variables
+   into an existing symbol table, optionally prefixing each name
+   with a string. Returns the number of variables loaded. The
+   prefix can be NULL or empty if not required.
+<H4>Source Code - (sflhttp.c)</H4>
+<PRE>
+{
+    char
+        *query_var,                     /*  Query variable name              */
+        **query_vars,                   /*  Query as string table            */
+        *equals;                        /*  Equal sign in variable           */
+    int
+        string_nbr,                     /*  Index into string table          */
+        variables = 0;                  /*  Number of variables loaded       */
+
+    ASSERT (symtab);
+    if ((query_vars = <A href="sfl403.htm#http_query2strt">http query2strt</A> (query)) == NULL)
+        return (0);                     /*  Not enough memory                */
+
+    for (string_nbr = 0; query_vars [string_nbr]; string_nbr++)
+      {
+        equals = strchr (query_vars [string_nbr], '=');
+        if (equals)
+          {
+            *equals = '\0';             /*  Cut into two strings             */
+            if (prefix == NULL)
+                prefix = "";            /*  Make safe for <A href="sfl296.htm#xstrcpy">xstrcpy</A>()          */
+            query_var = <A href="sfl296.htm#xstrcpy">xstrcpy</A> (NULL, prefix, query_vars [string_nbr], NULL);
+            <A href="sfldoc.htm#sym_assume_symbol">sym assume symbol</A> (symtab, query_var, equals + 1);
+            mem_strfree (&amp;query_var);
+            *equals = '=';              /*  Restore previous state           */
+            variables++;                /*  Count this variable              */
+          }
+      }
+    <A href="sfl304.htm#strtfree">strtfree</A> (query_vars);
+    return (variables);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl409.htm">&lt;</A>
+ | <A href="sfl411.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

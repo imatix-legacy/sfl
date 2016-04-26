@@ -1,0 +1,156 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>ini_dyn_save</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl149.htm">&lt;</A>
+ | <A href="sfl151.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="ini_dyn_save">&nbsp;</A>
+<H3><A NAME="TOC163"><TT>ini_dyn_save</TT></A></H3>
+<PRE>
+#include "sflini.h"
+int
+ini_dyn_save (
+    SYMTAB *symtab,
+    const char *filename)
+</PRE>
+<H4>Synopsis</H4>
+<P>Saves a symbol table to the specified file. The symbol table
+   entries must be formatted as "section:name=value" - see
+   <A href="sfl148.htm#ini_dyn_load">ini dyn load</A>(). Scans the ini file for a line containing
+   only "#*END", then writes the symbol data to the file from that
+   point. Returns the number of symbols saved, or -1 if there was
+   an error. As a side-effect, sorts the table on the symbol name.
+<H4>Source Code - (sflini.c)</H4>
+<PRE>
+{
+    FILE
+        *inifile,
+        *wrkfile;
+    SYMBOL
+        *symbol;                        /*  Next symbol in table             */
+    Bool
+        header_found;                   /*  Did we find a file header?       */
+    int
+        count;                          /*  How many symbols did we save?    */
+    char
+        *colon,                         /*  Points to ':' in symbol name     */
+        *outchar,                       /*  Output character pointer         */
+        *valchar;                       /*  Symbol value character pointer   */
+
+    ASSERT (filename);
+    ASSERT (symtab);
+
+    /*  Copy ini file header to temporary file                               */
+    wrkfile = <A href="sfl140.htm#ftmp_open">ftmp open</A> (NULL);
+    header_found = FALSE;
+    if ((inifile = <A href="sfl100.htm#file_open">file open</A> (filename, 'r')) != NULL)
+      {
+        while (<A href="sfl103.htm#file_read">file read</A> (inifile, iniline))
+          {
+            if (streq (iniline, "#*END"))
+              {
+                header_found = TRUE;
+                break;
+              }
+            <A href="sfl105.htm#file_write">file write</A> (wrkfile, iniline);
+          }
+        <A href="sfl102.htm#file_close">file close</A> (inifile);
+      }
+    /*  Now rewrite ini file                                                 */
+    if ((inifile = <A href="sfl100.htm#file_open">file open</A> (filename, 'w')) == NULL)
+      {
+        <A href="sfl141.htm#ftmp_close">ftmp close</A> (wrkfile);
+        return (-1);                    /*  No permission to write file      */
+      }
+    if (header_found)
+      {
+        fseek (wrkfile, 0, SEEK_SET);
+        while (<A href="sfl103.htm#file_read">file read</A> (wrkfile, iniline))
+            <A href="sfl105.htm#file_write">file write</A> (inifile, iniline);
+      }
+    <A href="sfl141.htm#ftmp_close">ftmp close</A> (wrkfile);               /*  Finished with temporary file     */
+
+    /*  Output ini file values                                               */
+    <A href="sfl105.htm#file_write">file write</A> (inifile, "#*END");
+    strclr (ini_section);               /*  Current section                  */
+    count = 0;
+
+    <A href="sfl389.htm#sym_sort_table">sym sort table</A> (symtab, NULL);      /*  Sort table by symbol name        */
+    for (symbol = symtab-&gt; symbols; symbol; symbol = symbol-&gt; next)
+      {
+        /*  Output symbols formatted as key:name                             */
+        colon = strrchr (symbol-&gt; name, ':');
+        if (colon)
+          {
+            memcpy (ini_value, symbol-&gt; name, colon - symbol-&gt; name);
+            ini_value [colon - symbol-&gt; name] = '\0';
+            strcpy (ini_keyword, colon + 1);
+
+            /*  If we start a new section, output the section header         */
+            *ini_value   = toupper (*ini_value);
+            *ini_keyword = toupper (*ini_keyword);
+            if (strneq (ini_section, ini_value))
+              {
+                strcpy (ini_section, ini_value);
+                snprintf (iniline, sizeof (iniline), "[%s]", ini_section);
+                <A href="sfl105.htm#file_write">file write</A> (inifile, "");
+                <A href="sfl105.htm#file_write">file write</A> (inifile, iniline);
+              }
+            /*  We always put quotes around values when writing              */
+            snprintf (iniline, sizeof (iniline), "    %s = \"", ini_keyword);
+            outchar = iniline + strlen (iniline);
+            for (valchar = symbol-&gt; value; *valchar; valchar++)
+              {
+                /*  If line is too long, break it                            */
+                if (outchar - iniline &gt; 75)
+                  {
+                    *outchar++ = '-';
+                    *outchar++ = '\0';
+                    <A href="sfl105.htm#file_write">file write</A> (inifile, iniline);
+                    strclr (iniline);
+                    outchar = iniline;
+                    continue;
+                  }
+                /*  Escape ", \, ( and newlines. We escape ( so that $(xxx)
+                 *  in the value is not replaced on input.
+                 */
+                if (*valchar == '\n')
+                  {
+                    *outchar++ = '\\';
+                    *outchar++ = 'n';
+                  }
+                else
+                if (*valchar == '"'
+                ||  *valchar == '\\'
+                ||  *valchar == '(')
+                  {
+                    *outchar++ = '\\';
+                    *outchar++ = *valchar;
+                  }
+                else
+                    *outchar++ = *valchar;
+              }
+            *outchar++ = '"';
+            *outchar++ = '\0';
+            <A href="sfl105.htm#file_write">file write</A> (inifile, iniline);
+          }
+      }
+    <A href="sfl102.htm#file_close">file close</A> (inifile);
+    return (count);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl149.htm">&lt;</A>
+ | <A href="sfl151.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

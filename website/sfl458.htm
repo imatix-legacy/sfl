@@ -1,0 +1,59 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>trace</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl457.htm">&lt;</A>
+ | <A href="sfl459.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="trace">&nbsp;</A>
+<H3><A NAME="TOC471"><TT>trace</TT></A></H3>
+<PRE>
+#include "sfltron.h"
+void
+trace (const char *format, ...)
+</PRE>
+<H4>Synopsis</H4>
+<P> If the global variable trace_state is TRUE, this function
+   formats the parameters (using printf() conventions) and sends
+   these to stdout, or the trace_file if opened using
+   <A href="sfl457.htm#set_trace_file">set trace file</A>(). The trace output is given a newline
+   automatically. Reentrant. Uses globals.
+<H4>Source Code - (sfltron.c)</H4>
+<PRE>
+{
+    va_list
+        argptr;                         /*  Argument list pointer            */
+    FILE
+        *out = stdout;                  /*  Output by default to stdout      */
+
+    if (trace_state)
+      {
+        va_start (argptr, format);      /*  Start variable args processing   */
+        if (trace_file)
+            out = trace_file;
+
+        /*  Output message:  date: message text\n                            */
+        print_time_str (out);
+        fputs    (": ", out);
+        vfprintf (out, format, argptr);
+        fputs    ("\n", out);
+        fflush   (out);
+
+        va_end (argptr);                /*  End variable args processing     */
+      }
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl457.htm">&lt;</A>
+ | <A href="sfl459.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

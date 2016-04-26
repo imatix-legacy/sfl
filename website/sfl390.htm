@@ -1,0 +1,76 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>symb2strt_</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl389.htm">&lt;</A>
+ | <A href="sfl391.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="symb2strt_">&nbsp;</A>
+<H3><A NAME="TOC403"><TT>symb2strt_</TT></A></H3>
+<PRE>
+#include "sflsymb.h"
+char **
+symb2strt_ (
+    const SYMTAB *symtab,               /*  Symbol table to export           */
+    const char   *filename,             /*  Name of source file making call  */
+    size_t        lineno)               /*  Line number in calling source    */
+</PRE>
+<H4>Synopsis</H4>
+<P>Exports the symbol table as an array of strings of the format
+   "name=value". Returns a pointer to the array. The array is
+   allocated dynamically. The array ends with a NULL string. To
+   free the table, call <A href="sfl304.htm#strtfree">strtfree</A>(). If there was not enough
+   memory to allocate the table, returns NULL. See also
+   <A href="sfl428.htm#symb2env">symb2env</A>(). Do not call this function directly: pass
+   through the symb2strt macro.
+<H4>Source Code - (sflsymb.c)</H4>
+<PRE>
+{
+    SYMBOL
+        *symbol;                        /*  Pointer to symbol                */
+    char
+        **strings,                      /*  Returned string array            */
+        *name_and_value;                /*  Name=value string                */
+    int
+        string_nbr;                     /*  Index into symbol_array          */
+
+    if (!symtab)
+        return (NULL);                  /*  Return NULL if argument is null  */
+
+    /*  Allocate the array of pointers with one slot for the final NULL      */
+    strings = <A href="sfl198.htm#mem_alloc_">mem alloc </A> (NULL, sizeof (char *) * (symtab-&gt; size + 1),
+                          filename, lineno);
+    if (strings)
+      {
+        string_nbr = 0;
+        for (symbol = symtab-&gt; symbols; symbol; symbol = symbol-&gt; next)
+          {
+            /*  Allocate space for "name=value" plus final null char         */
+	    int n_and_v_len = 0;
+	    n_and_v_len = strlen (symbol-&gt; name) + strlen (symbol-&gt; value) + 2;
+
+            name_and_value = <A href="sfl198.htm#mem_alloc_">mem alloc </A> (NULL, n_and_v_len, filename, lineno);
+            if (name_and_value)         /*  Fail-safe if no memory left      */
+                snprintf (name_and_value, n_and_v_len, "%s=%s",
+			                  symbol-&gt; name, symbol-&gt; value);
+            strings [string_nbr++] = name_and_value;
+          }
+        strings [string_nbr] = NULL;    /*  Store final null pointer         */
+      }
+    return (strings);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl389.htm">&lt;</A>
+ | <A href="sfl391.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,55 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>memfind</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl94.htm">&lt;</A>
+ | <A href="sfl96.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="memfind">&nbsp;</A>
+<H3><A NAME="TOC108"><TT>memfind</TT></A></H3>
+<PRE>
+#include "sflfind.h"
+void *
+memfind (const void  *block,            /*  Block containing data            */
+         size_t       block_size,       /*  Size of block in bytes           */
+         const void  *pattern,          /*  Pattern to search for            */
+         size_t       pattern_size,     /*  Size of pattern block            */
+         Bool         repeat_find)      /*  Same pattern as last time        */
+</PRE>
+<H4>Synopsis</H4>
+<P>Searches for a pattern in a block of memory using the Boyer-
+   Moore-Horspool-Sunday algorithm. The block and pattern may
+   contain any values; you must explicitly provide their lengths.
+   Returns a pointer to the pattern if found within the block, or
+   NULL if the pattern was not found. If you repeatedly scan for
+   the same pattern, use the repeat_find argument. If this is
+   TRUE, the function does not re-parse the pattern. This function
+   is meant to handle binary data. If you need to search strings,
+   use the strfind_r or <A href="sfl94.htm#strfind_rb">strfind rb</A>() functions. Non-Reentrant.
+<H4>Source Code - (sflfind.c)</H4>
+<PRE>
+{
+    static size_t
+        searchbuf [256];                /*  Static shared search buffer      */
+
+    ASSERT (block);                     /*  Expect non-NULL pointers, but    */
+    ASSERT (pattern);                   /*  full through if not debugging    */
+
+    return <A href="sfl97.htm#memfind_rb">memfind rb</A> (block, block_size, pattern, pattern_size,
+                       searchbuf, &amp;repeat_find);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl94.htm">&lt;</A>
+ | <A href="sfl96.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

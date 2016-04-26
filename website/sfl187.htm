@@ -1,0 +1,81 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>smtp_send_mail</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl186.htm">&lt;</A>
+ | <A href="sfl188.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="smtp_send_mail">&nbsp;</A>
+<H3><A NAME="TOC200"><TT>smtp_send_mail</TT></A></H3>
+<PRE>
+#include "sflmail.h"
+int smtp_send_mail (
+   char *strSmtpServer,
+   char *strMessageBody,
+   char *strSubject,
+   char *strSenderUserId,
+   char *strFullSenderUserId,
+   char *strDestUserIds,
+   char *strFullDestUserIds,
+   char *strCcUserIds,
+   char *strFullCcUserIds,
+   char *strBccUserIds,
+   char *strFullBccUserIds,
+   char *strRetPathUserId,
+   char *strRrcpUserId,
+   char *strMsgComment,
+   char *strMailerName,
+   char *strBinFiles,
+   char *strTxtFiles,
+   char *strDebugFile )
+</PRE>
+<H4>Synopsis</H4>
+<P>Format and send a SMTP message, by calling the
+   smtp_send_mail_ex function. This function is kept to be
+   compatable with previous versions of smtp_send_mail,
+   smtp_send_mail_ex should now be used, this will be deleted
+   soon.
+<H4>Source Code - (sflmail.c)</H4>
+<PRE>
+{
+   SMTP smtp;
+
+   smtp.strSmtpServer = strSmtpServer;
+   smtp.strMessageBody = strMessageBody;
+   smtp.strSubject = strSubject;
+   smtp.strSenderUserId = strSenderUserId;
+   smtp.strFullSenderUserId = strFullSenderUserId;
+   smtp.strDestUserIds = strDestUserIds;
+   smtp.strFullDestUserIds = strFullDestUserIds;
+   smtp.strCcUserIds = strCcUserIds;
+   smtp.strFullCcUserIds = strFullCcUserIds;
+   smtp.strBccUserIds = strBccUserIds;
+   smtp.strFullBccUserIds = strFullBccUserIds;
+   smtp.strRetPathUserId = strRetPathUserId;
+   smtp.strRrcpUserId = strRrcpUserId;
+   smtp.strMsgComment = strMsgComment;
+   smtp.strMailerName = strMailerName;
+   smtp.strBinFiles = strBinFiles;
+   smtp.strTxtFiles = strTxtFiles;
+   smtp.connect_retry_cnt = 3;
+   smtp.retry_wait_time = 0;
+   smtp.debug = 0;
+   smtp.strDebugFile = strDebugFile;
+
+   return <A href="sfl186.htm#smtp_send_mail_ex">smtp send mail ex</A> (&amp;smtp);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl186.htm">&lt;</A>
+ | <A href="sfl188.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

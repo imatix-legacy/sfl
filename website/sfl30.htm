@@ -1,0 +1,46 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>console_set_mode</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl29.htm">&lt;</A>
+ | <A href="sfl31.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="console_set_mode">&nbsp;</A>
+<H3><A NAME="TOC43"><TT>console_set_mode</TT></A></H3>
+<PRE>
+#include "sflcons.h"
+void
+console_set_mode (int mode)
+</PRE>
+<H4>Synopsis</H4>
+<P>Sets console display mode; the argument can be one of: <TABLE
+   BORDER NOWRAP> <TR><TD ALIGN="LEFT"><B>CONSOLE PLAIN</B>  <TD
+   ALIGN="LEFT">Output text exactly as specified <TR><TD
+   ALIGN="LEFT"><B>CONSOLE DATETIME</B>  <TD ALIGN="LEFT">Prefix
+   text by "yy/mm/dd hh:mm:ss " <TR><TD ALIGN="LEFT"><B>CONSOLE
+   TIME</B>  <TD ALIGN="LEFT">Prefix text by "hh:mm:ss " </TABLE>
+   The default is plain output.
+<H4>Source Code - (sflcons.c)</H4>
+<PRE>
+{
+    ASSERT (mode == CONSOLE_PLAIN
+         || mode == CONSOLE_DATETIME
+         || mode == CONSOLE_TIME);
+
+    console_mode = mode;
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl29.htm">&lt;</A>
+ | <A href="sfl31.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,106 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>point_in_poly</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl190.htm">&lt;</A>
+ | <A href="sfl192.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="point_in_poly">&nbsp;</A>
+<H3><A NAME="TOC204"><TT>point_in_poly</TT></A></H3>
+<PRE>
+#include "sflmath.h"
+int
+point_in_poly (const FPOINT *point, const FPOINT *pgon, int nbpoints)
+</PRE>
+<H4>Synopsis</H4>
+<P>Checks if the requested FPOINT is within the specified polygon.
+   Returns TRUE or FALSE.
+<H4>Source Code - (sflmath.c)</H4>
+<PRE>
+{
+    int
+        inside_flag,
+        xflag0,
+        crossings;
+    const double
+        *stop;
+    double
+        *p,
+        tx,
+        ty,
+        y;
+
+    crossings = 0;
+
+    tx = point-&gt; x;
+    ty = point-&gt; y;
+    y  = pgon [nbpoints - 1].y;
+
+    p = (double *) pgon + 1;
+    if ((y &gt;= ty) != (*p &gt;= ty))
+      {
+        if ((xflag0 = (pgon [nbpoints - 1].x &gt;= tx)) ==
+                (*(double *) pgon &gt;= tx))
+          {
+            if (xflag0)
+               crossings++;
+          }
+        else
+            crossings += (pgon [nbpoints - 1].x - (y - ty) *
+                         (*(double *) pgon - pgon [nbpoints - 1].x) /
+                         (*p - y)) &gt;= tx;
+      }
+     stop = &amp;pgon [nbpoints].y;
+     for (y = *p, p += 2; p &lt;= stop; y = *p, p += 2)
+       {
+         if (y &gt;= ty)
+           {
+             while ((p &lt; stop) &amp;&amp; (*p &gt;= ty))
+                 p += 2;
+             if (p &gt;= stop)
+                break;
+             if ((xflag0 = (*(p - 3) &gt;= tx)) == (*(p - 1) &gt;= tx))
+               {
+                 if (xflag0)
+                    crossings++;
+               }
+             else
+                 crossings += (*(p - 3) - (*(p - 2) - ty) *
+                              (*(p - 1) - *(p - 3)) /
+                              (*p - *(p - 2))) &gt;= tx;
+           }
+         else
+           {
+             while ((p &lt; stop) &amp;&amp; (*p &lt; ty))
+                p += 2;
+             if (p &gt;= stop)
+                break;
+             if ((xflag0 = (*(p - 3) &gt;= tx)) == (*(p - 1) &gt;= tx))
+               {
+                 if (xflag0)
+                    crossings++;
+               }
+             else
+                 crossings += (*(p - 3) - (*(p - 2) - ty) *
+                              (*(p - 1) -  *(p - 3)) /
+                              (*p - *(p - 2))) &gt;= tx;
+           }
+       }
+     inside_flag = crossings &amp; 0x01;
+     return (inside_flag);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl190.htm">&lt;</A>
+ | <A href="sfl192.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,51 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>get_file_size</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl130.htm">&lt;</A>
+ | <A href="sfl132.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="get_file_size">&nbsp;</A>
+<H3><A NAME="TOC144"><TT>get_file_size</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+long
+get_file_size (
+    const char *filename)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns the size, in bytes, of the specified file or directory.
+   The size of a directory is not a portable concept. If there is
+   an error, returns -1.
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+    struct stat
+        stat_buf;
+
+    ASSERT (filename);
+
+#   if (defined (MSDOS_FILESYSTEM))
+    if (system_devicename (filename))
+        return (-1);                    /*  Not allowed on device names      */
+#   endif
+    if (stat ((char *) filename, &amp;stat_buf) == 0)
+        return ((long) stat_buf.st_size);
+    else
+        return (-1);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl130.htm">&lt;</A>
+ | <A href="sfl132.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

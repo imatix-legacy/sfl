@@ -1,0 +1,154 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>compress_nulls</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl21.htm">&lt;</A>
+ | <A href="sfl23.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="compress_nulls">&nbsp;</A>
+<H3><A NAME="TOC35"><TT>compress_nulls</TT></A></H3>
+<PRE>
+#include "sflcomp.h"
+word
+compress_nulls (
+    byte *src,
+    byte *dst,
+    word src_size)
+</PRE>
+<H4>Synopsis</H4>
+<P>Similar to <A href="sfl20.htm#compress_rle">compress rle</A>(), but optimised towards
+   compression of binary zeroes. Use this when you are certain
+   that the sparse areas are set to binary zeroes. You must use
+   <A href="sfl23.htm#expand_nulls">expand nulls</A> () to decompress a block compressed with this
+   function. Returns the size of the compressed data. The dst
+   buffer should be 10% larger than the src buffer. The src buffer
+   must be at least src_size + 1 bytes long. It may be modified.
+   The compressed data contains these strings: <TABLE BORDER
+   NOWRAP> <TR><TD ALIGN="LEFT"><B>[01-7F][data...]</B>  <TD
+   ALIGN="LEFT">String of uncompressed data, 1 to 127 bytes.
+   <TR><TD ALIGN="LEFT"><B>[82-FF]</B>  <TD ALIGN="LEFT">Run of 2
+   to 127 binary zeroes. <TR><TD ALIGN="LEFT"><B>[81][80-FF]</B>
+   <TD ALIGN="LEFT">Run of 128 to 255 binary zeroes. <TR><TD
+   ALIGN="LEFT"><B>[80][lo][hi]</B>  <TD ALIGN="LEFT">Run of 256
+   to 2^16 binary zeroes. <TR><TD
+   ALIGN="LEFT"><B>[00][len][byte]</B>  <TD ALIGN="LEFT">Run of 4
+   to 255 identical bytes. <TR><TD
+   ALIGN="LEFT"><B>[00][00][lo][hi][byte]</B>  <TD
+   ALIGN="LEFT">Run of 256 to 2^16 identical bytes. </TABLE>
+<H4>Source Code - (sflcomp.c)</H4>
+<PRE>
+{
+    word
+        dst_size,                       /*  Size of compressed data          */
+        src_scan,                       /*  Scan through source data         */
+        run_end,                        /*  Points to end of run of bytes    */
+        length = 0;                     /*  Size of the run or string        */
+    byte
+        cur_byte,                       /*  Next byte to process             */
+        *header;                        /*  Header of unpacked string        */
+    Bool
+        have_run;                       /*  TRUE when we have a run          */
+
+    src_scan = 0;                       /*  Start at beginning of source     */
+    dst_size = 0;                       /*  No output yet                    */
+    header   = NULL;                    /*  No open unpacked string          */
+    while (src_scan &lt; src_size)
+      {
+        cur_byte = src [src_scan++];
+        have_run = FALSE;               /*  Unless we find a run             */
+
+        /*  Two identical bytes may signal the start of a run                */
+        if (cur_byte == src [src_scan]
+        &amp;&amp;  src_scan &lt; src_size)
+          {
+            /*  Stick-in a sentinel character to ensure that the run ends    */
+            src [src_size] = !cur_byte;
+            run_end = src_scan;         /*  src_scan &lt;= src_size             */
+            while (src [run_end] == cur_byte)
+                run_end++;
+
+            /*  A run is 4+ identical bytes or 2+ nulls                      */
+            if ((run_end - src_scan &gt; 2) || cur_byte == 0)
+              {
+                have_run = TRUE;
+                if (header)             /*  If we have a previous unpacked   */
+                  {                     /*    string, close it               */
+                    *header = (byte) length;
+                    header  = NULL;
+                  }
+                length = run_end - src_scan + 1;
+                src_scan = run_end;
+              }
+          }
+        if (have_run)
+          {
+            if (cur_byte == 0)
+              {
+                if (length &lt; 128)       /*  2-127 binary zeroes              */
+                    dst [dst_size++] = (byte) (length | 0x80);
+                else
+                if (length &lt; 256)       /*  128-256 binary zeroes            */
+                  {
+                    dst [dst_size++] = 0x81;
+                    dst [dst_size++] = (byte) length;
+                  }
+                else                    /*  256-2^15 binary zeroes           */
+                  {
+                    dst [dst_size++] = 0x80;
+                    dst [dst_size++] = (byte) (length &amp; 0xff);
+                    dst [dst_size++] = (byte) (length &gt;&gt; 8);
+                  }
+              }
+            else
+            if (length &lt; 256)           /*  Short run 4-255 bytes            */
+              {
+                dst [dst_size++] = 0x00;
+                dst [dst_size++] = (byte) length;
+                dst [dst_size++] = cur_byte;
+              }
+            else                        /*  Long run 256-2^16 bytes          */
+              {
+                dst [dst_size++] = 0x00;
+                dst [dst_size++] = 0x00;
+                dst [dst_size++] = (byte) (length &amp; 0xff);
+                dst [dst_size++] = (byte) (length &gt;&gt; 8);
+                dst [dst_size++] = cur_byte;
+              }
+          }
+        else
+          {
+            if (!header)                /*  Start new unpacked string if     */
+              {                         /*    necessary                      */
+                header = &amp;dst [dst_size++];
+                length = 0;
+              }
+            dst [dst_size++] = cur_byte;
+            if (++length == 127)        /*  Each string can be up to 127     */
+              {                         /*    bytes long (high bit cleared)  */
+                *header = (byte) length;
+                header  = NULL;
+              }
+          }
+      }
+    if (header)                         /*  If we have a previous unpacked   */
+      {                                 /*    string, close it               */
+        *header = (byte) length;
+        header  = NULL;
+      }
+    return (dst_size);                  /*  Return compressed data size      */
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl21.htm">&lt;</A>
+ | <A href="sfl23.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,50 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>xml_seems_to_be</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl499.htm">&lt;</A>
+ | <A href="sfl501.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="xml_seems_to_be">&nbsp;</A>
+<H3><A NAME="TOC513"><TT>xml_seems_to_be</TT></A></H3>
+<PRE>
+#include "sflxmll.h"
+int
+xml_seems_to_be (const char *path,
+                 const char *filename)
+</PRE>
+<H4>Synopsis</H4>
+<P>Reads the first line of a file. Returns XML_NOERROR if file is
+   found and has a valid XML header, XML_FILEERROR if the file
+   could not be opened and XML_LOADERROR if the first line is not
+   an XML header.
+<H4>Source Code - (sflxmll.c)</H4>
+<PRE>
+{
+    ASSERT (filename);
+    pname = filename;
+    ppath = path;
+
+    /*  Current line w/space for EOL                                         */
+    xmlline = mem_alloc (LINE_MAX + 2);
+
+    the_next_event = looks_like_xml_event;
+    xml_start_dialog ();
+    mem_free (xmlline);
+    return (feedback);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl499.htm">&lt;</A>
+ | <A href="sfl501.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

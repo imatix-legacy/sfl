@@ -1,0 +1,108 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>fortune_build</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl142.htm">&lt;</A>
+ | <A href="sfl144.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="fortune_build">&nbsp;</A>
+<H3><A NAME="TOC156"><TT>fortune_build</TT></A></H3>
+<PRE>
+#include "sflfort.h"
+int
+fortune_build (
+    const char *infile,                 /*  Name of file to compress         */
+    const char *outfile,                /*  Output file, created             */
+    Bool        compress)               /*  Compress yes/no                  */
+</PRE>
+<H4>Synopsis</H4>
+<P>Builds an indexed fortune file from a formatted text file. The
+   text file contains paragraphs separated by lines containing
+   '%%'. If okay, returns 0, else returns -1, see errno for the
+   cause.
+<H4>Source Code - (sflfort.c)</H4>
+<PRE>
+{
+    char
+        line [LINE_MAX + 1];            /*  Line from input file             */
+    int
+        block_nbr;
+    long
+        offset;
+
+    inbuf   = mem_alloc (BLOCK_SIZE);
+    outbuf  = mem_alloc (BLOCK_SIZE);
+    sizes   = mem_alloc (MAX_BLOCKS * sizeof (int));
+    input   = <A href="sfl100.htm#file_open">file open</A> (infile, 'r');
+    scratch = <A href="sfl140.htm#ftmp_open">ftmp open</A> (NULL);
+
+    if (!inbuf || !outbuf || !sizes || !input || !scratch)
+      {
+        mem_free (inbuf);
+        mem_free (outbuf);
+        mem_free (sizes);
+        return (-1);
+      }
+
+    nbr_blocks = 0;
+    nbr_paras  = 0;                     /*  Number of paragraphs in block    */
+    insize     = 2;                     /*  Leave room for nbr_paras         */
+
+    while (<A href="sfl103.htm#file_read">file read</A> (input, line))
+      {
+        if (streq (line, "%%"))
+            have_end_of_paragraph (compress);
+        else
+          {
+            memcpy (inbuf + insize, line, strlen (line));
+            insize += strlen (line);
+            inbuf [insize++] = '\n';
+          }
+      }
+    have_end_of_paragraph (compress);
+    if (nbr_paras)
+        have_end_of_block (compress);
+
+    fclose (input);                     /*  Finished with input file         */
+
+    output = fopen (outfile, "wb");
+    fprintf (output, "IFF%s -- http://www.imatix.com/ --\n%c",
+                     compress? "CMP": "TXT", 26);
+
+    output_dbyte = htons (nbr_blocks);
+    fwrite (&amp;output_dbyte, 2, 1, output);
+    offset = ftell (output) + nbr_blocks * 4;
+
+    for (block_nbr = 0; block_nbr &lt; nbr_blocks; block_nbr++)
+      {
+        output_qbyte = htonl (offset);
+        fwrite (&amp;output_qbyte, 4, 1, output);
+        offset += sizes [block_nbr];
+      }
+    fseek (scratch, 0, SEEK_SET);       /*  Back to start of scratch file    */
+    while ((outsize = fread (outbuf, 1, BLOCK_SIZE, scratch)) != 0)
+        fwrite (outbuf, 1, outsize, output);
+
+    <A href="sfl102.htm#file_close">file close</A> (output);
+    <A href="sfl141.htm#ftmp_close">ftmp close</A> (scratch);
+    mem_free (sizes);
+    mem_free (inbuf);
+    mem_free (outbuf);
+
+    return (0);                         /*  No errors                        */
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl142.htm">&lt;</A>
+ | <A href="sfl144.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

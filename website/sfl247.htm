@@ -1,0 +1,89 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>remove_dir</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl246.htm">&lt;</A>
+ | <A href="sfl248.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="remove_dir">&nbsp;</A>
+<H3><A NAME="TOC260"><TT>remove_dir</TT></A></H3>
+<PRE>
+#include "sfldir.h"
+int
+remove_dir (
+    const char *path)
+</PRE>
+<H4>Synopsis</H4>
+<P>remove a directory. Returns 0 if the directory could be
+   removed; -1 if there was an error. Under MS-DOS and OpenVMS
+   accepts a directory name in UNIX format, i.e. containing '/'
+   delimiters. The directory must be empty to be removed.
+<H4>Source Code - (sfldir.c)</H4>
+<PRE>
+{
+#if (defined (__UNIX__) || defined (__VMS_XOPEN) || defined (__OS2__))
+    /*  Check that directory exists                                          */
+    if (!<A href="sfl128.htm#file_is_directory">file is directory</A> (path))
+        return (-1);
+
+    return (rmdir (path));
+
+#elif (defined (MSDOS_FILESYSTEM))
+    int
+        rc = 0;
+    char
+        *copy_path;
+
+    /*  Check that directory exists                                          */
+    if (!<A href="sfl128.htm#file_is_directory">file is directory</A> (path))
+        return (-1);
+
+    copy_path = mem_strdup (path);
+    if (copy_path)
+      {
+        <A href="sfl294.htm#strconvch">strconvch</A> (copy_path, '/', '\\');
+#   if (defined (WIN32))
+        if (RemoveDirectory (copy_path))
+            rc = 0;
+        else
+          {
+LPVOID lpMsgBuf;
+
+FormatMessage(
+    FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+    NULL,
+    GetLastError(),
+    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+    (LPTSTR) &amp;lpMsgBuf,
+    0,
+    NULL
+);
+<A href="sfl32.htm#coprintf">coprintf</A> (lpMsgBuf);
+
+            rc = -1;
+            }
+#   else
+        rc = rmdir (copy_path);
+#   endif
+        mem_strfree (&amp;copy_path);
+      }
+    return (rc);
+#else
+    return (-1);
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl246.htm">&lt;</A>
+ | <A href="sfl248.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,50 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>print_message</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl194.htm">&lt;</A>
+ | <A href="sfl196.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="print_message">&nbsp;</A>
+<H3><A NAME="TOC208"><TT>print_message</TT></A></H3>
+<PRE>
+#include "sflmesg.h"
+void
+print_message (int msgid, ...)
+</PRE>
+<H4>Synopsis</H4>
+<P>Scans the message file for a message with the specified id.
+   Each line in the message file should start with a four-digit
+   id, then a space, then the message to print. The message can
+   include format specifiers using '%'. Values for each format are
+   passed after the msgid. Returns nothing. The message file must
+   be sorted by ascending message id's. Make sure you call
+   <A href="sfl193.htm#open_message_file">open message file</A> () before this function. Prints the
+   message on stderr.
+<H4>Source Code - (sflmesg.c)</H4>
+<PRE>
+{
+    va_list argptr;                     /*  Argument list pointer            */
+
+    read_msg (msgid);                   /*  Retrieve message into msgline    */
+    va_start (argptr, msgid);           /*  Start variable arguments list    */
+    vfprintf (stderr, msgline, argptr);
+    va_end   (argptr);                  /*  End variable arguments list      */
+    fprintf  (stderr, "\n");
+    fflush   (stderr);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl194.htm">&lt;</A>
+ | <A href="sfl196.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

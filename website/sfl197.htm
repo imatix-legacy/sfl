@@ -1,0 +1,159 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>Memory allocation functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl196.htm">&lt;</A>
+ | <A href="sfl198.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC210">Memory allocation functions</A></H2>
+<P>Filename: sflmem.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1996/06/08 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 1999/12/28
+<BR>Copyright: Copyright (c) 1996-2000 iMatix Corporation
+<H3>Synopsis</H3>
+<P>Encapsulated memory allocation functions. Based on an article
+   by Jim Schimandle in DDJ August 1990. Provides 'safe' versions
+   of malloc(), realloc(), free(), and strdup(). These functions
+   protect the programmer from errors in calling memory
+   allocation/free routines. When these calls are used, the
+   allocation routines in this module add a data structure to the
+   top of allocated memory blocks which tags them as legal memory
+   blocks. When the free routine is called, the memory block to be
+   freed is checked for legality. If the block is not legal, the
+   memory list is dumped to stderr and the program is terminated.
+   Some of these functions are called through macros that add the
+   filename and line number of the call, for tracing. Do not call
+   these functions directly.
+<H4>List of Functions</H4>
+<UL>
+<LI>void * <A href="sfl198.htm#mem_alloc_">mem alloc </A><BR>
+   (MEMTRN *trn, size_t size, const char *source_file, size_t
+   source_line);
+</LI>
+<LI>void * <A href="sfl199.htm#mem_realloc_">mem realloc </A><BR>
+   (void *block, size_t size, const char *source_file, size_t
+   source_line);
+</LI>
+<LI>void <A href="sfl202.htm#mem_free_">mem free </A><BR>
+   (void *block, const char *source_file, size_t source_line);
+</LI>
+<LI>char * <A href="sfl200.htm#mem_strdup_">mem strdup </A><BR>
+   (MEMTRN *trn, const char *string, const char *source_file,
+   size_t source_line);
+</LI>
+<LI>void <A href="sfl201.htm#mem_strfree_">mem strfree </A><BR>
+   (char **string, const char *source_file, size_t source_line);
+</LI>
+<LI>DESCR * <A href="sfl206.htm#mem_descr_">mem descr </A><BR>
+   (MEMTRN *trn, const void *block, size_t size, const char
+   *source_file, size_t source_line);
+</LI>
+<LI>MEMTRN * <A href="sfl207.htm#mem_new_trans_">mem new trans </A><BR>
+   (const char *source_file, size_t source_line);
+</LI>
+<LI>void <A href="sfl208.htm#mem_commit_">mem commit </A><BR>
+   (MEMTRN *trn, const char *source_file, size_t source_line);
+</LI>
+<LI>void <A href="sfl209.htm#mem_rollback_">mem rollback </A><BR>
+   (MEMTRN *trn, const char *source_file, size_t source_line);
+</LI>
+<LI>void <A href="sfl204.htm#mem_checkall_">mem checkall </A><BR>
+   (const char *source_file, size_t source_line);
+</LI>
+<LI>void <A href="sfl205.htm#mem_check_">mem check </A><BR>
+   (const void *block, const char *source_file, size_t
+   source_line);
+</LI>
+<LI>void <A href="sfl203.htm#mem_assert_">mem assert </A><BR>
+   (const char *source_file, size_t source_line);
+</LI>
+<LI>size_t <A href="sfl210.htm#mem_size_">mem size </A><BR>
+   (const void *block, const char *source_file, size_t
+   source_line);
+</LI>
+<LI>long <A href="sfl211.htm#mem_used">mem used</A><BR>
+   (void);
+</LI>
+<LI>long <A href="sfl212.htm#mem_allocs">mem allocs</A><BR>
+   (void);
+</LI>
+<LI>long <A href="sfl213.htm#mem_frees">mem frees</A><BR>
+   (void);
+</LI>
+<LI>void <A href="sfl216.htm#mem_freeall">mem freeall</A><BR>
+   (void);
+</LI>
+<LI>void <A href="sfl214.htm#mem_display">mem display</A><BR>
+   (FILE *save_to);
+</LI>
+<LI>int <A href="sfl215.htm#mem_scavenger">mem scavenger</A><BR>
+   (scavenger scav_fct, void *scav_arg);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sflmem.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>SFLMEM_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>mem_alloc(n)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>mem_assert()</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>mem_check(p)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>mem_checkall()</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>mem_commit(t)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>mem_descr(p,n)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>mem_free(p)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>mem_new_trans()</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>mem_realloc(p,n)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>mem_rollback(t)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>mem_size(p)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>mem_strdup(s)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>mem_strfree(ps)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>memt_alloc(t,n)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>memt_descr(t,p,n)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>memt_strdup(t,s)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+</TABLE>
+<H4>List of Type Definitions</H4>
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Type name:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>MEMHDR</B>  </TT>
+<TD ALIGN="LEFT">struct _MEMHDR
+<TR><TD ALIGN="LEFT"><TT><B>MEMTRN</B>  </TT>
+<TD ALIGN="LEFT">struct _MEMTRN
+<TR><TD ALIGN="LEFT"><TT><B>scavenger</B>  </TT>
+<TD ALIGN="LEFT">Bool (*) (void *)
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl196.htm">&lt;</A>
+ | <A href="sfl198.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,63 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>encode_mime_time</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl211.htm">&lt;</A>
+ | <A href="sfl213.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.10
+</TABLE>
+<HR>
+<A NAME="encode_mime_time">&nbsp;</A>
+<H3><A NAME="TOC225"><TT>encode_mime_time</TT></A></H3>
+<PRE>
+#include "sflmime.h"
+char *
+encode_mime_time (long date, long time)
+</PRE>
+<H4>Synopsis</H4>
+<P>Encode date and time (in long format) in Mime RFC1123 date
+   format, e.g. Mon, 12 Jan 1995 12:05:01 GMT. The supplied date
+   and time are in local time. Returns the date/time string if the
+   date was legal, else returns "?". Returned string is in a
+   static buffer.
+<H4>Source Code - (sflmime.c)</H4>
+<PRE>
+{
+    int
+        day_week,                       /*  Day of week number (0 is sunday) */
+        month;                          /*  Month number                     */
+    static char
+        buffer [50];
+
+    <A href="sfl83.htm#local_to_gmt">local to gmt</A> (date, time, &amp;date, &amp;time);
+    day_week = <A href="sfl56.htm#day_of_week">day of week</A> (date);
+    month    = GET_MONTH   (date);
+    if (day_week &gt;= 0 &amp;&amp; day_week &lt; 7 &amp;&amp; month &gt; 0 &amp;&amp; month &lt; 13)
+      {
+        sprintf (buffer, "%s, %02d %s %04d %02d:%02d:%02d GMT",
+                         days       [day_week],
+                         GET_DAY    (date),
+                         months     [month - 1],
+                         GET_CCYEAR (date),
+                         GET_HOUR   (time),
+                         GET_MINUTE (time),
+                         GET_SECOND (time)
+                 );
+        return (buffer);
+      }
+    else
+        return ("?");
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl211.htm">&lt;</A>
+ | <A href="sfl213.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-99 iMatix Corporation</TABLE>
+</BODY></HTML>

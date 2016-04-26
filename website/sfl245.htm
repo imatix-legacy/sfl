@@ -1,0 +1,78 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>file_matches</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl244.htm">&lt;</A>
+ | <A href="sfl246.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="file_matches">&nbsp;</A>
+<H3><A NAME="TOC258"><TT>file_matches</TT></A></H3>
+<PRE>
+#include "sfldir.h"
+Bool
+file_matches (
+    const char *filename,
+    const char *pattern)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns TRUE if the filename matches the pattern. The pattern
+   is a character string that can contain these 'wildcard'
+   characters:
+<H4>Source Code - (sfldir.c)</H4>
+<PRE>
+{
+    char
+        *pattern_ptr,                   /*  Points to pattern                */
+        *filename_ptr;                  /*  Points to filename               */
+
+    filename_ptr = (char *) filename;   /*  Start comparing file name        */
+    pattern_ptr  = (char *) pattern;    /*  Start comparing file name        */
+    FOREVER
+      {
+        /*  If we came to the end of the pattern and the filename, we have   */
+        /*  successful match.                                                */
+        if (*pattern_ptr == '\0' &amp;&amp; *filename_ptr == '\0')
+            return (TRUE);              /*  Have a match                     */
+
+        /*  Otherwise, end of either is a failed match                       */
+        if (*pattern_ptr == '\0' || *filename_ptr == '\0')
+            return (FALSE);             /*  Match failed                     */
+
+        /*  If the pattern character is '?', then we matched a char          */
+        if (*pattern_ptr == '?'
+#if (defined (NAMEFOLD))
+        ||  toupper (*pattern_ptr) == toupper (*filename_ptr))
+#else
+        ||  *pattern_ptr == *filename_ptr)
+#endif
+          {
+            pattern_ptr++;
+            filename_ptr++;
+          }
+        else
+        /*  If we have a '*', match as much of the filename as we can        */
+        if (*pattern_ptr == '*')
+          {
+            pattern_ptr++;              /*  Try to match following char      */
+            while (*filename_ptr &amp;&amp; *filename_ptr != *pattern_ptr)
+                filename_ptr++;
+          }
+        else
+            return (FALSE);             /*  Match failed                     */
+      }
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl244.htm">&lt;</A>
+ | <A href="sfl246.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

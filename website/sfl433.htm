@@ -1,0 +1,46 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>tok_free</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl432.htm">&lt;</A>
+ | <A href="sfl434.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="tok_free">&nbsp;</A>
+<H3><A NAME="TOC446"><TT>tok_free</TT></A></H3>
+<PRE>
+#include "sfltok.h"
+void
+tok_free (
+    char **token_list)
+</PRE>
+<H4>Synopsis</H4>
+<P>Frees the memory allocated by a <A href="sfl431.htm#tok_split">tok split</A>() call. You
+   should call this function for each call to <A href="sfl431.htm#tok_split">tok split</A>(), to
+   avoid memory leaks. Do not try to free the allocated memory
+   yourself, as the structure of a token list is not documented
+   and may change over time.
+<H4>Source Code - (sfltok.c)</H4>
+<PRE>
+{
+    if (token_list)
+      {
+        token_list--;                   /*  Back-up to get right address     */
+        mem_free (token_list [0]);      /*  Free buffer                      */
+        mem_free (token_list);          /*    and free token list            */
+      }
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl432.htm">&lt;</A>
+ | <A href="sfl434.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

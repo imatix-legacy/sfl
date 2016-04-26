@@ -1,0 +1,91 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>strtempcmp</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl326.htm">&lt;</A>
+ | <A href="sfl328.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="strtempcmp">&nbsp;</A>
+<H3><A NAME="TOC340"><TT>strtempcmp</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+int
+strtempcmp (
+    const char *str1,
+    const char *strPat)
+</PRE>
+<H4>Synopsis</H4>
+<P> Compares a string to a template. Template chars and there
+   functions: # or 9 = Number. A or _ = Alpha. @ = Alphanumeric
+   char = Literal. Char would be the literal to use. ie: "\%" -
+   looks for a % in that postion Returns 0 if == to the template
+   and 1 if != to the template. Submitted by Scott Beasley <A
+   HREF=mailto:"jscottb@infoave.com">jscottb@infoave.com</A>
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+   int ires = 1;
+
+   ASSERT (str1);
+   ASSERT (strPat);
+
+   while (*str1 &amp;&amp; *strPat)
+     {
+       switch ((int)*strPat)
+         {
+           case '#':
+           case '9':
+              ires = isdigit ((int)*str1);
+              break;
+
+           case 'A':
+           case '_':
+              ires = isalpha ((int)*str1);
+              break;
+
+           case '@':
+              ires = isalnum ((int)*str1);
+              break;
+
+           case ' ':
+              ires = isspace ((int)*str1);
+              break;
+
+           case '\\':
+              strPat++;
+              if (*str1 != *strPat)
+                 {
+                   ires = 1;
+                 }
+              break;
+
+           default:
+              break;
+         }
+
+       if (!ires)
+         {
+           break;
+         }
+
+       str1++;
+       strPat++;
+     }
+
+   return ires ? 0 : 1;
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl326.htm">&lt;</A>
+ | <A href="sfl328.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

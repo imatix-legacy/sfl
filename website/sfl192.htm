@@ -1,0 +1,59 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>Message-file access functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl191.htm">&lt;</A>
+ | <A href="sfl193.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC205">Message-file access functions</A></H2>
+<P>Filename: sflmesg.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1992/10/25 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 1997/09/08
+<BR>Copyright: Copyright (c) 1996-2000 iMatix Corporation
+<H3>Synopsis</H3>
+<P>Provides functions to read and format messages from a message
+   file. The intention of such a file is to provide a single
+   location for all error messages: you can easier translate these
+   into foreign languages, and you can control the consistency of
+   an application's error messages.
+<H4>List of Functions</H4>
+<UL>
+<LI>int <A href="sfl193.htm#open_message_file">open message file</A><BR>
+   (const char *filename);
+</LI>
+<LI>void <A href="sfl194.htm#close_message_file">close message file</A><BR>
+   (void);
+</LI>
+<LI>void <A href="sfl195.htm#print_message">print message</A><BR>
+   (int msgid, ...);
+</LI>
+<LI>char * <A href="sfl196.htm#message_text">message text</A><BR>
+   (int msgid);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sflmesg.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>ERROR_ANY</B>  </TT>
+<TD ALIGN="LEFT">0000 /* Generic error message */
+<TR><TD ALIGN="LEFT"><TT><B>SFLMESG_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl191.htm">&lt;</A>
+ | <A href="sfl193.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

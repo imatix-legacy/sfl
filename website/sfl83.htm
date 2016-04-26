@@ -1,0 +1,42 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>local_to_gmt</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl82.htm">&lt;</A>
+ | <A href="sfl84.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.10
+</TABLE>
+<HR>
+<A NAME="local_to_gmt">&nbsp;</A>
+<H3><A NAME="TOC96"><TT>local_to_gmt</TT></A></H3>
+<PRE>
+#include "sfldate.h"
+void
+local_to_gmt (long date, long time, long *gmt_date, long *gmt_time)
+</PRE>
+<H4>Synopsis</H4>
+<P>Converts the specified date and time to GMT. Returns the GMT
+   date and time in two arguments.
+<H4>Source Code - (sfldate.c)</H4>
+<PRE>
+{
+    time_t
+        time_value;
+
+    time_value = <A href="sfl68.htm#date_to_timer">date to timer</A>   (date, time);
+    *gmt_date  = <A href="sfl71.htm#timer_to_gmdate">timer to gmdate</A> (time_value);
+    *gmt_time  = <A href="sfl72.htm#timer_to_gmtime">timer to gmtime</A> (time_value);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl82.htm">&lt;</A>
+ | <A href="sfl84.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-99 iMatix Corporation</TABLE>
+</BODY></HTML>

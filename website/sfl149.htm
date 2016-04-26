@@ -1,0 +1,45 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>ini_dyn_loade</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl148.htm">&lt;</A>
+ | <A href="sfl150.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="ini_dyn_loade">&nbsp;</A>
+<H3><A NAME="TOC162"><TT>ini_dyn_loade</TT></A></H3>
+<PRE>
+#include "sflini.h"
+SYMTAB *
+ini_dyn_loade (
+    SYMTAB *load_symtab,
+    const char *filename)
+</PRE>
+<H4>Synopsis</H4>
+<P>Loads the contents of an .ini file into a symbol table, as for
+   <A href="sfl148.htm#ini_dyn_load">ini dyn load</A>(), but requires that the .ini file exists.
+   Returns a loaded symbol table if the file was present, and NULL
+   otherwise.
+<H4>Source Code - (sflini.c)</H4>
+<PRE>
+{
+    ASSERT (filename);
+    if (<A href="sfl101.htm#file_locate">file locate</A> ("PATH", filename, NULL))
+        return (<A href="sfl148.htm#ini_dyn_load">ini dyn load</A> (load_symtab, filename));
+    else
+        return (NULL);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl148.htm">&lt;</A>
+ | <A href="sfl150.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,104 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>Encryption and decryption functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl46.htm">&lt;</A>
+ | <A href="sfl48.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC60">Encryption and decryption functions</A></H2>
+<P>Filename: sflcryp.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1996/01/23 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 1997/09/08
+<BR>Copyright: Copyright (c) 1996-2000 iMatix Corporation
+<H3>Synopsis</H3>
+<P>The encryption/decryption functions were based on the
+   cryptosystem library by Andrew Brown <A
+   HREF=mailto:"asb@cs.nott.ac.uk">asb@cs.nott.ac.uk</A>, cleaned-
+   up for portability. Thanks for a great package. IDEA is
+   registered as the international patent WO 91/18459 "Device for
+   Converting a Digital Block and the Use thereof". For commercial
+   use of IDEA, you should contact: ASCOM TECH AG Freiburgstrasse
+   370 CH-3018 Bern, Switzerland
+<H3>Notes</H3>
+<PRE>
+    Description of IDEA cipher
+    --------------------------
+    The IDEA cipher operates on 64 bit (8 byte) blocks, using a 128 bit (16
+    byte) key. IDEA has found itself famous through its inclusion in the
+    well-known PGP package. The following is from the introduction to chapter
+    3 of the thesis that presented the cipher.
+
+    The block cipher IDEA (International Data Encryption Algorithm) is based
+    on the new design concept of "mixing operations from different algebraic
+    groups". The required "confusion" was achieved by successively using three
+    "incompatible" group operations on pairs of 16-bit subblocks and the cipher
+    structure was chosen to provide the necessary "diffusion". The cipher
+    structure was further chosen to facilitate both hardware and software
+    implementations. The IDEA cipher is an improved version of PES and was
+    developed to increase security against differential cryptanalysis.
+
+    Description of MDC cipher
+    -------------------------
+    This is a method for turning a hash function, here MD5, into a fast
+    secret-key encryption. Based on a suggestion by Phil Karn in sci.crypt, 13
+    Feb 1992. See also his comments from sci.crypt, 23 Mar 1992. The method is
+    a variant of that described in Zheng, Matsumoto and Imai, Crypto 89. See
+    also, "A New Class of Cryptosystems Based on Interconnection Networks" by
+    michaelp@terpsichore.informatic.rwth-aachen.de
+
+    Description of DES cipher
+    -------------------------
+    DES is the well known U.S. Data Encryption Standard cipher.
+    DES encrypts data in 64 bit blocks, using a 64 bit key -- of which
+    56 bits are used in the encipherment process.
+</PRE>
+<H4>List of Functions</H4>
+<UL>
+<LI>Bool <A href="sfl48.htm#crypt_encode">crypt encode</A><BR>
+   (byte *buffer, word buffer_size, int algorithm, const byte
+   *key);
+</LI>
+<LI>Bool <A href="sfl49.htm#crypt_decode">crypt decode</A><BR>
+   (byte *buffer, word buffer_size, int algorithm, const byte
+   *key);
+</LI>
+<LI>qbyte <A href="sfl50.htm#calculate_crc">calculate crc</A><BR>
+   (byte *block, size_t length);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sflcryp.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>CRYPT_DES</B>  </TT>
+<TD ALIGN="LEFT">2 /* DES algorithm */
+<TR><TD ALIGN="LEFT"><TT><B>CRYPT_IDEA</B>  </TT>
+<TD ALIGN="LEFT">0 /* IDEA algorithm */
+<TR><TD ALIGN="LEFT"><TT><B>CRYPT_MAX_BLOCK_SIZE</B>  </TT>
+<TD ALIGN="LEFT">32 /* Largest block size, in bytes */
+<TR><TD ALIGN="LEFT"><TT><B>CRYPT_MDC</B>  </TT>
+<TD ALIGN="LEFT">1 /* MDC algorithm */
+<TR><TD ALIGN="LEFT"><TT><B>CRYPT_TOP</B>  </TT>
+<TD ALIGN="LEFT">4 /* We support 4 algorithms */
+<TR><TD ALIGN="LEFT"><TT><B>CRYPT_XOR</B>  </TT>
+<TD ALIGN="LEFT">3 /* A basic XOR algorithm */
+<TR><TD ALIGN="LEFT"><TT><B>SFLCRYP_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl46.htm">&lt;</A>
+ | <A href="sfl48.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

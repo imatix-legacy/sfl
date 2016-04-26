@@ -1,0 +1,231 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>String-handling functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl276.htm">&lt;</A>
+ | <A href="sfl278.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC290">String-handling functions</A></H2>
+<P>Filename: sflstr.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1992/10/25 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 1999/06/22
+<BR>Copyright: Copyright (c) 1996-2000 iMatix Corporation
+<H3>Synopsis</H3>
+<P>Provides various string-handling functions. Some of these
+   functions are available on some but not all platforms; others
+   are useful tools for string handling.
+<H4>List of Functions</H4>
+<UL>
+<LI>char * <A href="sfl278.htm#strdupl">strdupl</A><BR>
+   (const char *string);
+</LI>
+<LI>char * <A href="sfl279.htm#strfree">strfree</A><BR>
+   (char **string);
+</LI>
+<LI>char * <A href="sfl280.htm#strskp">strskp</A><BR>
+   (const char *string);
+</LI>
+<LI>char * <A href="sfl281.htm#strcset">strcset</A><BR>
+   (char *string, char ch);
+</LI>
+<LI>char * <A href="sfl282.htm#strpad">strpad</A><BR>
+   (char *string, char ch, int length);
+</LI>
+<LI>char * <A href="sfl283.htm#strlwc">strlwc</A><BR>
+   (char *string);
+</LI>
+<LI>char * <A href="sfl284.htm#strupc">strupc</A><BR>
+   (char *string);
+</LI>
+<LI>char * <A href="sfl285.htm#strcrop">strcrop</A><BR>
+   (char *string);
+</LI>
+<LI>char * <A href="sfl286.htm#stropen">stropen</A><BR>
+   (char *string, Bool align);
+</LI>
+<LI>char * <A href="sfl287.htm#strclose">strclose</A><BR>
+   (char *string, Bool align);
+</LI>
+<LI>char * <A href="sfl288.htm#strunique">strunique</A><BR>
+   (char *string, char unique);
+</LI>
+<LI>int <A href="sfl289.htm#strmatch">strmatch</A><BR>
+   (const char *string1, const char *string2);
+</LI>
+<LI>qbyte <A href="sfl293.htm#strhash">strhash</A><BR>
+   (const char *string);
+</LI>
+<LI>Bool <A href="sfl290.htm#strprefixed">strprefixed</A><BR>
+   (const char *string, const char *prefix);
+</LI>
+<LI>char * <A href="sfl291.htm#strprefix">strprefix</A><BR>
+   (const char *string, const char *delims);
+</LI>
+<LI>char * <A href="sfl292.htm#strdefix">strdefix</A><BR>
+   (const char *string, const char *prefix);
+</LI>
+<LI>char * <A href="sfl294.htm#strconvch">strconvch</A><BR>
+   (char *string, char from, char to);
+</LI>
+<LI>char * <A href="sfl295.htm#xstrcat">xstrcat</A><BR>
+   (char *dest, const char *src, ...);
+</LI>
+<LI>char * <A href="sfl296.htm#xstrcpy">xstrcpy</A><BR>
+   (char *dest, const char *src, ...);
+</LI>
+<LI>int <A href="sfl297.htm#lexcmp">lexcmp</A><BR>
+   (const char *string1, const char *string2);
+</LI>
+<LI>int <A href="sfl298.htm#lexncmp">lexncmp</A><BR>
+   (const char *string1, const char *string2, const int count);
+</LI>
+<LI>int <A href="sfl299.htm#lexwcmp">lexwcmp</A><BR>
+   (const char *string1, const char *string2);
+</LI>
+<LI>char * <A href="sfl300.htm#soundex">soundex</A><BR>
+   (const char *string);
+</LI>
+<LI>char * <A href="sfl301.htm#soundexn">soundexn</A><BR>
+   (const char *string, int size, Bool fold);
+</LI>
+<LI>DESCR * <A href="sfl302.htm#strt2descr">strt2descr</A><BR>
+   (char **strings);
+</LI>
+<LI>char * <A href="sfl303.htm#descr2strt">descr2strt</A><BR>
+   (const DESCR *descr);
+</LI>
+<LI>void <A href="sfl304.htm#strtfree">strtfree</A><BR>
+   (char **strings);
+</LI>
+<LI>int <A href="sfl305.htm#strcntch">strcntch</A><BR>
+   (const char *string, char value);
+</LI>
+<LI>int <A href="sfl306.htm#strlookup">strlookup</A><BR>
+   (const LOOKUP *lookup, const char *key);
+</LI>
+<LI>char * <A href="sfl307.htm#strreformat">strreformat</A><BR>
+   (const char *source, size_t width, const char *prefix);
+</LI>
+<LI>char * <A href="sfl308.htm#removechars">removechars</A><BR>
+   (char *str, char *chrs);
+</LI>
+<LI>char * <A href="sfl309.htm#replacechrswith">replacechrswith</A><BR>
+   (char *str, char *chrs, char ctorlcwth);
+</LI>
+<LI>char * <A href="sfl310.htm#insertstring">insertstring</A><BR>
+   (char *str, char *chrstoins, int pos);
+</LI>
+<LI>char * <A href="sfl311.htm#insertchar">insertchar</A><BR>
+   (char *str, char chrtoins, int pos);
+</LI>
+<LI>char * <A href="sfl312.htm#leftfill">leftfill</A><BR>
+   (char *str, char chrtofill, unsigned len);
+</LI>
+<LI>char * <A href="sfl313.htm#rightfill">rightfill</A><BR>
+   (char *str, char chrtofill, unsigned len);
+</LI>
+<LI>char * <A href="sfl314.htm#trim">trim</A><BR>
+   (char *strin);
+</LI>
+<LI>char * <A href="sfl315.htm#ltrim">ltrim</A><BR>
+   (char *string);
+</LI>
+<LI>char * <A href="sfl316.htm#searchreplace">searchreplace</A><BR>
+   (char *str, char *strtofnd, char *strtoins);
+</LI>
+<LI>char * <A href="sfl317.htm#deletestring">deletestring</A><BR>
+   (char *str, char *strtodel, int ignorecase);
+</LI>
+<LI>char * <A href="sfl318.htm#getstrfld">getstrfld</A><BR>
+   (char *str, int fln, int ofset, char *sep, char *ret);
+</LI>
+<LI>char * <A href="sfl319.htm#setstrfld">setstrfld</A><BR>
+   (char *str, int fln, int ofset, char *sep, char *ins);
+</LI>
+<LI>int <A href="sfl320.htm#getstrfldlen">getstrfldlen</A><BR>
+   (char *str, int fln, int ofset, char *sep);
+</LI>
+<LI>char * <A href="sfl321.htm#findstrinfile">findstrinfile</A><BR>
+   (FILE *fp, char *find, char *retstr, int *iLnNo);
+</LI>
+<LI>char * <A href="sfl322.htm#getequval">getequval</A><BR>
+   (char *strline, char *strretstr);
+</LI>
+<LI>int <A href="sfl323.htm#matchtable">matchtable</A><BR>
+   (char *str, char *strmatch, char *strsept, int ncse);
+</LI>
+<LI>char * <A href="sfl324.htm#stringreplace">stringreplace</A><BR>
+   (char *strbuf, char *strpattern);
+</LI>
+<LI>char * <A href="sfl325.htm#wordwrapstr">wordwrapstr</A><BR>
+   (char *strbuff, int iwid);
+</LI>
+<LI>char * <A href="sfl326.htm#stricstr">stricstr</A><BR>
+   (const char *str1, const char *str2);
+</LI>
+<LI>int <A href="sfl327.htm#strtempcmp">strtempcmp</A><BR>
+   (const char *str1, const char *strPat);
+</LI>
+<LI>int <A href="sfl328.htm#istoken">istoken</A><BR>
+   (char **strLine, const char *strtoken, int *iWasToken);
+</LI>
+<LI>int <A href="sfl333.htm#isoneoftokens">isoneoftokens</A><BR>
+   (char **str, char *strmat, char *strsep, int *iWasTk);
+</LI>
+<LI>char * <A href="sfl329.htm#eatstr">eatstr</A><BR>
+   (char **strBuff, char *strToEat);
+</LI>
+<LI>char * <A href="sfl330.htm#eatstrpast">eatstrpast</A><BR>
+   (char **strBuff, char *strCharsToEatPast);
+</LI>
+<LI>char * <A href="sfl331.htm#movestrpast">movestrpast</A><BR>
+   (char **strBuff, char cCharToEatPast);
+</LI>
+<LI>char * <A href="sfl332.htm#eatchar">eatchar</A><BR>
+   (char **strBuff, char cChar);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sflstr.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>IGNORECASE</B>  </TT>
+<TD ALIGN="LEFT">0
+<TR><TD ALIGN="LEFT"><TT><B>SENSECASE</B>  </TT>
+<TD ALIGN="LEFT">1
+<TR><TD ALIGN="LEFT"><TT><B>SFLSTR_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>checkargcnt(reqnum)</B>  </TT>
+<TD ALIGN="LEFT">((argc-1)&gt;=(reqnum)?1:0)
+<TR><TD ALIGN="LEFT"><TT><B>cstrcpy(dest,src)</B>  </TT>
+<TD ALIGN="LEFT">{*dest=src;*(dest+1)='\0';}
+<TR><TD ALIGN="LEFT"><TT><B>deletechar(strbuf,pos)</B>  </TT>
+<TD ALIGN="LEFT">strcpy((strbuf+pos),(strbuf+pos+1))
+<TR><TD ALIGN="LEFT"><TT><B>deletechars(strbuf,pos,cnt)</B>  </TT>
+<TD ALIGN="LEFT">strcpy((strbuf+pos),(strbuf+pos+cnt))
+<TR><TD ALIGN="LEFT"><TT><B>getcommandlinearg(argnum)</B>  </TT>
+<TD ALIGN="LEFT">((argnum)&lt;=(argc-1))?argv[argnum]:""
+<TR><TD ALIGN="LEFT"><TT><B>mstrncpy(dest,src,len)</B>  </TT>
+<TD ALIGN="LEFT">{strncpy(dest,src,len);*(dest+len)='\0';}
+<TR><TD ALIGN="LEFT"><TT><B>numofcmdargs()</B>  </TT>
+<TD ALIGN="LEFT">((argc-1)&gt;0?argc-1:0)
+<TR><TD ALIGN="LEFT"><TT><B>xstrcpy_debug()</B>  </TT>
+<TD ALIGN="LEFT">(various)
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl276.htm">&lt;</A>
+ | <A href="sfl278.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

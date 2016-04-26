@@ -1,0 +1,50 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>year_slot_set</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl267.htm">&lt;</A>
+ | <A href="sfl269.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="year_slot_set">&nbsp;</A>
+<H3><A NAME="TOC281"><TT>year_slot_set</TT></A></H3>
+<PRE>
+#include "sflslot.h"
+int
+year_slot_set (byte *range, int day_from, int day_to)
+</PRE>
+<H4>Synopsis</H4>
+<P>Sets the slots for the specified day range. If day_to is zero,
+   it is ignored; only the slot for day_from is set. Returns 0 if
+   okay, -1 if the specified range is invalid.
+<H4>Source Code - (sflslot.c)</H4>
+<PRE>
+{
+    if (day_to == 0)
+        day_to = day_from;              /*  Range is just one day            */
+
+    if (day_from &gt; day_to)
+        return (-1);                    /*  Bad range                        */
+
+    while (day_from &lt;= day_to)          /*  Find and set each bit            */
+      {
+        ASSERT (day_from &gt;= 0 &amp;&amp; day_from &lt; MAX_DAY);
+        range [BYTE (day_from)] |= BIT (day_from);
+        day_from++;
+      }
+    return (0);                         /*  No errors                        */
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl267.htm">&lt;</A>
+ | <A href="sfl269.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,49 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>get_day_abbrev</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl165.htm">&lt;</A>
+ | <A href="sfl167.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="get_day_abbrev">&nbsp;</A>
+<H3><A NAME="TOC179"><TT>get_day_abbrev</TT></A></H3>
+<PRE>
+#include "sfllang.h"
+char *
+get_day_abbrev (int day, Bool upper)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns the abbreviation for the specified day, which must be a
+   value from 0 (Sunday) to 6 (Saturday). The abbreviation (3
+   letters) is converted into uppercase if the 'upper' argument is
+   true. Accented characters are formatted according to the
+   current accents setting.
+<H4>Source Code - (sfllang.c)</H4>
+<PRE>
+{
+    char
+        abbrev [4];
+
+    ASSERT (day &gt;= 0 &amp;&amp; day &lt;= 6);
+
+    strncpy (abbrev, day_table [day], 3);
+    abbrev [3] = '\0';
+    if (upper)
+        <A href="sfl284.htm#strupc">strupc</A> (abbrev);
+    return (handle_accents (abbrev));
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl165.htm">&lt;</A>
+ | <A href="sfl167.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,83 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>linebuf_append</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl173.htm">&lt;</A>
+ | <A href="sfl175.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="linebuf_append">&nbsp;</A>
+<H3><A NAME="TOC187"><TT>linebuf_append</TT></A></H3>
+<PRE>
+#include "sfllbuf.h"
+void
+linebuf_append (LINEBUF *buffer, const char *line)
+</PRE>
+<H4>Synopsis</H4>
+<P>Appends a line to the line buffer. If the buffer was full, the
+   oldest line is lost. Updates the buffer head and tail as
+   needed.
+<H4>Source Code - (sfllbuf.c)</H4>
+<PRE>
+{
+    int
+        length,                         /*  Size of line to insert           */
+        room_left,                      /*  Space left between head and top  */
+        tail_old,                       /*  Offset of tail into buffer       */
+        head_old,                       /*  Offset of head before insert     */
+        head_new;                       /*  Offset of head after insert      */
+    char
+        *linedata;                      /*  Address of data to store         */
+
+    ASSERT (buffer);
+    ASSERT (line);
+
+    linedata  = (char *) line;
+    length    = strlen (line) + 1;      /*  Include trailing null            */
+    room_left = (int) (buffer-&gt; top - buffer-&gt; head);
+
+    /*  We need to make space for the new line; we calculate the new head
+     *  and if the tail falls between the old and new head, it must be moved
+     *  up to the next line start.  We compare 'ints' not 'char *' because
+     *  they can be negative.
+     */
+    tail_old = (int) (buffer-&gt; tail - buffer-&gt; data);
+    head_old = (int) (buffer-&gt; head - buffer-&gt; data);
+    if (head_old &gt; tail_old)            /*  Shift head_old down to get it    */
+        head_old -= buffer-&gt; size;      /*    somewhere before tail_old      */
+    head_new = head_old + length;       /*  And calculate head_new           */
+
+    /*  If the line is too large for the remaining space, copy what we can   */
+    if (length &gt; room_left)
+      {
+        memcpy (buffer-&gt; head, linedata, room_left);
+        linedata += room_left;
+        length   -= room_left;
+        buffer-&gt; head = buffer-&gt; data;  /*  Bump head to start of buffer     */
+      }
+    /*  Copy rest of line to buffer                                          */
+    memcpy (buffer-&gt; head, linedata, length);
+    buffer-&gt; head += length;            /*  Bump head past string            */
+    if (buffer-&gt; head == buffer-&gt; top)  /*    and maybe wrap-around          */
+        buffer-&gt; head = buffer-&gt; data;
+
+    ASSERT (buffer-&gt; head &lt;= buffer-&gt; top);
+
+    if (head_old &lt;  tail_old            /*  If tail falls between head_old   */
+    &amp;&amp;  tail_old &lt;= head_new)           /*    and/on head_new, bump it up    */
+        buffer-&gt; tail = start_next_line (buffer, buffer-&gt; head);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl173.htm">&lt;</A>
+ | <A href="sfl175.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

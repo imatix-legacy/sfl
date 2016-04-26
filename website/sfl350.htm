@@ -1,0 +1,57 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>socket_peeraddr</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl349.htm">&lt;</A>
+ | <A href="sfl351.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="socket_peeraddr">&nbsp;</A>
+<H3><A NAME="TOC363"><TT>socket_peeraddr</TT></A></H3>
+<PRE>
+#include "sflsock.h"
+char *
+socket_peeraddr (
+    sock_t handle)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns a string containing the peer host address for the
+   specified connected socket. The string is formatted as a string
+   "n.n.n.n". Returns the address of a static string or a buffer
+   that is overwritten by each call. If sockets are not supported,
+   or there was an error, returns the loopback address
+   "127.0.0.1".
+<H4>Source Code - (sflsock.c)</H4>
+<PRE>
+{
+#if (defined (DOES_SOCKETS))
+    static char
+        peeraddr [NTOA_MAX + 1];        /*  xxx.xxx.xxx.xxx                  */
+    struct sockaddr_in
+        sin;                            /*  Address of peer system           */
+
+    if (<A href="sfl357.htm#get_peer_addr">get peer addr</A> (handle, &amp;sin, NULL, 0))
+        return ("127.0.0.1");
+    else
+      {
+        strncpy (peeraddr, inet_ntoa (sin.sin_addr), NTOA_MAX);
+        return  (peeraddr);
+      }
+#else
+    return ("127.0.0.1");
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl349.htm">&lt;</A>
+ | <A href="sfl351.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

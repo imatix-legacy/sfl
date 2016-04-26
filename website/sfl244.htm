@@ -1,0 +1,83 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>set_curdir</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl243.htm">&lt;</A>
+ | <A href="sfl245.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="set_curdir">&nbsp;</A>
+<H3><A NAME="TOC257"><TT>set_curdir</TT></A></H3>
+<PRE>
+#include "sfldir.h"
+int
+set_curdir (
+    const char *path)
+</PRE>
+<H4>Synopsis</H4>
+<P>Sets the current working directory as specified. Returns 0 if
+   the directory path was found; -1 if there was an error. Under
+   Windows, replaces '/' by '\' before changing directory, and
+   switches to the specified disk if the path starts with a letter
+   and ':'. Does nothing if the path is NULL or empty.
+<H4>Source Code - (sfldir.c)</H4>
+<PRE>
+{
+    int
+        feedback = 0;
+
+#if (defined (__UNIX__) || defined (__VMS_XOPEN) || defined (__OS2__))
+    if (path &amp;&amp; *path)
+        feedback = chdir (path);
+
+#elif (defined (MSDOS_FILESYSTEM))
+    char
+        *copy_path = mem_strdup (path);
+
+    if (path == NULL || *path == '\0')
+        return (0);                     /*  Do nothing if path is empty      */
+
+    /*  MS-DOS compilers generally require a two-step process                */
+    <A href="sfl294.htm#strconvch">strconvch</A> (copy_path, '/', '\\');
+
+#   if (defined (WIN32))
+    /* The drive letter does not need to be changed separately in Win32.    */
+    feedback = !SetCurrentDirectory (copy_path);
+
+#   elif (defined (__TURBOC__))
+    feedback = chdir (copy_path);
+    if (feedback == 0 &amp;&amp; isalpha (path [0]) &amp;&amp; path [1] == ':')
+        setdisk (toupper (path [0]) - 'A');
+
+#   elif (defined (__LCC__))
+    feedback = chdir (copy_path);
+    if (feedback == 0 &amp;&amp; isalpha (path [0]) &amp;&amp; path [1] == ':')
+        chdrive (toupper (path [0]) - 'A' + 1);
+
+#   elif (defined (_MSC_VER))
+    feedback = _chdir (copy_path);
+    if (feedback == 0 &amp;&amp; isalpha (path [0]) &amp;&amp; path [1] == ':')
+        _chdrive (toupper (path [0]) - 'A' + 1);
+
+#   endif
+    mem_strfree (&amp;copy_path);
+#else
+    feedback = -1;
+#endif
+
+    return (feedback);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl243.htm">&lt;</A>
+ | <A href="sfl245.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

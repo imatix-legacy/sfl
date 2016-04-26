@@ -1,0 +1,76 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>node_create</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl222.htm">&lt;</A>
+ | <A href="sfl224.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="node_create">&nbsp;</A>
+<H3><A NAME="TOC236"><TT>node_create</TT></A></H3>
+<PRE>
+#include "sflnode.h"
+void *
+node_create (
+    void *after,
+    size_t size)
+</PRE>
+<H4>Synopsis</H4>
+<P>Creates a new node with the specified size, and attaches it to
+   the linked list after the specified node. Initialises all
+   fields in the node (except the main list pointers) to binary
+   zeroes. If the 'after' argument is null, initialises but does
+   not attach the node. Returns a pointer to the newly-created
+   node, or NULL if there was not enough memory.
+<H4>Examples</H4>
+<PRE>
+    typedef struct {
+        void *prev, *next;
+        long data;
+    } BLOCK;
+
+    NODE head;
+    BLOCK *pointer;
+
+    //  Initialise head of list
+    node_reset (&head);
+
+    //  Attach new block to start of list
+    pointer = (BLOCK *) node_create (&head, sizeof (BLOCK));
+    pointer-&gt; data = 1;
+
+    //  Attach new block to end of list
+    pointer = (BLOCK *) node_create (head.prev, sizeof (BLOCK));
+    pointer-&gt; data = 1000;
+</PRE>
+<H4>Source Code - (sflnode.c)</H4>
+<PRE>
+{
+    NODE
+        *node;                          /*  Allocated node                   */
+
+    ASSERT (size &gt; 0);
+
+    if ((node = mem_alloc (size)) != NULL)
+      {
+        memset (node, 0, size);
+        node_reset (node);              /*  Initialise node pointers         */
+        if (after)                      /*  Link into list if required       */
+            <A href="sfl225.htm#node_relink_after">node relink after</A> (node, after);
+      }
+    return (node);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl222.htm">&lt;</A>
+ | <A href="sfl224.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

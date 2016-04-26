@@ -1,0 +1,75 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>time_now</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl52.htm">&lt;</A>
+ | <A href="sfl54.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="time_now">&nbsp;</A>
+<H3><A NAME="TOC66"><TT>time_now</TT></A></H3>
+<PRE>
+#include "sfldate.h"
+long
+time_now (void)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns the current time as a long value (HHMMSSCC). If the
+   system clock does not return centiseconds, these are set to
+   zero.
+<H4>Source Code - (sfldate.c)</H4>
+<PRE>
+{
+#if (defined (__TURBOC__))
+    /*  The Turbo-C gettime() function returns just what we want             */
+    struct time
+        time_struct;
+
+    gettime (&amp;time_struct);
+    return (MAKE_TIME (time_struct.ti_hour,
+                       time_struct.ti_min,
+                       time_struct.ti_sec,
+                       time_struct.ti_hund));
+
+#elif (defined (__UTYPE_FREEBSD__))
+    return (<A href="sfl70.htm#timer_to_time">timer to time</A> (time (NULL)));
+
+#elif (defined (__UNIX__) || defined (__VMS_XOPEN))
+    /*  The BSD gettimeofday function returns seconds and microseconds       */
+    struct timeval
+        time_struct;
+
+    gettimeofday (&amp;time_struct, 0);
+    return (<A href="sfl70.htm#timer_to_time">timer to time</A> (time_struct.tv_sec)
+                         + time_struct.tv_usec / 10000);
+
+#elif (defined (WIN32))
+    /*  The Win32 GetLocalTime function returns just what we want            */
+    SYSTEMTIME
+        time_struct;
+
+    GetLocalTime (&amp;time_struct);
+    return (MAKE_TIME (time_struct.wHour,
+                       time_struct.wMinute,
+                       time_struct.wSecond,
+                       time_struct.wMilliseconds / 10));
+
+#else
+    /*  Otherwise, just get the time without milliseconds                    */
+    return (<A href="sfl70.htm#timer_to_time">timer to time</A> (time (NULL)));
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl52.htm">&lt;</A>
+ | <A href="sfl54.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

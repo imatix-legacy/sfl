@@ -1,0 +1,94 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>sym_exec_all</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl381.htm">&lt;</A>
+ | <A href="sfl383.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="sym_exec_all">&nbsp;</A>
+<H3><A NAME="TOC395"><TT>sym_exec_all</TT></A></H3>
+<PRE>
+#include "sflsymb.h"
+int
+sym_exec_all (
+    const SYMTAB *table,                /*  Symbol table to process          */
+    symfunc the_function, ...           /*  Function to call                 */
+)
+</PRE>
+<H4>Synopsis</H4>
+<P>Traverses the symbol table, executing the specified function
+   for every symbol in the table. The function receives one or
+   more arguments: the first argument is a SYMBOL pointer to the
+   symbol, and following arguments as supplied by the caller.
+   Continues so long as the function returns TRUE; halts when
+   every symbol has been processed, or when the function returns
+   FALSE. Returns the number of symbols processed, if all symbols
+   were processed; or negative the number of symbols processed if
+   processing stopped early due to the function returning FALSE or
+   other errors. The symbols are processed in reverse creation
+   order; the newest symbol is processed first.
+<H4>Examples</H4>
+<PRE>
+    static Bool
+    dump_symbol (SYMBOL *symbol, ...)
+    {
+        printf ("%s = %s\n", symbol-&gt; name, symbol-&gt; value);
+        return (TRUE);
+    }
+
+    SYMTAB
+        *table;
+
+    table = sym_create_table ();
+    sym_create_symbol (table, "Symbol 1", "value 1");
+    sym_create_symbol (table, "Symbol 2", "value 2");
+    sym_exec_all (table, dump_symbol);
+    sym_delete_table (table);
+</PRE>
+<H4>Source Code - (sflsymb.c)</H4>
+<PRE>
+{
+    SYMBOL
+        *symbol;                        /*  Next symbol in table             */
+    va_list
+        argptr;                         /*  Argument list pointer            */
+    int
+        count = 0;                      /*  Number of symbols processed ok   */
+    Bool
+        alldone = TRUE;                 /*  Assume all symbols will be done  */
+
+    ASSERT (table);
+
+    va_start (argptr, the_function);    /*  Start variable args processing   */
+    for (symbol = table-&gt; symbols; symbol; symbol = symbol-&gt; next)
+      {
+        if ((*the_function) (symbol, argptr))
+            count++;
+        else
+          {
+            alldone = FALSE;
+            break;
+	  }
+      }
+    va_end (argptr);                    /*  End variable args processing     */
+
+    if (alldone)
+        return (count);                 /*  All symbols processed -&gt; positive*/
+    else
+        return (-(count));              /*  Stopped early -&gt; negative count  */
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl381.htm">&lt;</A>
+ | <A href="sfl383.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

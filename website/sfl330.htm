@@ -1,0 +1,55 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>eatstrpast</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl329.htm">&lt;</A>
+ | <A href="sfl331.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="eatstrpast">&nbsp;</A>
+<H3><A NAME="TOC343"><TT>eatstrpast</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+char *
+eatstrpast (
+    char **strBuff,
+    char *strCharsToEatPast)
+</PRE>
+<H4>Synopsis</H4>
+<P> Eats chars past first occurrence of one of the chars contained
+   in strCharsToEatPast.
+<H4>Examples</H4>
+<PRE>
+       char strBuff[] = { " , 456, 789" };
+       eatstrpast (&strBuff, ",");
+
+    On return here strBuff would be: " 456, 789".
+    Returns a pointer to head of the input buffer.
+    Submitted by Scott Beasley &lt;jscottb@infoave.com&gt;
+</PRE>
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+   ASSERT (strBuff);
+   ASSERT (strCharsToEatPast);
+
+   <A href="sfl315.htm#ltrim">ltrim</A> (*strBuff);
+   while (**strBuff &amp;&amp; strchr (strCharsToEatPast, **strBuff))
+       deletechar (*strBuff, 0);
+
+   return *strBuff;
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl329.htm">&lt;</A>
+ | <A href="sfl331.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

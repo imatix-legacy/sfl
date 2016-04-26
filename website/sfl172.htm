@@ -1,0 +1,39 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>linebuf_destroy</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl171.htm">&lt;</A>
+ | <A href="sfl173.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="linebuf_destroy">&nbsp;</A>
+<H3><A NAME="TOC185"><TT>linebuf_destroy</TT></A></H3>
+<PRE>
+#include "sfllbuf.h"
+void
+linebuf_destroy (LINEBUF *buffer)
+</PRE>
+<H4>Synopsis</H4>
+<P>Destroys a line buffer and frees its memory.
+<H4>Source Code - (sfllbuf.c)</H4>
+<PRE>
+{
+    ASSERT (buffer);
+
+    mem_free (buffer-&gt; data);
+    mem_free (buffer);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl171.htm">&lt;</A>
+ | <A href="sfl173.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

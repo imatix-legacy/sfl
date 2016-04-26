@@ -1,0 +1,58 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>connect_TCP_fast</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl342.htm">&lt;</A>
+ | <A href="sfl344.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="connect_TCP_fast">&nbsp;</A>
+<H3><A NAME="TOC356"><TT>connect_TCP_fast</TT></A></H3>
+<PRE>
+#include "sflsock.h"
+sock_t
+connect_TCP_fast (
+    const struct sockaddr_in *sin       /*  Socket address structure         */
+)
+</PRE>
+<H4>Synopsis</H4>
+<P>Creates a TCP socket and connects it to a specified host/port
+   address. Returns a socket number or INVALID_SOCKET. In that
+   case you can get the reason for the error by calling
+   <A href="sfl355.htm#connect_error">connect error</A> (). This may be: <TABLE BORDER NOWRAP>
+   <TR><TD ALIGN="LEFT"><B>IP NOSOCKETS</B>  <TD
+   ALIGN="LEFT">Sockets not supported on this system <TR><TD
+   ALIGN="LEFT"><B>IP BADHOST</B>  <TD ALIGN="LEFT">Host is not
+   known <TR><TD ALIGN="LEFT"><B>IP BADPROTOCOL</B>  <TD
+   ALIGN="LEFT">Cannot understand protocol name <TR><TD
+   ALIGN="LEFT"><B>IP SOCKETERROR</B>  <TD ALIGN="LEFT">Cannot
+   open a socket <TR><TD ALIGN="LEFT"><B>IP CONNECTERROR</B>  <TD
+   ALIGN="LEFT">Cannot connect socket </TABLE> This function is
+   faster, if you know the host system address and port, than
+   <A href="sfl341.htm#connect_TCP">connect TCP</A>() because no translation is needed. You can get
+   the host/address structure by calling <A href="sfl347.htm#address_end_point">address end point</A>()
+   or <A href="sfl357.htm#get_peer_addr">get peer addr</A>(). See <A href="sfl345.htm#connect_socket">connect socket</A>() for details.
+<H4>Source Code - (sflsock.c)</H4>
+<PRE>
+{
+    ASSERT (sin);
+    return (<A href="sfl345.htm#connect_socket">connect socket</A> (NULL,       /*  No host name                     */
+                            NULL,       /*  No service name                  */
+                            "tcp",      /*  Protocol is TCP                  */
+                            sin,        /*  We have a prepared address       */
+                            1, 0));     /*  1 retry, no waiting              */
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl342.htm">&lt;</A>
+ | <A href="sfl344.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

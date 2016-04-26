@@ -1,0 +1,77 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>clean_path</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl241.htm">&lt;</A>
+ | <A href="sfl243.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="clean_path">&nbsp;</A>
+<H3><A NAME="TOC255"><TT>clean_path</TT></A></H3>
+<PRE>
+#include "sfldir.h"
+char *
+clean_path (
+    const char *path)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns a clean directory name; i.e. resolves the path, removes
+   a trailing slash unless the name consists just of '/'; on a MS-
+   DOS file system, cleans-up a directory name consisting of a
+   disk specifier. The cleaned-up directory path is in a static
+   area that is overwritten by each call.
+<H4>Source Code - (sfldir.c)</H4>
+<PRE>
+{
+#if (defined (__UNIX__) || defined (MSDOS_FILESYSTEM) || defined (__VMS__))
+    static char
+        new_path [PATH_MAX + 1];        /*  Returned path value              */
+    char
+        *slash;
+
+    strncpy (new_path, path, PATH_MAX);
+    new_path [PATH_MAX] = '\0';
+#   if (defined (MSDOS_FILESYSTEM))
+    /*  For DOS filesystems, use only back slashes                           */
+    <A href="sfl294.htm#strconvch">strconvch</A> (new_path, '/', '\\');
+#   endif
+    slash = strrchr (new_path, PATHEND);    /*  Find last slash              */
+
+#   if (defined (MSDOS_FILESYSTEM))
+    /*  If slash is last character in string, maybe squash it                */
+    if (slash &amp;&amp; slash [1] == '\0')
+      {
+        if (slash &gt; new_path &amp;&amp; slash [-1] != ':')
+            *slash = '\0';
+      }
+    else                                /*  Turn X: into X:\                 */
+    if (new_path [1] == ':' &amp;&amp; new_path [2] == '\0')
+      {
+        new_path [2] = '\\';
+        new_path [3] = '\0';
+      }
+#   else
+    /*  If slash is last character in string, maybe squash it                */
+    if (slash &amp;&amp; slash [1] == '\0')
+        if (slash &gt; new_path)
+            *slash = '\0';
+#   endif
+    return (new_path);
+#else
+    return ((char *) path);
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl241.htm">&lt;</A>
+ | <A href="sfl243.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

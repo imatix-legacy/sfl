@@ -1,0 +1,54 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>process_priority</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl262.htm">&lt;</A>
+ | <A href="sfl264.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="process_priority">&nbsp;</A>
+<H3><A NAME="TOC276"><TT>process_priority</TT></A></H3>
+<PRE>
+#include "sflproc.h"
+int
+process_priority (int priority)
+</PRE>
+<H4>Synopsis</H4>
+<P>Sets process priority as specified, to one of PRIORITY_LOW,
+   PRIORITY_NORMAL, or PRIORITY_HIGH. Currently has an effect only
+   under Windows NT/95. Returns 0 if okay, -1 if there was an
+   error.
+<H4>Source Code - (sflproc.c)</H4>
+<PRE>
+{
+#if (defined (WIN32))
+    int
+        class;
+
+    if (priority == PRIORITY_HIGH)
+        class = HIGH_PRIORITY_CLASS;
+    else
+    if (priority == PRIORITY_LOW)
+        class = IDLE_PRIORITY_CLASS;
+    else
+        class = NORMAL_PRIORITY_CLASS;
+
+    return (SetPriorityClass (GetCurrentProcess (), class));
+#else
+    return (0);
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl262.htm">&lt;</A>
+ | <A href="sfl264.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

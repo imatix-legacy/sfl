@@ -1,0 +1,49 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>tree_find_eq</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl441.htm">&lt;</A>
+ | <A href="sfl443.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="tree_find_eq">&nbsp;</A>
+<H3><A NAME="TOC455"><TT>tree_find_eq</TT></A></H3>
+<PRE>
+#include "sfltree.h"
+void *tree_find_eq (TREE **root, void *tree, TREE_COMPARE *comp)
+</PRE>
+<H4>Synopsis</H4>
+<P>Finds a node with data exactly matching that provided.
+<H4>Source Code - (sfltree.c)</H4>
+<PRE>
+{
+    TREE
+       *current = *root,
+       *found;
+
+    found = NULL;
+    while (current != TREE_NULL)
+        switch ((comp) (current, tree))
+          {
+            case -1: current = current-&gt; right; break;
+            case  1: current = current-&gt; left;  break;
+            default: found = current;           /*  In case of duplicates,   */
+                     current = current-&gt; left;  /*  get the first one.       */
+          }
+
+    return found;
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl441.htm">&lt;</A>
+ | <A href="sfl443.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

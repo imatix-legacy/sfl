@@ -1,0 +1,74 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>get_hostaddrs</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl365.htm">&lt;</A>
+ | <A href="sfl367.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="get_hostaddrs">&nbsp;</A>
+<H3><A NAME="TOC379"><TT>get_hostaddrs</TT></A></H3>
+<PRE>
+#include "sflsock.h"
+qbyte *
+get_hostaddrs (void)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns a table of all host IP addresses. The table ends in a
+   zero address. Each address is a 4-byte value in host format.
+   Returns NULL if there was an error. If sockets are not
+   supported, returns a table with the loopback address
+   (127.0.0.1) and a null address. The caller must free the table
+   using mem_free() when finished using it.
+<H4>Source Code - (sflsock.c)</H4>
+<PRE>
+{
+#if (defined (DOES_SOCKETS))
+    int
+        addr_count;                     /*  How many addresses do we have    */
+    qbyte
+        *addr_table;                    /*  Where we store the addresses     */
+    struct hostent
+        *phe;                           /*  Host information entry           */
+
+    if ((phe = gethostbyname (<A href="sfl364.htm#get_hostname">get hostname</A> ())) == NULL)
+        return (NULL);
+
+    /*  Count the addresses                                                  */
+    for (addr_count = 0; phe-&gt; h_addr_list [addr_count]; addr_count++);
+
+    /*  Allocate a table; socket addresses are 4 bytes                       */
+    addr_table = mem_alloc (4 * (addr_count + 1));
+
+    /*  Store the addresses                                                  */
+    for (addr_count = 0; phe-&gt; h_addr_list [addr_count]; addr_count++)
+        addr_table [addr_count]
+            = *(qbyte *) (phe-&gt; h_addr_list [addr_count]);
+
+    addr_table [addr_count] = 0;
+    return (addr_table);
+
+#else
+    qbyte
+        *addr_table;                    /*  Where we store the addresses     */
+
+    addr_table = mem_alloc (8);         /*  Addresses are 4 bytes            */
+    addr_table [0] = htonl (SOCKET_LOOPBACK);
+    addr_table [1] = 0;
+    return (addr_table);
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl365.htm">&lt;</A>
+ | <A href="sfl367.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

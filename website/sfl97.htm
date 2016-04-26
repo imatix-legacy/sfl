@@ -1,0 +1,122 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>memfind_rb</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl96.htm">&lt;</A>
+ | <A href="sfl98.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="memfind_rb">&nbsp;</A>
+<H3><A NAME="TOC110"><TT>memfind_rb</TT></A></H3>
+<PRE>
+#include "sflfind.h"
+void *
+memfind_rb (const void  *in_block,      /*  Block containing data            */
+            size_t       block_size,    /*  Size of block in bytes           */
+            const void  *in_pattern,    /*  Pattern to search for            */
+            size_t       pattern_size,  /*  Size of pattern block            */
+            size_t      *shift,         /*  Shift table (search buffer)      */
+            Bool        *repeat_find)   /*  TRUE: search buffer already init */
+</PRE>
+<H4>Synopsis</H4>
+<P>Searches for a pattern in a block of memory using the Boyer-
+   Moore-Horspool-Sunday algorithm. The block and pattern may
+   contain any values; you must explicitly provide their lengths.
+   Returns a pointer to the pattern if found within the block, or
+   NULL if the pattern was not found. On the first search with a
+   given pattern, *repeat_find should be FALSE. It will be set to
+   TRUE after the shift table is initialised, allowing the
+   initialisation phase to be skipped on subsequent searches.
+   shift must point to an array big enough to hold 256 (8**2)
+   size_t values. This function is meant to handle binary data,
+   for repeated searches for the same pattern. If you need to
+   search strings, use the <A href="sfl93.htm#strfind_r">strfind r</A>() or <A href="sfl94.htm#strfind_rb">strfind rb</A>()
+   functions. If you wish to search for a pattern only once
+   consider using <A href="sfl96.htm#memfind_r">memfind r</A>(). Reentrant.
+<H4>Source Code - (sflfind.c)</H4>
+<PRE>
+{
+    size_t
+        byte_nbr,                       /*  Distance through block           */
+        match_size;                     /*  Size of matched part             */
+    const byte
+        *match_base = NULL,             /*  Base of match of pattern         */
+        *match_ptr  = NULL,             /*  Point within current match       */
+        *limit      = NULL;             /*  Last potiental match point       */
+    const byte
+        *block   = (byte *) in_block,   /*  Concrete pointer to block data   */
+        *pattern = (byte *) in_pattern; /*  Concrete pointer to search value */
+
+    ASSERT (block);                     /*  Expect non-NULL pointers, but    */
+    ASSERT (pattern);                   /*  fail gracefully if not debugging */
+    ASSERT (shift);                     /*  NULL repeat_find =&gt; is false     */
+    if (block == NULL || pattern == NULL || shift == NULL)
+        return (NULL);
+
+    /*  Pattern must be smaller or equal in size to string                   */
+    if (block_size &lt; pattern_size)
+        return (NULL);                  /*  Otherwise it's not found         */
+
+    if (pattern_size == 0)              /*  Empty patterns match at start    */
+        return ((void *)block);
+
+    /*  Build the shift table unless we're continuing a previous search      */
+
+    /*  The shift table determines how far to shift before trying to match   */
+    /*  again, if a match at this point fails.  If the byte after where the  */
+    /*  end of our pattern falls is not in our pattern, then we start to     */
+    /*  match again after that byte; otherwise we line up the last occurence */
+    /*  of that byte in our pattern under that byte, and try match again.    */
+
+    if (!repeat_find || !*repeat_find)
+      {
+        for (byte_nbr = 0; byte_nbr &lt; 256; byte_nbr++)
+            shift [byte_nbr] = pattern_size + 1;
+        for (byte_nbr = 0; byte_nbr &lt; pattern_size; byte_nbr++)
+            shift [(byte) pattern [byte_nbr]] = pattern_size - byte_nbr;
+
+        if (repeat_find)
+            *repeat_find = TRUE;
+      }
+
+    /*  Search for the block, each time jumping up by the amount             */
+    /*  computed in the shift table                                          */
+
+    limit = block + (block_size - pattern_size + 1);
+    ASSERT (limit &gt; block);
+
+    for (match_base = block;
+         match_base &lt; limit;
+         match_base += shift [*(match_base + pattern_size)])
+      {
+        match_ptr  = match_base;
+        match_size = 0;
+
+        /*  Compare pattern until it all matches, or we find a difference    */
+        while (*match_ptr++ == pattern [match_size++])
+          {
+            ASSERT (match_size &lt;= pattern_size &amp;&amp;
+                    match_ptr == (match_base + match_size));
+
+            /*  If we found a match, return the start address                */
+            if (match_size &gt;= pattern_size)
+              return ((void*)(match_base));
+
+          }
+      }
+    return (NULL);                      /*  Found nothing                    */
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl96.htm">&lt;</A>
+ | <A href="sfl98.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,142 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>XML (Extensible Markup Language) access functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl467.htm">&lt;</A>
+ | <A href="sfl469.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC481">XML (Extensible Markup Language) access functions</A></H2>
+<P>Filename: sflxml.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1998/02/25 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 2000/01/16
+<BR>Copyright: Copyright (c) 1991-99 iMatix Corporation
+<H3>Synopsis</H3>
+<P>Provides functions to read and write XML files, and manipulate
+   XML data in memory as list structures. XML is the Extensible
+   Markup Language. Accepts this XML syntax: &lt;item
+   [attr=["]value["]]...&gt;value [child]&lt;/item&gt;
+<H4>List of Functions</H4>
+<UL>
+<LI>XML_ITEM * <A href="sfl470.htm#xml_new">xml new</A><BR>
+   (XML_ITEM *parent, const char *name, const char *value);
+</LI>
+<LI>XML_ITEM * <A href="sfl469.htm#xml_create">xml create</A><BR>
+   (const char *name, const char *value);
+</LI>
+<LI>void <A href="sfl471.htm#xml_modify_value">xml modify value</A><BR>
+   (XML_ITEM *item, const char *value);
+</LI>
+<LI>void <A href="sfl472.htm#xml_rename">xml rename</A><BR>
+   (XML_ITEM *item, const char *name);
+</LI>
+<LI>char * <A href="sfl473.htm#xml_item_name">xml item name</A><BR>
+   (XML_ITEM *item);
+</LI>
+<LI>char * <A href="sfl474.htm#xml_item_value">xml item value</A><BR>
+   (XML_ITEM *item);
+</LI>
+<LI>void <A href="sfl475.htm#xml_free">xml free</A><BR>
+   (XML_ITEM *item);
+</LI>
+<LI>void <A href="sfl476.htm#xml_attach_child">xml attach child</A><BR>
+   (XML_ITEM *parent, XML_ITEM *item);
+</LI>
+<LI>void <A href="sfl477.htm#xml_attach_sibling">xml attach sibling</A><BR>
+   (XML_ITEM *sibling, XML_ITEM *item);
+</LI>
+<LI>void <A href="sfl478.htm#xml_detach">xml detach</A><BR>
+   (XML_ITEM *item);
+</LI>
+<LI>XML_ITEM * <A href="sfl479.htm#xml_first_child">xml first child</A><BR>
+   (XML_ITEM *item);
+</LI>
+<LI>XML_ITEM * <A href="sfl480.htm#xml_last_child">xml last child</A><BR>
+   (XML_ITEM *item);
+</LI>
+<LI>XML_ITEM * <A href="sfl481.htm#xml_next_sibling">xml next sibling</A><BR>
+   (XML_ITEM *item);
+</LI>
+<LI>XML_ITEM * <A href="sfl482.htm#xml_prev_sibling">xml prev sibling</A><BR>
+   (XML_ITEM *item);
+</LI>
+<LI>XML_ITEM * <A href="sfl483.htm#xml_parent">xml parent</A><BR>
+   (XML_ITEM *item);
+</LI>
+<LI>int <A href="sfl484.htm#xml_put_attr_ic">xml put attr ic</A><BR>
+   (XML_ITEM *item, const char *name, const char *value, Bool
+   ignore_case);
+</LI>
+<LI>XML_ATTR * <A href="sfl485.htm#xml_attr_ic">xml attr ic</A><BR>
+   (XML_ITEM *item, const char *name, Bool ignore_case);
+</LI>
+<LI>char * <A href="sfl486.htm#xml_attr_name">xml attr name</A><BR>
+   (XML_ATTR *item);
+</LI>
+<LI>char * <A href="sfl487.htm#xml_attr_value">xml attr value</A><BR>
+   (XML_ATTR *item);
+</LI>
+<LI>char * <A href="sfl488.htm#xml_get_attr_ic">xml get attr ic</A><BR>
+   (XML_ITEM *item, const char *name, const char *deflt, Bool
+   ignore_case);
+</LI>
+<LI>void <A href="sfl489.htm#xml_free_attr">xml free attr</A><BR>
+   (XML_ATTR *attr);
+</LI>
+<LI>XML_ATTR * <A href="sfl490.htm#xml_first_attr">xml first attr</A><BR>
+   (XML_ITEM *item);
+</LI>
+<LI>XML_ATTR * <A href="sfl491.htm#xml_last_attr">xml last attr</A><BR>
+   (XML_ITEM *item);
+</LI>
+<LI>XML_ATTR * <A href="sfl492.htm#xml_next_attr">xml next attr</A><BR>
+   (XML_ATTR *attr);
+</LI>
+<LI>XML_ATTR * <A href="sfl493.htm#xml_prev_attr">xml prev attr</A><BR>
+   (XML_ATTR *attr);
+</LI>
+<LI>Bool <A href="sfl494.htm#xml_changed">xml changed</A><BR>
+   (XML_ITEM *item);
+</LI>
+<LI>Bool <A href="sfl495.htm#xml_refresh">xml refresh</A><BR>
+   (XML_ITEM **item);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sflxml.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>FORATTRIBUTES(attr,item)</B>  </TT>
+<TD ALIGN="LEFT">for (attr = xml_first_attr (item); <TR><TD ALIGN="LEFT"><TT><B>FORCHILDREN(child,item)</B>  </TT>
+<TD ALIGN="LEFT">for (child = xml_first_child (item); <TR><TD ALIGN="LEFT"><TT><B>FORVALUES(child,item)</B>  </TT>
+<TD ALIGN="LEFT">for (child = xml_first_child (item); <TR><TD ALIGN="LEFT"><TT><B>SLFXML_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>xml_attr(item,</B>  </TT>
+<TD ALIGN="LEFT">name) <TR><TD ALIGN="LEFT"><TT><B>xml_get_attr(item,</B>  </TT>
+<TD ALIGN="LEFT">name, dflt) <TR><TD ALIGN="LEFT"><TT><B>xml_put_attr(item,</B>  </TT>
+<TD ALIGN="LEFT">name, value) </TABLE>
+<H4>List of Type Definitions</H4>
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Type name:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>XML_ATTR</B>  </TT>
+<TD ALIGN="LEFT">struct _XML_ATTR
+<TR><TD ALIGN="LEFT"><TT><B>XML_ITEM</B>  </TT>
+<TD ALIGN="LEFT">struct _XML_ITEM
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl467.htm">&lt;</A>
+ | <A href="sfl469.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

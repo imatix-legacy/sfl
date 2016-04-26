@@ -1,0 +1,43 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>file_close</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl101.htm">&lt;</A>
+ | <A href="sfl103.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="file_close">&nbsp;</A>
+<H3><A NAME="TOC115"><TT>file_close</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+int
+file_close (
+    FILE *stream)
+</PRE>
+<H4>Synopsis</H4>
+<P>Closes an open file stream. Returns 0 if okay, -1 if there was
+   an error. For now, equivalent to fclose, and supplied because
+   it looks nice when you use <A href="sfl100.htm#file_open">file open</A>() and <A href="sfl102.htm#file_close">file close</A>()
+   together.
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+    if (stream)
+        return (fclose (stream));
+    else
+        return (0);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl101.htm">&lt;</A>
+ | <A href="sfl103.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

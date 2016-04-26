@@ -1,0 +1,106 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>conv_str_time</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl43.htm">&lt;</A>
+ | <A href="sfl45.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="conv_str_time">&nbsp;</A>
+<H3><A NAME="TOC57"><TT>conv_str_time</TT></A></H3>
+<PRE>
+#include "sflconv.h"
+/*  We supply the dialog file as the source
+long
+conv_str_time (const char *p_string)
+</PRE>
+<H4>Synopsis</H4>
+<P>Converts a string to a time. The string must have this format:
+   hour[&lt;delim&gt;minute[&lt;delim&gt;second[&lt;delim&gt;centi
+   ]]][a[m]|p[m]] Any non-digit is accepted as delimiter. Each
+   component may be one or two digits. The input string must be
+   null-terminated. Returns -1 in case of an invalid date or
+   format. If the string was empty (contains no usable digits,
+   returns 0. The am/pm indicator can occur one anywhere in the
+   string.
+<H4>Source Code - (sflcvst.c)</H4>
+<PRE>
+{
+
+After-Init:
+    (--) Ok                                 -&gt; Expect-Hour
+          + Get-Next-Component
+
+Expect-Hour:
+    (--) Number                             -&gt; Expect-Minute
+          + Have-Hour
+          + Get-Next-Component
+    (--) Am-Pm                              -&gt; Expect-Hour
+          + Have-Am-Pm-Indicator
+          + Get-Next-Component
+
+Expect-Minute:
+    (--) Number                             -&gt; Expect-Second
+          + Have-Minute
+          + Get-Next-Component
+    (--) Am-Pm                              -&gt; Expect-Minute
+          + Have-Am-Pm-Indicator
+          + Get-Next-Component
+
+Expect-Second:
+    (--) Number                             -&gt; Expect-Centisecond
+          + Have-Second
+          + Get-Next-Component
+    (--) Am-Pm                              -&gt; Expect-Second
+          + Have-Am-Pm-Indicator
+          + Get-Next-Component
+
+Expect-Centisecond:
+    (--) Number                             -&gt; Allow-Am-Pm
+          + Have-Centisecond
+          + Get-Next-Component
+    (--) Am-Pm                              -&gt; Expect-Centisecond
+          + Have-Am-Pm-Indicator
+          + Get-Next-Component
+
+Allow-Am-Pm:
+    (--) Am-Pm                              -&gt; Expect-Finished
+          + Have-Am-Pm-Indicator
+          + Get-Next-Component
+
+Expect-Finished:
+    (--) Finished                           -&gt;
+          + Have-Complete-Time
+          + Terminate-The-Program
+
+Defaults:
+    (--) Number                             -&gt;
+          + Have-Invalid-Time
+          + Terminate-The-Program
+    (--) Am-Pm                              -&gt;
+          + Have-Invalid-Time
+          + Terminate-The-Program
+    (--) Finished                           -&gt;
+          + Have-Complete-Time
+          + Terminate-The-Program
+    (--) Delimiter                          -&gt;
+          + Have-Delimiter
+          + Get-Next-Component
+    (--) Error                              -&gt;
+          + Have-Invalid-Time
+          + Terminate-The-Program
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl43.htm">&lt;</A>
+ | <A href="sfl45.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

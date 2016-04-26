@@ -1,0 +1,79 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>get_file_time</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl131.htm">&lt;</A>
+ | <A href="sfl133.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="get_file_time">&nbsp;</A>
+<H3><A NAME="TOC145"><TT>get_file_time</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+time_t
+get_file_time (
+    const char *filename)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns the modification time of the specified file or
+   directory. The returned time is suitable for feeding to
+   localtime().
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+#if (defined (WIN32_NOT_IMPLEMENTED))
+    /*  This code has been disactivated because it returns incorrect
+        values depending on the seasonal clock change.
+     */
+    unsigned long thi,tlo;
+    double  dthi,dtlo;
+    double  secs_since_1601, secs_time_t;
+    double  delta = 11644473600.;
+    double  two_to_32 = 4294967296.;
+    HANDLE  handle;
+    FILETIME creation, last_access, last_write;
+
+    handle = CreateFile (filename, GENERIC_READ, FILE_SHARE_WRITE,
+                         NULL, OPEN_EXISTING, 0, 0);
+    if (handle == INVALID_HANDLE_VALUE)
+        return (0);
+    GetFileTime (handle, &amp;creation, &amp;last_access, &amp;last_write);
+    CloseHandle (handle);
+    thi = last_write.dwHighDateTime;
+    tlo = last_write.dwLowDateTime;
+    dthi = (double) thi;
+    dtlo = (double) tlo;
+    secs_since_1601 = (dthi * two_to_32 + dtlo) / 1.0e7;
+    secs_time_t     = secs_since_1601 - delta;
+    return ((time_t) secs_time_t);
+
+#else
+    struct stat
+        stat_buf;
+
+    ASSERT (filename);
+
+#   if (defined (MSDOS_FILESYSTEM))
+    if (system_devicename (filename))
+        return (0);                     /*  Not allowed on device names      */
+#   endif
+    if (stat ((char *) filename, &amp;stat_buf) == 0)
+        return (stat_buf.st_mtime &gt; 0? stat_buf.st_mtime: 0);
+    else
+        return (0);
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl131.htm">&lt;</A>
+ | <A href="sfl133.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

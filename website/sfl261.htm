@@ -1,0 +1,61 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>process_esc</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl260.htm">&lt;</A>
+ | <A href="sfl262.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="process_esc">&nbsp;</A>
+<H3><A NAME="TOC274"><TT>process_esc</TT></A></H3>
+<PRE>
+#include "sflproc.h"
+char *
+process_esc (char *dest, const char *src)
+</PRE>
+<H4>Synopsis</H4>
+<P>Escapes a directory string so that <A href="sfl252.htm#process_create">process create</A>() can
+   handle it correctly. If you pass a command to process_create
+   with a directory name that contains spaces, it will assume that
+   the spaces delimit the command from its arguments. For
+   instance, under Windows 95, the filename "C:\Program
+   Files\Myprog.exe" will be incorrectly treated as a program
+   called "C:\Program" with arguments "Files\Myprog.exe". This
+   function replaces spaces by the escape character (0x1B). You
+   cannot use this value in a filename and expect
+   <A href="sfl252.htm#process_create">process create</A>() to work correctly. On an EBCDIC system,
+   the escape character (0x27) is also used. If the dest argument
+   is NULL, allocates a string using mem_alloc() and returns that.
+   Otherwise copies into the dest string and returns that. If the
+   src string is NULL, returns an empty string.
+<H4>Source Code - (sflproc.c)</H4>
+<PRE>
+{
+#if (defined (__EBCDIC__))
+#   define ESC_CHAR   0x27
+#else
+#   define ESC_CHAR   0x1B
+#endif
+    /*  Copy to dest, allocate if necessary                                  */
+    if (dest != src)
+      {
+        xstrcpy_debug ();
+        dest = <A href="sfl296.htm#xstrcpy">xstrcpy</A> (dest, src, NULL);
+      }
+    <A href="sfl294.htm#strconvch">strconvch</A> (dest, ' ', ESC_CHAR);
+    return (dest);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl260.htm">&lt;</A>
+ | <A href="sfl262.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

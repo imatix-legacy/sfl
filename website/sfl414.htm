@@ -1,0 +1,69 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>build_full_url</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl413.htm">&lt;</A>
+ | <A href="sfl415.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="build_full_url">&nbsp;</A>
+<H3><A NAME="TOC427"><TT>build_full_url</TT></A></H3>
+<PRE>
+#include "sflhttp.h"
+char *
+build_full_url (const char *uri, const char *base_uri)
+</PRE>
+<H4>Synopsis</H4>
+<P>If the specified URI string does not start with a URL schema or
+   a directory delimiter, we add the path of the base URI, and
+   return the resulting full URI. This is provided as a freshly-
+   allocated string which the caller must free using mem_free()
+   when finished. If the specified URI is already a full URI,
+   returns a fresh copy of that URI.
+<H4>Source Code - (sflhttp.c)</H4>
+<PRE>
+{
+    char
+        *full_uri,                      /*  Formatted full URI               */
+        *slash;                         /*  Find delimiter in path           */
+    int
+        base_len,                       /*  Length of base part of URI       */
+        uri_len;                        /*     and the rest of uri           */
+
+    if (<A href="sfl413.htm#is_full_url">is full url</A> (uri) || uri [0] == '/')
+        return (mem_strdup (uri));
+    else
+      {
+        /*  Find last slash in base URI                                      */
+        slash = strrchr (base_uri, '/');
+        if (slash)
+          {
+            uri_len  = strlen (uri);
+            base_len = ++slash - base_uri;
+            full_uri = mem_alloc (base_len + uri_len + 1);
+            if (full_uri)
+              {
+                memcpy (full_uri, base_uri, base_len);
+                strncpy (full_uri + base_len, uri, (uri_len + 1));
+              }
+          }
+        else
+            full_uri = <A href="sfl296.htm#xstrcpy">xstrcpy</A> (NULL, "/", uri, NULL);
+
+        return (full_uri);
+      }
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl413.htm">&lt;</A>
+ | <A href="sfl415.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

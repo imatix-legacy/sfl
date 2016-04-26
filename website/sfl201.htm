@@ -1,0 +1,59 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>mem_strfree_</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl200.htm">&lt;</A>
+ | <A href="sfl202.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="mem_strfree_">&nbsp;</A>
+<H3><A NAME="TOC214"><TT>mem_strfree_</TT></A></H3>
+<PRE>
+#include "sflmem.h"
+void
+mem_strfree_ (
+    char **string,                      /*  Address of string to free        */
+    const char *filename,               /*  Name of source file making call  */
+    size_t lineno                       /*  Line number in calling source    */
+)
+</PRE>
+<H4>Synopsis</H4>
+<P>Releases memory occupied by a string. Use the mem_strfree()
+   macro to call this function! Call this function to free strings
+   allocated using <A href="sfl200.htm#mem_strdup_">mem strdup </A>(). Accepts the address of a
+   char pointer as argument: if the pointer is not null, the
+   string is freed, and the pointer is set to null. Returns the
+   address of the modified pointer.
+<H4>Examples</H4>
+<PRE>
+    char
+        *string1 = NULL,
+        *string2 = NULL;
+    string1 = mem_strdup ("This is a string");
+    mem_strfree (&string1);
+    mem_strfree (&string2);
+</PRE>
+<H4>Source Code - (sflmem.c)</H4>
+<PRE>
+{
+    ASSERT (string);
+    if (*string)
+      {
+        <A href="sfl202.htm#mem_free_">mem free </A> (*string, filename, lineno);
+        *string = NULL;
+      }
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl200.htm">&lt;</A>
+ | <A href="sfl202.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

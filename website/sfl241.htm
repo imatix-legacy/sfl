@@ -1,0 +1,93 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>locate_path</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl240.htm">&lt;</A>
+ | <A href="sfl242.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="locate_path">&nbsp;</A>
+<H3><A NAME="TOC254"><TT>locate_path</TT></A></H3>
+<PRE>
+#include "sfldir.h"
+char *
+locate_path (
+    const char *root,
+    const char *path)
+</PRE>
+<H4>Synopsis</H4>
+<P>Accepts a root directory and a path and locates the path with
+   respect to the root. If the path looks like an absolute
+   directory, returns the path after cleaning it up. Otherwise
+   appends the path to the root, and returns the result. In any
+   case, the resulting directory does not need to exist. Cleans-up
+   the returned path by appending a '/' if necessary, and
+   resolving any '..' subpaths. The returned value is held in a
+   freshly-allocated string which the caller must free using
+   mem_free() when finished with..
+<H4>Source Code - (sfldir.c)</H4>
+<PRE>
+{
+#if (defined (__UNIX__) || defined (MSDOS_FILESYSTEM) || defined (__VMS__))
+    char
+        *new_path,                      /*  Returned path value              */
+        *resolved;                      /*  and after .. resolution          */
+
+    ASSERT (root);
+    ASSERT (path);
+
+#if (defined (MSDOS_FILESYSTEM))
+    /*  Under MSDOS, OS/2, or Windows we have a full path if we have any of:
+     *  /directory
+     *  D:/directory
+     *  the variations of those with backslashes.
+     */
+    if (path [0] == '\\'   || path [0] == '/'
+    || (isalpha (path [0]) &amp;&amp; path [1] == ':'
+    &amp;&amp; (path [2] == '\\'   || path [2] == '/')))
+
+#else
+    /*  Under UNIX or VMS we have a full path if the path starts with the
+     *  directory marker.
+     */
+    if (path [0] == PATHEND)
+#endif
+        new_path = mem_strdup (path);   /*  Use path as supplied             */
+    else
+      {
+        xstrcpy_debug ();
+        if (path_delimiter (strlast (root)))
+            new_path = <A href="sfl296.htm#xstrcpy">xstrcpy</A> (NULL, root, path, NULL);
+        else
+            new_path = <A href="sfl296.htm#xstrcpy">xstrcpy</A> (NULL, root, "/", path, NULL);
+      }
+    resolved = <A href="sfl240.htm#resolve_path">resolve path</A> (new_path);
+    mem_free (new_path);
+    /*  Append slash if necessary                                            */
+    if (!path_delimiter (strlast (resolved)))
+      {
+        new_path = resolved;
+        xstrcpy_debug ();
+        resolved = <A href="sfl296.htm#xstrcpy">xstrcpy</A> (NULL, new_path, "/", NULL);
+        mem_free (new_path);
+      }
+    return (resolved);
+#else
+
+    return (mem_strdup (path));         /*  Unknown system                   */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl240.htm">&lt;</A>
+ | <A href="sfl242.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

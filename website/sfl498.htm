@@ -1,0 +1,51 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>xml_save_string</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl497.htm">&lt;</A>
+ | <A href="sfl499.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="xml_save_string">&nbsp;</A>
+<H3><A NAME="TOC511"><TT>xml_save_string</TT></A></H3>
+<PRE>
+#include "sflxmll.h"
+char *
+xml_save_string (
+    XML_ITEM *item)
+</PRE>
+<H4>Synopsis</H4>
+<P>Saves an XML tree to a string. Returns a freshly-allocated
+   string containing the XML tree, or NULL if there was
+   insufficient memory to allocate a new string.
+<H4>Source Code - (sflxmll.c)</H4>
+<PRE>
+{
+    size_t
+        xml_size;
+    char
+        *xml_string;
+
+    ASSERT (item);
+    init_charmaps ();                   /*  Initialise character maps        */
+    xml_size = xml_item_size (item);
+    xml_string = mem_alloc (xml_size + 1000);
+    if (xml_string)
+        xml_save_string_item (xml_string, item);
+
+    return (xml_string);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl497.htm">&lt;</A>
+ | <A href="sfl499.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

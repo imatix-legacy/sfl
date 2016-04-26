@@ -1,0 +1,74 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>file_concat</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl106.htm">&lt;</A>
+ | <A href="sfl108.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="file_concat">&nbsp;</A>
+<H3><A NAME="TOC120"><TT>file_concat</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+int
+file_concat (
+    const char *src,
+    const char *dest)
+</PRE>
+<H4>Synopsis</H4>
+<P>Copies the contents of src onto dest. If dest does not exist,
+   it is created. Returns 0 if the concatenation operation
+   succeeded, or -1 if some error occurred.
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+    FILE *inf, *outf;
+    char *buffer;
+    size_t chars_read;                  /*  Amount read from stream          */
+    int  feedback = 0;
+
+    ASSERT (src);
+    ASSERT (dest);
+
+#   if (defined (MSDOS_FILESYSTEM))
+    if (system_devicename (dest) || system_devicename (src))
+        return (-1);                    /*  Not allowed on device names      */
+#   endif
+    if ((inf = fopen (src, FOPEN_READ_BINARY)) == NULL)
+        return (-1);                    /*  Input file not found             */
+
+    if ((buffer = mem_alloc (SHRT_MAX)) == NULL)
+        feedback = -1;                  /*  Insufficient memory for buffer   */
+    else
+      {
+        if ((outf = fopen (dest, FOPEN_APPEND_BINARY)) == NULL)
+          {
+            mem_free (buffer);
+            return (-1);                /*  Could not create output file     */
+          }
+        while ((chars_read = fread (buffer, 1, SHRT_MAX, inf)) != 0)
+            if (fwrite (buffer, 1, chars_read, outf) != chars_read)
+              {
+                feedback = -1;
+                break;
+              }
+        fclose (outf);
+        mem_free (buffer);
+      }
+    fclose (inf);
+    return (feedback);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl106.htm">&lt;</A>
+ | <A href="sfl108.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,55 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>xml_load</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl482.htm">&lt;</A>
+ | &gt; | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.10
+</TABLE>
+<HR>
+<A NAME="xml_load">&nbsp;</A>
+<H3><A NAME="TOC496"><TT>xml_load</TT></A></H3>
+<PRE>
+#include "sflxmll.h"
+XML_ITEM *
+xml_load (const char *path,
+          const char *filename)
+</PRE>
+<H4>Synopsis</H4>
+<P>Loads the contents of an XML file into a new XML tree. The XML
+   data is not checked against a DTD. Returns NULL if there was
+   insufficient memory, or the XML file could not be read. The XML
+   tree always starts with a top-level item called 'XML' with
+   these attributes: <TABLE BORDER NOWRAP> <TR><TD
+   ALIGN="LEFT"><B>filename</B>  <TD ALIGN="LEFT">Name of the XML
+   input file <TR><TD ALIGN="LEFT"><B>filetime</B>  <TD
+   ALIGN="LEFT">Modification time of the file, "HHMMSSCC" <TR><TD
+   ALIGN="LEFT"><B>filedate</B>  <TD ALIGN="LEFT">Modification
+   date of input file, "YYYYMMDD" </TABLE> Looks for the XML file
+   on the specified path symbol, or in the current directory if
+   the path argument is null. Adds the specified extension to the
+   file name if there is none already included.
+<H4>Source Code - (sflxmll.c)</H4>
+<PRE>
+{
+    feedback = NULL;                    /*  Reset return feedback            */
+
+    ASSERT (filename);
+    pname = filename;
+    ppath = path;
+
+#   include "sflxmll.i"                 /*  Include dialog interpreter       */
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl482.htm">&lt;</A>
+ | &gt; | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-99 iMatix Corporation</TABLE>
+</BODY></HTML>

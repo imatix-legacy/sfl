@@ -1,0 +1,84 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>Linked-list functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl178.htm">&lt;</A>
+ | <A href="sfl180.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC192">Linked-list functions</A></H2>
+<P>Filename: sfllist.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1997/07/28 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 1998/07/26
+<BR>Copyright: Copyright (c) 1996-2000 iMatix Corporation
+<H3>Synopsis</H3>
+<P>Provides functions to maintain doubly-linked lists. You can use
+   these functions to work with lists of any structure. To make
+   this work, all structures must start with two pointers, "void
+   *next, *prev;". When you want to attach a linked-list to
+   another structure, declare the list head as a list. You can
+   then refer to this variable when you attach items to the list
+   head. The code sets the global list_unsafe to TRUE whenever it
+   is changing a list.
+<H4>List of Functions</H4>
+<UL>
+<LI>void * <A href="sfl181.htm#list_relink">list relink</A><BR>
+   (void *left, void *list, void *right);
+</LI>
+<LI>void * <A href="sfl180.htm#list_unlink">list unlink</A><BR>
+   ( void *list );
+</LI>
+<LI>void * <A href="sfl182.htm#list_add">list add</A><BR>
+   (LIST *list, void *data, size_t size);
+</LI>
+<LI>void <A href="sfl183.htm#list_remove">list remove</A><BR>
+   (LIST *list, void *data, size_t size);
+</LI>
+<LI>void <A href="sfl184.htm#list_sort">list sort</A><BR>
+   (void *list, NODE_COMPARE comp);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sfllist.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>FORLIST(node,root)</B>  </TT>
+<TD ALIGN="LEFT">for ((node) = (root).next; <TR><TD ALIGN="LEFT"><TT><B>SFLLIST_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>list_create(node,size)</B>  </TT>
+<TD ALIGN="LEFT">if (((node) = mem_alloc (size)) != NULL) <TR><TD ALIGN="LEFT"><TT><B>list_destroy(list)</B>  </TT>
+<TD ALIGN="LEFT">while (!list_empty(list)) <TR><TD ALIGN="LEFT"><TT><B>list_empty(list)</B>  </TT>
+<TD ALIGN="LEFT">((list)-&gt; prev == (list))
+<TR><TD ALIGN="LEFT"><TT><B>list_pop(list,item)</B>  </TT>
+<TD ALIGN="LEFT">list_remove (list, <TR><TD ALIGN="LEFT"><TT><B>list_push(list,item)</B>  </TT>
+<TD ALIGN="LEFT">list_add (list, <TR><TD ALIGN="LEFT"><TT><B>list_queue(list,item)</B>  </TT>
+<TD ALIGN="LEFT">list_add (((LIST *)list)-&gt; prev, <TR><TD ALIGN="LEFT"><TT><B>list_relink_after(l,a)</B>  </TT>
+<TD ALIGN="LEFT">(list_relink (a, l, ((LIST *) a)-&gt; next))
+<TR><TD ALIGN="LEFT"><TT><B>list_relink_before(l,b)</B>  </TT>
+<TD ALIGN="LEFT">(list_relink (((LIST *) b)-&gt; prev, l, b))
+<TR><TD ALIGN="LEFT"><TT><B>list_reset(list)</B>  </TT>
+<TD ALIGN="LEFT">(list)-&gt; prev = (list)-&gt; next = (list)
+</TABLE>
+<H4>List of Type Definitions</H4>
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Type name:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>NODE_COMPARE</B>  </TT>
+<TD ALIGN="LEFT">Bool (*) (LIST *t1, LIST *t2)
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl178.htm">&lt;</A>
+ | <A href="sfl180.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

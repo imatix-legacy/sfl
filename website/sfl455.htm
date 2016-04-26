@@ -1,0 +1,54 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>set_gid_user</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl454.htm">&lt;</A>
+ | <A href="sfl456.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.10
+</TABLE>
+<HR>
+<A NAME="set_gid_user">&nbsp;</A>
+<H3><A NAME="TOC468"><TT>set_gid_user</TT></A></H3>
+<PRE>
+#include "sfluid.h"
+int
+set_gid_user (void)
+</PRE>
+<H4>Synopsis</H4>
+<P>This function can be used by 'setgid' programs; i.e. programs
+   that run under a fixed gid such as 'root'. Typically such
+   programs need to access root resources, but user data files. To
+   do this they must switch between the 'root' gid and the 'user'
+   gid. This function switches to the real user id. Use
+   <A href="sfl456.htm#set_gid_root">set gid root</A>() to switch (back) to the 'root' gid. See
+   also: <A href="sfl453.htm#set_uid_user">set uid user</A>() and <A href="sfl454.htm#set_uid_root">set uid root</A>().
+<H4>Source Code - (sfluid.c)</H4>
+<PRE>
+{
+#if (defined (DOES_UID))
+#   if (defined (__UTYPE_HPUX))
+    return (setgid (get_gid (REAL_ID)));
+#   elif (defined (__OS2__))            /*  OS/2 only supports one UID       */
+    return (0);
+#   elif (defined (__VMS__))            /*  No setgid under OpenVMS          */
+    return (0);
+#   else
+    return (setegid (get_gid (REAL_ID)));
+#   endif
+#else
+    return (0);
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl454.htm">&lt;</A>
+ | <A href="sfl456.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-99 iMatix Corporation</TABLE>
+</BODY></HTML>

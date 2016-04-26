@@ -1,0 +1,131 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>fortune_read</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl143.htm">&lt;</A>
+ | <A href="sfl145.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="fortune_read">&nbsp;</A>
+<H3><A NAME="TOC157"><TT>fortune_read</TT></A></H3>
+<PRE>
+#include "sflfort.h"
+char *
+fortune_read (const char *fortune_file)
+</PRE>
+<H4>Synopsis</H4>
+<P>Reads a random paragraph from the specified fortune file. The
+   fortune file is located in the current directory or on the
+   current path. The paragraph of text is returned in a freshly-
+   allocated block of memory that you should free afterwards using
+   mem_free(). Returns NULL if the fortune file could not be
+   opened.
+<H4>Source Code - (sflfort.c)</H4>
+<PRE>
+{
+    static Bool
+        first_time = TRUE;
+    FILE
+        *fortunes;                      /*  FFF input stream                 */
+    byte
+        *inbuf,                         /*  Block read from file             */
+        *outbuf;                        /*  And after decompression          */
+    int
+        nbr_blocks,                     /*  Number of blocks in data file    */
+        nbr_paras,                      /*  Number of paragraphs in block    */
+        paragraph;
+    dbyte
+        input_dbyte,
+        block_size;                     /*  Size of current block            */
+    qbyte
+        input_qbyte,
+        block_offset;                   /*  Offset of block in file          */
+    char
+        *para_start;                    /*  Start of paragraph               */
+    Bool
+        compressed;                     /*  Compressed fortune data?         */
+
+    /*  Initialise random-number generator if necessary                      */
+    if (first_time)
+      {
+        randomize ();
+        first_time = FALSE;
+      }
+
+    /*  Look for fortunes file                                               */
+    fortunes = <A href="sfl101.htm#file_locate">file locate</A> ("PATH", fortune_file, NULL);
+    if (fortunes == NULL)
+        return (NULL);
+
+    /*  Allocate working buffers                                             */
+    inbuf  = mem_alloc (BLOCK_SIZE);
+    outbuf = mem_alloc (BLOCK_SIZE);
+    if (inbuf == NULL || outbuf == NULL)
+      {
+        mem_free (inbuf);
+        mem_free (outbuf);
+        return (NULL);
+      }
+
+    /*  Indexed Fortune File format starts with IFFCMP or IFFTXT             */
+    <A href="sfl103.htm#file_read">file read</A> (fortunes, (char *) inbuf);
+    if (memcpy (inbuf, "IFFTXT", 6) == 0)
+        compressed = FALSE;
+    else
+        compressed = TRUE;
+
+    while (fgetc (fortunes) != 26);     /*  Skip past file header            */
+
+    /*  Get total number of blocks in file                                   */
+    fread (&amp;input_dbyte, 2, 1, fortunes);
+    nbr_blocks = ntohs (input_dbyte);
+
+    /*  Look at random block address in Toc                                  */
+    fseek (fortunes, random (nbr_blocks) * 4, SEEK_CUR);
+    fread (&amp;input_qbyte, 4, 1, fortunes);
+    block_offset = ntohl (input_qbyte);
+
+    /*  Go read, then decompress the block                                   */
+    fseek (fortunes, block_offset, SEEK_SET);
+    fread (&amp;input_dbyte, 2, 1, fortunes);
+    block_size = ntohs (input_dbyte);
+
+    if (compressed)
+      {
+        fread (inbuf, 1, block_size, fortunes);
+        <A href="sfl19.htm#expand_block">expand block</A> (inbuf, outbuf, block_size);
+      }
+    else
+        fread (outbuf, 1, block_size, fortunes);
+
+    /*  Chose random paragraph from block                                    */
+    input_dbyte = *(dbyte *) outbuf;
+    nbr_paras   = ntohs (input_dbyte);
+    paragraph   = random (nbr_paras);
+    para_start  = (char *) outbuf + 2;
+    while (paragraph--)
+        para_start = strchr (para_start, '\0') + 1;
+
+    para_start = mem_strdup (para_start);
+
+    /*  Release allocated memory                                             */
+    fclose (fortunes);
+    mem_free (inbuf);
+    mem_free (outbuf);
+
+    return (para_start);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl143.htm">&lt;</A>
+ | <A href="sfl145.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

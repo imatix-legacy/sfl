@@ -1,0 +1,104 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>tree_delete</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl440.htm">&lt;</A>
+ | <A href="sfl442.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="tree_delete">&nbsp;</A>
+<H3><A NAME="TOC454"><TT>tree_delete</TT></A></H3>
+<PRE>
+#include "sfltree.h"
+void tree_delete (TREE **root, void *tree)
+</PRE>
+<H4>Synopsis</H4>
+<P>Deletes a node from a tree. Does not deallocate any memory.
+<H4>Source Code - (sfltree.c)</H4>
+<PRE>
+{
+    TREE
+       *youngest, *descendent;
+    TREE_COLOUR
+        colour;
+
+    if ((!tree)
+    ||  (tree == TREE_NULL))
+        return;
+
+    if ((((TREE *) tree)-&gt; left  == TREE_NULL)
+    ||  (((TREE *) tree)-&gt; right == TREE_NULL))
+        /* descendent has a TREE_NULL node as a child */
+        descendent = tree;
+    else
+      {
+        /* find tree successor with a TREE_NULL node as a child */
+        descendent = ((TREE *) tree)-&gt; right;
+        while (descendent-&gt; left != TREE_NULL)
+            descendent = descendent-&gt; left;
+      }
+
+    /* youngest is descendent's only child, if there is one, else TREE_NULL */
+    if (descendent-&gt; left != TREE_NULL)
+        youngest = descendent-&gt; left;
+    else
+        youngest = descendent-&gt; right;
+
+    /* remove descendent from the parent chain */
+    if (youngest != TREE_NULL)
+        youngest-&gt; parent = descendent-&gt; parent;
+    if (descendent-&gt; parent)
+        if (descendent == descendent-&gt; parent-&gt; left)
+            descendent-&gt; parent-&gt; left  = youngest;
+        else
+            descendent-&gt; parent-&gt; right = youngest;
+    else
+        *root = youngest;
+
+    colour = descendent-&gt; colour;
+
+    if (descendent != (TREE *) tree)
+      {
+        /* Conceptually what we are doing here is moving the data from       */
+        /* descendent to tree.  In fact we do this by linking descendent     */
+        /* into the structure in the place of tree.                          */
+        descendent-&gt; left   = ((TREE *) tree)-&gt; left;
+        descendent-&gt; right  = ((TREE *) tree)-&gt; right;
+        descendent-&gt; parent = ((TREE *) tree)-&gt; parent;
+        descendent-&gt; colour = ((TREE *) tree)-&gt; colour;
+
+        if (descendent-&gt; parent)
+          {
+            if (tree == descendent-&gt; parent-&gt; left)
+                descendent-&gt; parent-&gt; left  = descendent;
+            else
+                descendent-&gt; parent-&gt; right = descendent;
+          }
+        else
+            *root = descendent;
+
+        if (descendent-&gt; left != TREE_NULL)
+            descendent-&gt; left-&gt; parent = descendent;
+
+        if (descendent-&gt; right != TREE_NULL)
+            descendent-&gt; right-&gt; parent = descendent;
+      }
+
+    if ((youngest != TREE_NULL)
+    &amp;&amp;  (colour   == BLACK))
+        delete_fixup (root, youngest);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl440.htm">&lt;</A>
+ | <A href="sfl442.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,60 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>ini_dyn_values</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl153.htm">&lt;</A>
+ | <A href="sfl155.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="ini_dyn_values">&nbsp;</A>
+<H3><A NAME="TOC167"><TT>ini_dyn_values</TT></A></H3>
+<PRE>
+#include "sflini.h"
+char **
+ini_dyn_values (
+    SYMTAB *symtab,
+    const char *section,
+    const char *keyword,
+    const char *default_value)
+</PRE>
+<H4>Synopsis</H4>
+<P>Finds a section:keyword in the symbol table and returns a
+   pointer to a string table containing the values, delimited by
+   commas. When finished with the string table you should call
+   <A href="sfl433.htm#tok_free">tok free</A>() to free the memory allocated for it. The default
+   value may not be NULL. Returns a pointer to a table of string
+   tokens (see <A href="sfl431.htm#tok_split">tok split</A>()), or NULL if there was insufficient
+   memory. The specified section and keyword can be in any case;
+   they are converted internally to lowercase to match the symbol
+   table. If the keyword is empty or NULL, no ':keyword' is
+   appended to the section name.
+<H4>Source Code - (sflini.c)</H4>
+<PRE>
+{
+    ASSERT (section);
+    ASSERT (default_value);
+
+    if (keyword &amp;&amp; *keyword)
+        snprintf (ini_keyword, sizeof (ini_keyword), "%s:%s", section, keyword);
+    else
+        strncpy  (ini_keyword, section, sizeof (ini_keyword));
+
+    <A href="sfl283.htm#strlwc">strlwc</A> (ini_keyword);
+    strcpy (iniline, <A href="sfl385.htm#sym_get_value">sym get value</A> (symtab, ini_keyword, default_value));
+    <A href="sfl294.htm#strconvch">strconvch</A> (iniline, ',', ' ');
+    return (<A href="sfl431.htm#tok_split">tok split</A> (iniline));
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl153.htm">&lt;</A>
+ | <A href="sfl155.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

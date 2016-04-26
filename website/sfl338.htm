@@ -1,0 +1,51 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>passive_UDP</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl337.htm">&lt;</A>
+ | <A href="sfl339.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="passive_UDP">&nbsp;</A>
+<H3><A NAME="TOC351"><TT>passive_UDP</TT></A></H3>
+<PRE>
+#include "sflsock.h"
+sock_t
+passive_UDP (
+    const char *service                 /*  Service name or port as string   */
+)
+</PRE>
+<H4>Synopsis</H4>
+<P>Creates a passive UDP socket for the specified service. Returns
+   socket number or INVALID_SOCKET. If it returns INVALID_SOCKET,
+   you can get the reason for the error by calling
+   <A href="sfl355.htm#connect_error">connect error</A> (). This may be one of: <TABLE BORDER NOWRAP>
+   <TR><TD ALIGN="LEFT"><B>IP NOSOCKETS</B>  <TD
+   ALIGN="LEFT">Sockets not supported on this system <TR><TD
+   ALIGN="LEFT"><B>IP BADSERVICE</B>  <TD ALIGN="LEFT">Service
+   cannot be converted to port number <TR><TD ALIGN="LEFT"><B>IP
+   BADPROTOCOL</B>  <TD ALIGN="LEFT">Cannot understand protocol
+   name <TR><TD ALIGN="LEFT"><B>IP SOCKETERROR</B>  <TD
+   ALIGN="LEFT">Cannot create the passive socket <TR><TD
+   ALIGN="LEFT"><B>IP BINDERROR</B>  <TD ALIGN="LEFT">Cannot bind
+   to the port </TABLE>
+<H4>Source Code - (sflsock.c)</H4>
+<PRE>
+{
+    ASSERT (service &amp;&amp; *service);
+    return (<A href="sfl339.htm#passive_socket">passive socket</A> (service, "udp", 0));
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl337.htm">&lt;</A>
+ | <A href="sfl339.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

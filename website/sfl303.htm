@@ -1,0 +1,76 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>descr2strt</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl302.htm">&lt;</A>
+ | <A href="sfl304.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="descr2strt">&nbsp;</A>
+<H3><A NAME="TOC316"><TT>descr2strt</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+char **
+descr2strt (
+    const DESCR *descr)
+</PRE>
+<H4>Synopsis</H4>
+<P>Takes a descriptor prepared by <A href="sfl302.htm#strt2descr">strt2descr</A>() and returns an
+   array of strings pointers, terminated in a null pointer. The
+   array is allocated using the mem_alloc() function. Each string
+   is individually allocated. Thus, to free the string table you
+   must call mem_free() for each entry in the table, except the
+   last one, and then for the table. You can also call
+   <A href="sfl304.htm#strtfree">strtfree</A>() to destroy the table in a single operation.
+   Returns NULL if there was insufficient memory to allocate the
+   table of strings.
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+    char
+        **table;
+    int
+        string_count,
+        string_nbr;                     /*  Index into string table          */
+    char
+        *descr_ptr;                     /*  Pointer into block               */
+
+    ASSERT (descr);
+
+    /*  Count the number of strings in the table                             */
+    descr_ptr = (char *) descr-&gt; data;
+    string_count = 0;
+    while (*descr_ptr)                  /*  Loop until we hit null string    */
+      {
+        string_count++;
+        descr_ptr += strlen (descr_ptr) + 1;
+      }
+
+    /*  Allocate a table and fill it with the strings                        */
+    table = mem_alloc ((string_count + 1) * sizeof (char *));
+    if (table)
+      {
+        descr_ptr = (char *) descr-&gt; data;
+        for (string_nbr = 0; string_nbr &lt; string_count; string_nbr++)
+          {
+            table [string_nbr] = mem_strdup (descr_ptr);
+            descr_ptr += strlen (descr_ptr) + 1;
+          }
+        table [string_count] = NULL;    /*  Store final null pointer         */
+      }
+    return (table);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl302.htm">&lt;</A>
+ | <A href="sfl304.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

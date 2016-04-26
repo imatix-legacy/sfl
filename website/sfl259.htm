@@ -1,0 +1,186 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>process_server</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl258.htm">&lt;</A>
+ | <A href="sfl260.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="process_server">&nbsp;</A>
+<H3><A NAME="TOC272"><TT>process_server</TT></A></H3>
+<PRE>
+#include "sflproc.h"
+int
+process_server (
+    const char *workdir,                /*  Where server runs, or NULL/""    */
+    const char *lockfile,               /*  For exclusive execution          */
+    int   argc,                         /*  Original command-line arguments  */
+    char *argv [],                      /*  Original command-line arguments  */
+    const char *sswitch [])             /*  Filter these options from argv   */
+</PRE>
+<H4>Synopsis</H4>
+<P>Converts the process from an interactive foreground process
+   into a background process. Depending on the system either the
+   existing process becomes a background process, or a new process
+   is started as a background process and the existing process
+   terminates. Requires the original command-line arguments as
+   passed to the main() function. If a new process is started, any
+   arguments that match any of the values in the (NULL terminated)
+   'sswitch' array will be omitted from the arguments to the new
+   process. You should specify the command-line switch(es) your
+   main program uses to run as a background service. If it
+   returns, returns 0 if okay, and returns -1 if there was an
+   error. The precise effect of this function depends on the
+   system. On UNIX, does this: <UL> <LI>Switches the process to
+   run as a background job, under init; <LI>closes all open files;
+   <LI>moves to a safe, known working directory, if required;
+   <LI>sets the umask for new files; <LI>opens stdin, stdout, and
+   stderr to the null device; <LI>enforces exclusive execution
+   through a lock file, if required; <LI>logs the process id in
+   the lock file; <LI>ignores the hangup unwanted signals. </UL>
+   On OS/2, starts a new copy of the program up, detached, and
+   running separately from the current process, and if successful,
+   the existing process exits. On other systems does nothing
+   except return 0.
+<H4>Source Code - (sflproc.c)</H4>
+<PRE>
+{
+#if (defined (__UNIX__))
+    int
+        fork_result,
+        file_handle;
+    char
+        pid_buffer [10];
+    struct flock
+        lock_file;                      /*  flock() argument block           */
+#endif
+    int
+        argi = 0,                       /*  Input arguments iterator         */
+        argo = 0;                       /*  Output arguments iterator        */
+    char
+        **newargv = NULL;               /*  Array of new arguments           */
+
+    newargv = malloc (argc * sizeof (char *));
+    if (newargv == NULL)
+        return (-1);
+
+    /*  Copy the arguments across, skipping any in sswitch                   */
+    for (argi = argo = 0; argi &lt; argc; argi++)
+      {
+        Bool
+            copy_argument = TRUE;
+        int
+            i = 0;
+
+        for (i = 0; sswitch != NULL &amp;&amp; sswitch [i] != NULL; i++)
+          {
+            if (strcmp (argv [argi], sswitch [i]) == 0)
+                copy_argument = FALSE;
+          }
+        if (copy_argument)
+            newargv [argo++] = argv [argi];
+      }
+
+    /*  Terminate the new argument array                                     */
+    newargv [argo] = NULL;
+
+#if (defined (__UNIX__))
+    /*  We recreate our process as a child of init.  The process continues   */
+    /*  to exit in the background.  UNIX calls wait() for all children of    */
+    /*  the init process, so the server will exit cleanly.                   */
+
+    fork_result = fork ();
+    if (fork_result &lt; 0)                /*  &lt; 0 is an error                  */
+        return (-1);                    /*  Could not fork                   */
+    else
+    if (fork_result &gt; 0)                /*  &gt; 0 is the parent process        */
+        exit (EXIT_SUCCESS);            /*  End parent process               */
+
+    /*  We close all open file descriptors that may have been inherited      */
+    /*  from the parent process.  This is to reduce the resources we use.    */
+
+    for (file_handle = FILEHANDLE_MAX - 1; file_handle &gt;= 0; file_handle--)
+        close (file_handle);            /*  Ignore errors                    */
+
+    /*  We move to a safe and known directory, which is supplied as an       */
+    /*  argument to this function (or not, if workdir is NULL or empty).     */
+
+    if (workdir &amp;&amp; strused (workdir))
+        chdir (workdir);
+
+    /*  We set the umask so that new files are given mode 750 octal          */
+
+    umask (027);                        /*  Complement of 0750               */
+
+    /*  We set standard input and output to the null device so that any      */
+    /*  functions that assume that these files are open can still work.      */
+
+    file_handle = open ("/dev/null", O_RDWR);    /*  stdin = handle 0        */
+    dup (file_handle);                           /*  stdout = handle 1       */
+    dup (file_handle);                           /*  stderr = handle 2       */
+
+    /*  We enforce a lock on the lockfile, if specified, so that only one    */
+    /*  copy of the server can run at once.  We return -1 if the lock fails. */
+    /*  This locking code might be better isolated into a separate package,  */
+    /*  since it is not very portable between unices.                        */
+
+    if (lockfile &amp;&amp; strused (lockfile))
+      {
+        file_handle = open (lockfile, O_RDWR | O_CREAT, 0640);
+        if (file_handle &lt; 0)
+            return (-1);                /*  We could not open lock file      */
+        else
+          {
+            lock_file.l_type = F_WRLCK;
+            if (fcntl (file_handle, F_SETLK, &amp;lock_file))
+                return (-1);            /*  We could not obtain a lock       */
+          }
+        /*  We record the server's process id in the lock file               */
+        snprintf (pid_buffer, sizeof (pid_buffer), "%6d\n", getpid ());
+        write   (file_handle, pid_buffer, strlen (pid_buffer));
+      }
+
+    /*  We ignore any hangup signal from the controlling TTY                 */
+    signal (SIGHUP, SIG_IGN);
+    return (0);                         /*  Initialisation completed ok      */
+
+#elif (defined (__OS2__))
+
+    /*  Start a new copy of the program up, running detached from this
+     *  program.  Quote the arguments to prevent expansion because they've
+     *  already been expanded once if applicable.  The program name is taken
+     *  to be argv[0] due to the lack of better options, and the path will be
+     *  searched to try to find it.
+     *
+     *  Providing the program starts successfully, this process exits,
+     *  otherwise an error is returned.
+     */
+#   if (defined (__EMX__))
+
+    if (spawnvp ((P_NOWAIT | P_DETACH | P_QUOTE), newargv [0], newargv) == -1)
+        return -1;
+    else
+        exit (EXIT_SUCCESS);
+
+#   else
+#   error Do not know how to run detached program.
+#   endif
+
+#else
+    return (0);                         /*  Nothing to do on this system     */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl258.htm">&lt;</A>
+ | <A href="sfl260.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

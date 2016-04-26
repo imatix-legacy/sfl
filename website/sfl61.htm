@@ -1,0 +1,40 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>default_century</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl60.htm">&lt;</A>
+ | <A href="sfl62.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.10
+</TABLE>
+<HR>
+<A NAME="default_century">&nbsp;</A>
+<H3><A NAME="TOC74"><TT>default_century</TT></A></H3>
+<PRE>
+#include "sfldate.h"
+long
+default_century (long *date)
+</PRE>
+<H4>Synopsis</H4>
+<P>Supplies a default century for the year if necessary. If the
+   year is 51 to 99, the century is set to 19. If the year is 0 to
+   50, the century is set to 20. Returns the adjusted date.
+<H4>Source Code - (sfldate.c)</H4>
+<PRE>
+{
+    if (GET_CENTURY (*date) == 0)
+        *date += (GET_YEAR (*date) &gt; 50? 19000000L: 20000000L);
+    return (*date);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl60.htm">&lt;</A>
+ | <A href="sfl62.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-99 iMatix Corporation</TABLE>
+</BODY></HTML>

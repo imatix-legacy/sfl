@@ -1,0 +1,39 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>get_tens_name</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl163.htm">&lt;</A>
+ | <A href="sfl165.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="get_tens_name">&nbsp;</A>
+<H3><A NAME="TOC177"><TT>get_tens_name</TT></A></H3>
+<PRE>
+#include "sfllang.h"
+char *
+get_tens_name (int tens)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns the name for the specified tens, which is a value from
+   10 to 90; it is rounded as required. Accented characters are
+   formatted according to the current accents setting.
+<H4>Source Code - (sfllang.c)</H4>
+<PRE>
+{
+    ASSERT (tens &gt;= 10 &amp;&amp; tens &lt; 100);
+    return (handle_accents (tens_table [tens / 10 - 1]));
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl163.htm">&lt;</A>
+ | <A href="sfl165.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

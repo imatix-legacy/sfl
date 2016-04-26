@@ -1,0 +1,91 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>socket_is_permitted</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl369.htm">&lt;</A>
+ | <A href="sfl371.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="socket_is_permitted">&nbsp;</A>
+<H3><A NAME="TOC383"><TT>socket_is_permitted</TT></A></H3>
+<PRE>
+#include "sflsock.h"
+Bool
+socket_is_permitted (const char *address, const char *mask)
+</PRE>
+<H4>Synopsis</H4>
+<P>Compares the specified address with a mask and returns TRUE if
+   the address matches the mask, or FALSE if it does not. The
+   address is formatted as a string "xxx.xxx.xxx.xxx". The mask is
+   formatted as zero or more patterns, delimited by whitespace or
+   commas. A pattern is an address string, with zero or more of
+   the last components replaced by '*'. The pattern may also be
+   prefixed by '!' to indicate exclusion. This is an example of a
+   mask: "127.0.0.1, 253.34.*, !253.35.*". This mask allows all
+   addresses: "*". To get the string address for a remote socket,
+   use socket_peer_address().
+<H4>Source Code - (sflsock.c)</H4>
+<PRE>
+{
+    char
+        *addrptr,                       /*  Pointer into address             */
+        *maskptr;                       /*  Pointer into mask                */
+    Bool
+        negate,                         /*  If !pattern                      */
+        feedback = FALSE;               /*  False unless matched             */
+
+    ASSERT (address);
+    ASSERT (mask);
+
+    maskptr = (char *) mask;
+    while (*maskptr)
+      {
+        while (isspace (*maskptr) || *maskptr == ',')
+            maskptr++;
+
+        /*  Get negation if necessary                                        */
+        if (*maskptr == '!')
+          {
+            negate = TRUE;
+            maskptr++;
+          }
+        else
+            negate = FALSE;
+
+        /*  Compare pattern with address up to the end of the pattern        */
+        for (addrptr = (char *) address; *addrptr; addrptr++)
+          {
+            if (*maskptr == '*')        /*  Matched address up to *          */
+                return (!negate);       /*  So either accepted or failed     */
+            else
+            if (*maskptr == '\0')       /*  Did not match address            */
+                return (negate);        /*    so fail unless negated         */
+            else
+            if (*addrptr != *maskptr)   /*  Some difference                  */
+                break;                  /*    so stop comparing              */
+
+            maskptr++;
+          }
+        if (*addrptr == '\0'            /*  Matched exact address?           */
+        &amp;&amp; (*maskptr == '\0' || isspace (*maskptr) || *maskptr == ','))
+            return (!negate);           /*  Either accepted or failed        */
+
+        until (*maskptr == '\0' || isspace (*maskptr) || *maskptr == ',')
+            maskptr++;                  /*  Skip to end of this pattern      */
+      }
+    return (feedback);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl369.htm">&lt;</A>
+ | <A href="sfl371.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

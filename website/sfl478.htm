@@ -1,0 +1,51 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>xml_changed</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl477.htm">&lt;</A>
+ | <A href="sfl479.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.10
+</TABLE>
+<HR>
+<A NAME="xml_changed">&nbsp;</A>
+<H3><A NAME="TOC491"><TT>xml_changed</TT></A></H3>
+<PRE>
+#include "sflxml.h"
+Bool
+xml_changed (
+    XML_ITEM *item)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns TRUE if the XML file loaded into the specified list has
+   in the meantime been changed. Returns FALSE if not.
+<H4>Source Code - (sflxml.c)</H4>
+<PRE>
+{
+    char
+        *filename;
+
+    ASSERT (item);
+
+    /*  Date, time, and name of original XML file are in the list            */
+    filename = <A href="sfl474.htm#xml_get_attr">xml get attr</A> (item, "filename", NULL);
+    if (filename
+    &amp;&amp;  <A href="sfl113.htm#file_has_changed">file has changed</A> (filename,
+                          atol (<A href="sfl474.htm#xml_get_attr">xml get attr</A> (item, "filedate", "0")),
+                          atol (<A href="sfl474.htm#xml_get_attr">xml get attr</A> (item, "filetime", "0"))))
+        return (TRUE);
+    else
+        return (FALSE);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl477.htm">&lt;</A>
+ | <A href="sfl479.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-99 iMatix Corporation</TABLE>
+</BODY></HTML>

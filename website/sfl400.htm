@@ -1,0 +1,80 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>http_escape_hex</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl399.htm">&lt;</A>
+ | <A href="sfl401.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="http_escape_hex">&nbsp;</A>
+<H3><A NAME="TOC413"><TT>http_escape_hex</TT></A></H3>
+<PRE>
+#include "sflhttp.h"
+char *
+http_escape_hex (
+    const char *string,
+    char  *result,
+    size_t outmax)
+</PRE>
+<H4>Synopsis</H4>
+<P>Works as <A href="sfl398.htm#http_escape">http escape</A>(), but converts spaces to %20 instead
+   of '+'. This encoding is standard for filenames and URL
+   requests.
+<H4>Source Code - (sflhttp.c)</H4>
+<PRE>
+{
+    char
+        *target;                        /*  Where we store the result        */
+    size_t
+        length;                         /*  of escaped character             */
+
+    ASSERT (string);
+    if (outmax == 0)                    /*  If no fixed length, get total len*/
+        outmax = <A href="sfl399.htm#http_escape_size">http escape size</A> (string);
+
+    if (result == NULL)
+        if ((result = mem_alloc (outmax)) == NULL)
+            return (NULL);              /*  Could not allocate a block       */
+
+    if (outmax &gt; 1)
+        outmax -= 1;                    /*  Leave space for NULL terminator  */
+    else
+    if (outmax == 1)                    /*  Only room for terminator         */
+      {
+        *result = '\0';
+        return (result);
+      }
+    target = result;
+    while (*string)
+      {
+        length = http_escape_char (*string, target, outmax, TRUE);
+        if (length == 0)
+            break;
+
+        target += length;
+        outmax -= length;
+        if (*string == '\n' || *string == '\r')
+          {
+            if ((string [1] == '\n' || string [1] == '\r')
+            &amp;&amp;  (string [1] != *string))
+                string++;
+          }
+        string++;
+      }
+    *target = '\0';                     /*  Terminate target string          */
+    return (result);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl399.htm">&lt;</A>
+ | <A href="sfl401.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

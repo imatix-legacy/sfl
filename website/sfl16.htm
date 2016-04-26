@@ -1,0 +1,70 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>bits_fget</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl15.htm">&lt;</A>
+ | <A href="sfl17.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="bits_fget">&nbsp;</A>
+<H3><A NAME="TOC29"><TT>bits_fget</TT></A></H3>
+<PRE>
+#include "sflbits.h"
+BITS *
+bits_fget (FILE *file)
+</PRE>
+<H4>Synopsis</H4>
+<P>Reads a bitstring from the specified file stream. You must have
+   previously written the bitstring using bit_fput (). Returns a
+   newly-created bitmap, or NULL if there was insufficient memory.
+<H4>Source Code - (sflbits.c)</H4>
+<PRE>
+{
+    int
+        block_nbr;                      /*  Bitstring block number           */
+    word
+        comp_size;                      /*  Size of compressed block         */
+    BITBLOCK
+        *block_ptr;                     /*  Points to bitstring block        */
+    BITS
+        *bits;
+
+    ASSERT (file);
+
+    bits = <A href="sfl10.htm#bits_create">bits create</A> ();              /*  Create a new, empty bitmap       */
+
+    /*  Read bitstring header from file                                      */
+    fread (&amp;bits-&gt; block_count, sizeof (bits-&gt; block_count), 1, file);
+    fread (&amp;bits-&gt; free_list,   sizeof (bits-&gt; free_list),   1, file);
+
+    /*  Read bitstring blocks from file                                      */
+    for (block_nbr = 0; block_nbr &lt; bits-&gt; block_count; block_nbr++)
+      {
+        block_nbr = alloc_block (bits);
+        if (block_nbr == 0)
+          {
+            <A href="sfl11.htm#bits_destroy">bits destroy</A> (bits);
+            return (NULL);
+          }
+        fread (&amp;comp_size, sizeof (comp_size), 1, file);
+        fread (compressed, comp_size,          1, file);
+        block_ptr        = bits-&gt; block [block_nbr];
+        block_ptr-&gt; size = <A href="sfl19.htm#expand_block">expand block</A> (compressed, (byte *) block_ptr,
+                                         comp_size);
+      }
+    return (bits);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl15.htm">&lt;</A>
+ | <A href="sfl17.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

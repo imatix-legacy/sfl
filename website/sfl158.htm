@@ -1,0 +1,65 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>set_userlang_str</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl157.htm">&lt;</A>
+ | <A href="sfl159.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="set_userlang_str">&nbsp;</A>
+<H3><A NAME="TOC171"><TT>set_userlang_str</TT></A></H3>
+<PRE>
+#include "sfllang.h"
+int
+set_userlang_str (const char *language)
+</PRE>
+<H4>Synopsis</H4>
+<P>Sets language used for date and numeric translation, using a
+   string representation of the language. The valid user languages
+   are: <TABLE BORDER NOWRAP> <TR><TD ALIGN="LEFT"><B>""</B>  <TD
+   ALIGN="LEFT">Default language (use hard-coded values) <TR><TD
+   ALIGN="LEFT"><B>"--"</B>  <TD ALIGN="LEFT">Alternative form for
+   default language <TR><TD ALIGN="LEFT"><B>"DA"</B>  <TD
+   ALIGN="LEFT">Danish <TR><TD ALIGN="LEFT"><B>"DE"</B>  <TD
+   ALIGN="LEFT">German <TR><TD ALIGN="LEFT"><B>"EN"</B>  <TD
+   ALIGN="LEFT">English <TR><TD ALIGN="LEFT"><B>"ES"</B>  <TD
+   ALIGN="LEFT">Castillian Spanish <TR><TD
+   ALIGN="LEFT"><B>"FB"</B>  <TD ALIGN="LEFT">Belgian or Swiss
+   French <TR><TD ALIGN="LEFT"><B>"FR"</B>  <TD
+   ALIGN="LEFT">French <TR><TD ALIGN="LEFT"><B>"IS"</B>  <TD
+   ALIGN="LEFT">Icelandic <TR><TD ALIGN="LEFT"><B>"IT"</B>  <TD
+   ALIGN="LEFT">Italian <TR><TD ALIGN="LEFT"><B>"NL"</B>  <TD
+   ALIGN="LEFT">Dutch <TR><TD ALIGN="LEFT"><B>"NO"</B>  <TD
+   ALIGN="LEFT">Norwegian <TR><TD ALIGN="LEFT"><B>"PO"</B>  <TD
+   ALIGN="LEFT">Portuguese <TR><TD ALIGN="LEFT"><B>"SV"</B>  <TD
+   ALIGN="LEFT">Swedish </TABLE> Returns 0 if okay, -1 if an
+   unsupported language was specified.
+<H4>Source Code - (sfllang.c)</H4>
+<PRE>
+{
+    int
+        index;
+
+    if (strnull (language))
+        return (<A href="sfl157.htm#set_userlang">set userlang</A> (USERLANG_DEFAULT));
+
+    for (index = 0; index &lt; USERLANG_TOP; index++)
+        if (streq (language, language_str [index]))
+            return (<A href="sfl157.htm#set_userlang">set userlang</A> (index));
+
+    return (-1);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl157.htm">&lt;</A>
+ | <A href="sfl159.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

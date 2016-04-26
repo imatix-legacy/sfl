@@ -1,0 +1,51 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>soundex</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl299.htm">&lt;</A>
+ | <A href="sfl301.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="soundex">&nbsp;</A>
+<H3><A NAME="TOC313"><TT>soundex</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+char *
+soundex (
+    const char *string)
+</PRE>
+<H4>Synopsis</H4>
+<P>Calculates the SOUNDEX code for the string. Returns the address
+   of a static area that holds the code. This area is overwritten
+   by each call to the soundex function. The SOUNDEX encoding
+   converts letters to uppercase, and translates each letter
+   according to this table: A0 B1 C2 D3 E0 F1 G2 H0 I0 J2 K2 L4 M5
+   N5 O0 P1 Q2 R6 S2 T3 U0 V1 W0 X2 Y0 Z2. Non-letters are
+   ignored, letters that translate to zero, and multiple
+   occurences of the same value are also ignored. This function
+   always returns a 4-letter encoding: the first letter of the
+   string followed by the first three significant digits.
+<H4>Examples</H4>
+<PRE>
+    printf ("Soundex of %s = %s\n", argv [1], soundex (argv [1]));
+</PRE>
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+    ASSERT (string);
+    return (<A href="sfl301.htm#soundexn">soundexn</A> (string, 4, FALSE));
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl299.htm">&lt;</A>
+ | <A href="sfl301.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

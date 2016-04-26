@@ -1,0 +1,185 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>get_name_server</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl371.htm">&lt;</A>
+ | <A href="sfl373.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="get_name_server">&nbsp;</A>
+<H3><A NAME="TOC385"><TT>get_name_server</TT></A></H3>
+<PRE>
+#include "sflsock.h"
+int
+get_name_server (struct sockaddr_in *ns_address, int ns_max)
+</PRE>
+<H4>Synopsis</H4>
+<P>gets the addresses of the DNS servers defined in the TCP/IP
+   configuration. The addresses are returned in a user-provided
+   struct sockaddr_in array. The maximum number of addresses in
+   this array is supplied as the ns_max argument. Return the
+   number of address found.
+<H4>Source Code - (sflsock.c)</H4>
+<PRE>
+{
+    int
+        ns_count = 0;                /*  Number of servers that we found  */
+
+#if (defined (WIN32))
+    static OSVERSIONINFO
+        version_info;
+    HKEY
+        hkey;                           /*  Handle to returned reg. key      */
+    static char
+        registry_value [LINE_MAX + 1];  /*  DNS server info from registry    */
+    long
+        size = LINE_MAX;                /*  Max. size of returned value      */
+    DWORD
+        type;
+    char
+        *key,
+        **address_list = NULL;
+    int
+        address_nbr;
+
+    /*  Look in registry; this sometimes works, but not always               */
+    version_info.dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
+    if (GetVersionEx (&amp;version_info)
+    &amp;&amp;  version_info.dwPlatformId == VER_PLATFORM_WIN32_NT)
+        key = "SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters";
+    else
+        key = "SYSTEM\\CurrentControlSet\\Services\\Vxd\\Mstcp\\Parameters";
+
+    if (RegOpenKeyEx (HKEY_LOCAL_MACHINE, key, 0,
+        KEY_QUERY_VALUE, &amp;hkey) == ERROR_SUCCESS
+    &amp;&amp;  RegQueryValueEx (hkey, "NameServer", NULL, (LPDWORD) &amp;type,
+        (LPBYTE) registry_value, (LPDWORD) &amp;size) == ERROR_SUCCESS)
+      {
+        address_list = <A href="sfl431.htm#tok_split">tok split</A> (registry_value);
+        for (address_nbr = 0; address_list [address_nbr]; address_nbr++)
+          {
+            if (ns_count &gt;= ns_max)
+                break;
+
+            ns_address [ns_count].sin_family      = AF_INET;
+            ns_address [ns_count].sin_port        = htons (DNS_PORT);
+            ns_address [ns_count].sin_addr.s_addr =
+                inet_addr (address_list [address_nbr]);
+            ns_count++;
+          }
+        <A href="sfl433.htm#tok_free">tok free</A> (address_list);
+        RegCloseKey (hkey);
+      }
+
+#elif (defined (__UNIX__))
+    static char
+        buffer  [LINE_MAX + 1],
+        address [16];
+    FILE
+        *resolver;
+    int
+        rc;
+
+    resolver = <A href="sfl100.htm#file_open">file open</A> ("/etc/resolv.conf", 'r');
+    if (resolver)
+      {
+        while (<A href="sfl103.htm#file_read">file read</A> (resolver, buffer))
+          {
+            rc = sscanf (buffer, "nameserver %s", address);
+            if (rc &gt; 0 &amp;&amp; rc != EOF)
+              {
+                if (ns_count &gt;= ns_max)
+                    break;
+
+                ns_address [ns_count].sin_family      = AF_INET;
+                ns_address [ns_count].sin_port        = htons (DNS_PORT);
+                ns_address [ns_count].sin_addr.s_addr = inet_addr (address);
+                ns_count++;
+              }
+          }
+        <A href="sfl102.htm#file_close">file close</A> (resolver);
+      }
+
+#elif (defined (__OS2__))
+    static char
+        buffer  [LINE_MAX + 1],
+        address [16];
+    char
+        *etcenv   = NULL,
+        *filename = NULL;
+    FILE
+        *resolver = NULL;
+    int
+        rc;
+
+    /*  Under OS/2 the file controlling the resolver is stored in the        */
+    /*  directory pointed at by the ETC environment variable.  It is called  */
+    /*  resolv2 or resolv (I *think* that is the order of preference), so we */
+    /*  try those two file names in that order.                              */
+
+    /*  If the ETC environment variable is not set we try the /mptn/etc      */
+    /*  directory since that is a likely default location for it.            */
+
+    etcenv = getenv ("ETC");
+    if (etcenv)
+      {
+        filename = mem_alloc (strlen(etcenv) + 10);
+        if (!filename)
+          return 0;                  /*  Cannot allocate memory for filename */
+
+        strcpy (filename, etcenv);
+        strcat (filename, "/resolv2");
+
+        resolver = <A href="sfl100.htm#file_open">file open</A> (filename, 'r');
+
+        if (! resolver)
+          { /*  Not available under that filename, let's try the other one   */
+            strcpy (filename, etcenv);
+            strcat (filename, "/resolv");
+
+            resolver = <A href="sfl100.htm#file_open">file open</A> (filename, 'r');
+          }
+        mem_free (filename);
+      }
+    else
+      { /*  No environment variable around, try using the defaults           */
+        resolver = <A href="sfl100.htm#file_open">file open</A> ("/mptn/etc/resolv2", 'r');
+        if (! resolver)
+            resolver = <A href="sfl100.htm#file_open">file open</A> ("/mptn/etc/resolv", 'r');
+      }
+    if (resolver)
+      {
+        while (<A href="sfl103.htm#file_read">file read</A> (resolver, buffer))
+          {
+            rc = sscanf (buffer, "nameserver %s", address);
+            if (rc &gt; 0 &amp;&amp; rc != EOF)
+              {
+                if (ns_count &gt;= ns_max)
+                    break;
+
+                ns_address [ns_count].sin_family      = AF_INET;
+                ns_address [ns_count].sin_port        = htons (DNS_PORT);
+                ns_address [ns_count].sin_addr.s_addr = inet_addr (address);
+                ns_count++;
+              }
+          }
+        <A href="sfl102.htm#file_close">file close</A> (resolver);
+      }
+#endif
+
+    return (ns_count);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl371.htm">&lt;</A>
+ | <A href="sfl373.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

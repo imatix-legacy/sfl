@@ -1,0 +1,65 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>file_delete</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl108.htm">&lt;</A>
+ | <A href="sfl110.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="file_delete">&nbsp;</A>
+<H3><A NAME="TOC122"><TT>file_delete</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+int
+file_delete (
+    const char *filename)
+</PRE>
+<H4>Synopsis</H4>
+<P>Deletes the specified file. Returns 0 if okay, -1 in case of an
+   error.
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+#if (defined (__VMS__))
+    ASSERT (filename);
+    return (remove (filename));
+
+#elif (defined (WIN32))
+    int
+        rc;
+
+    ASSERT (filename);
+    if (system_devicename (filename))
+        return (-1);                    /*  Not allowed on device names      */
+
+    rc = !DeleteFile (filename);
+    if (rc &amp;&amp; errno == EACCES)
+      {
+        /*  Under WinNT and Win95, a delete of a freshly-created file can
+         *  sometimes fail with a permission error which passes after a
+         *  short delay.  Ugly but it seems to work.
+         */
+        Sleep (200);
+        rc = !DeleteFile (filename);
+      }
+    return (rc);
+#else
+
+    ASSERT (filename);
+    return (unlink (filename));
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl108.htm">&lt;</A>
+ | <A href="sfl110.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

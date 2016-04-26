@@ -1,0 +1,66 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>strprefix</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl290.htm">&lt;</A>
+ | <A href="sfl292.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="strprefix">&nbsp;</A>
+<H3><A NAME="TOC304"><TT>strprefix</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+char *
+strprefix (
+    const char *string,
+    const char *delims)
+</PRE>
+<H4>Synopsis</H4>
+<P>Looks for one of the delimiter characters in the string; if
+   found, returns a string that contains the text up to that
+   delimiter. If not found, returns NULL. The returned string can
+   be zero or more characters long followed by a null byte. It is
+   allocated using the mem_alloc() function; you should free it
+   using mem_free() when finished.
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+    const char
+        *nextch;
+    char
+        *token;
+    int
+        token_size;
+
+    ASSERT (string);
+    ASSERT (delims);
+
+    for (nextch = string; *nextch; nextch++)
+      {
+        if (strchr (delims, *string))   /*  Is next character a delimiter    */
+          {
+            token_size = (int) (nextch - string);
+            token = mem_alloc (token_size + 1);
+            if (token == NULL)
+                return (NULL);          /*  Not enough memory - fail         */
+            memcpy (token, string, token_size);
+            token [token_size] = 0;
+            return (token);
+          }
+      }
+    return (NULL);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl290.htm">&lt;</A>
+ | <A href="sfl292.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

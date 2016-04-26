@@ -1,0 +1,69 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>sock_init</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl334.htm">&lt;</A>
+ | <A href="sfl336.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="sock_init">&nbsp;</A>
+<H3><A NAME="TOC348"><TT>sock_init</TT></A></H3>
+<PRE>
+#include "sflsock.h"
+int
+sock_init (void)
+</PRE>
+<H4>Synopsis</H4>
+<P>Initialise the internet protocol. On most systems this is a
+   null call. On some systems this loads dynamic libraries.
+   Returns 0 0 if everything was okay, else returns SOCKET_ERROR.
+   You should call <A href="sfl336.htm#sock_term">sock term</A>() when your program ends.
+<H4>Source Code - (sflsock.c)</H4>
+<PRE>
+{
+#if (defined (__WINDOWS__))
+    WORD
+        wVersionRequested;              /*  We really want Winsock 1.1       */
+    WSADATA
+        wsaData;
+
+    wVersionRequested = 0x0101;         /*  ... but we'll take 1.1           */
+    if (WSAStartup (wVersionRequested, &amp;wsaData) == 0)
+        return (0);
+    else
+        return ((int) SOCKET_ERROR);
+
+#elif (defined (__UTYPE_BEOS))
+    /*  BeOS numbers sockets from 0 upwards, but this causes havoc with
+     *  programs that expect a BSD-style numbering of 1 or higher.  We
+     *  force compatibility by creating (and wasting) one socket so that
+     *  further socket handles are guaranteed &gt;0.
+     */
+    <A href="sfl340.htm#create_socket">create socket</A> ("tcp");
+    return (0);
+
+#elif (defined (DOES_SOCKETS))
+    return (0);
+
+#elif (defined (FAKE_SOCKETS))
+    return (0);
+
+#else
+    connect_error_value = IP_NOSOCKETS;
+    return ((int) SOCKET_ERROR);        /*  Sockets not supported            */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl334.htm">&lt;</A>
+ | <A href="sfl336.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

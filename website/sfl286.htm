@@ -1,0 +1,54 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>stropen</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl285.htm">&lt;</A>
+ | <A href="sfl287.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="stropen">&nbsp;</A>
+<H3><A NAME="TOC299"><TT>stropen</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+char *
+stropen (
+    char *string,
+    Bool  align)
+</PRE>
+<H4>Synopsis</H4>
+<P>Inserts a character at string, and places a blank in the gap.
+   If align is TRUE, makes room by reducing the size of the next
+   gap of 2 or more spaces. If align is FALSE, extends the size of
+   the string. Returns string.
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+    char *gap;
+    int  length;
+
+    ASSERT (string);
+    length = strlen (string) + 1;       /*  By default, move string + NULL   */
+    if (align)                          /*  If align is TRUE, find gap       */
+      {
+        gap = strstr (string, "  ");
+        if (gap)
+            length = (int) (gap - string);
+      }
+    memmove (string + 1, string, length);
+    string [0] = ' ';                   /*  Stick a space into string        */
+    return (string);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl285.htm">&lt;</A>
+ | <A href="sfl287.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

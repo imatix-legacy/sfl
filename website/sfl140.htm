@@ -1,0 +1,88 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>ftmp_open</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl139.htm">&lt;</A>
+ | <A href="sfl141.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="ftmp_open">&nbsp;</A>
+<H3><A NAME="TOC153"><TT>ftmp_open</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+FILE *
+ftmp_open (char **pathname)
+</PRE>
+<H4>Synopsis</H4>
+<P>Creates a temporary file, like the tmpfile() function, but
+   without the problem under some systems where tmpfile() will try
+   to create temporary files on read-only drives. If the pathname
+   argument is not null, allocates a copy of the full filename
+   used for the temporary file and passes this back in the
+   pathname argument.
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+    static qbyte
+        file_number = 0;                /*  We generate unique file names    */
+    FILE
+        *tempstream;
+    char
+        *tempdir,
+        *tempfile;
+    FTMPITEM
+        *tempitem;
+
+#if (defined (MSDOS_FILESYSTEM))
+    tempdir = <A href="sfl422.htm#env_get_string">env get string</A>  ("TEMP", NULL);
+    if (!tempdir)
+        tempdir = <A href="sfl422.htm#env_get_string">env get string</A>  ("TMP", NULL);
+    if (!tempdir)
+        tempdir = ".";
+
+#elif (defined (__UNIX__))
+    tempdir = <A href="sfl422.htm#env_get_string">env get string</A>  ("TMPDIR", NULL);
+    if (!tempdir)
+        tempdir = "/tmp";
+
+#else
+    tempdir = <A href="sfl422.htm#env_get_string">env get string</A>  ("TMPDIR", NULL);
+    if (!tempdir)
+        tempdir = ".";
+#endif
+    if (file_number == 0)
+      {
+        randomize ();
+        file_number = random (32767);
+      }
+    tempfile = <A href="sfl137.htm#get_tmp_file_name">get tmp file name</A> (tempdir, &amp;file_number, "tmp");
+    if (pathname)
+        *pathname = mem_strdup (tempfile);
+
+    tempstream = fopen (tempfile, "wb");
+    if (tempstream)
+      {
+        list_create (tempitem, sizeof (FTMPITEM));
+        list_relink_before (&amp;ftmplist, tempitem);
+        tempitem-&gt; stream   = tempstream;
+        tempitem-&gt; filename = tempfile;
+      }
+    else
+        mem_free (tempfile);
+
+    return (tempstream);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl139.htm">&lt;</A>
+ | <A href="sfl141.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

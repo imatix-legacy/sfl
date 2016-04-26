@@ -1,0 +1,54 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>http_query2descr</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl404.htm">&lt;</A>
+ | <A href="sfl406.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="http_query2descr">&nbsp;</A>
+<H3><A NAME="TOC418"><TT>http_query2descr</TT></A></H3>
+<PRE>
+#include "sflhttp.h"
+DESCR *
+http_query2descr (
+    const char *query)
+</PRE>
+<H4>Synopsis</H4>
+<P>Parses a HTTP query string, and returns the values as a DESCR
+   block, composed of null-delimited strings with an empty string
+   at the end. See <A href="sfl302.htm#strt2descr">strt2descr</A>() and <A href="sfl404.htm#http_query2symb">http query2symb</A>() for
+   more details. Returns the address of the allocated descriptor,
+   or NULL if there was not enough memory.
+<H4>Source Code - (sflhttp.c)</H4>
+<PRE>
+{
+    char
+        **strings;                      /*  Formatted string array           */
+    DESCR
+        *descr;                         /*  Returned descriptor              */
+
+    strings = <A href="sfl403.htm#http_query2strt">http query2strt</A> (query);
+    if (strings)
+      {
+        descr = <A href="sfl302.htm#strt2descr">strt2descr</A> (strings);
+        <A href="sfl304.htm#strtfree">strtfree</A> (strings);
+        return (descr);
+      }
+    else
+        return (NULL);                  /*  Couldn't create string table     */
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl404.htm">&lt;</A>
+ | <A href="sfl406.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

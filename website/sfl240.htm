@@ -1,0 +1,107 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>resolve_path</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl239.htm">&lt;</A>
+ | <A href="sfl241.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="resolve_path">&nbsp;</A>
+<H3><A NAME="TOC253"><TT>resolve_path</TT></A></H3>
+<PRE>
+#include "sfldir.h"
+char *
+resolve_path (
+    const char *old_path)
+</PRE>
+<H4>Synopsis</H4>
+<P>Accepts a path consisting of zero or more directory names and
+   optionally a filename plus extension. Removes '.' and '..' if
+   they occur in the path. '..' is resolved by also removing the
+   preceding directory name, if any. Returns a freshly-allocated
+   string containing the resulting path. The caller must free this
+   string using mem_free() when finished with it. The returned
+   path may be empty. Under OS/2 and DOS, treats '\' and '/' both
+   as directory separators. A '..' directory at the start of the
+   path resolves into nothing. If the input path started with '/',
+   the returned path also does, else it does not. For
+   compatibility with DOS-based systems, '...' is treated as
+   '../..', '....' as '../../..', and so on.
+<H4>Source Code - (sfldir.c)</H4>
+<PRE>
+{
+#if (defined (__UNIX__) || defined (MSDOS_FILESYSTEM) || defined (__VMS__))
+    char
+        *new_path,                      /*  Newly-allocated path             */
+        *new_ptr,                       /*  Pointer into new_path            */
+        last_char = '/';                /*  Start of path counts as delim    */
+    int
+        nbr_dots;                       /*  Size of '..', '...' specifier    */
+
+    ASSERT (old_path);
+
+    new_path = mem_strdup (old_path);
+    new_ptr  = new_path;
+    while (*old_path)
+      {
+        if (path_delimiter (last_char) &amp;&amp; *old_path == '.')
+          {
+            /*  Handle one or more dots followed by a path delimiter         */
+            nbr_dots = 0;               /*  Count number of dots             */
+            while (old_path [nbr_dots] == '.')
+                nbr_dots++;
+
+            if (path_delimiter (old_path [nbr_dots]))
+              {
+                old_path += nbr_dots;   /*  Skip past dots                   */
+                if (*old_path)
+                    old_path++;         /*    and past / if any              */
+
+                /*  Now backtrack in new path, dropping directories as       */
+                /*  many times as needed (0 or more times)                   */
+                while (nbr_dots &gt; 1)
+                  {
+                    if (new_ptr &gt; new_path + 1)
+                      {
+                        new_ptr--;      /*  Drop delimiter                   */
+                        while (new_ptr &gt; new_path)
+                          {
+                            if (path_delimiter (*(new_ptr - 1)))
+                                break;  /*    and end after delimiter        */
+                            new_ptr--;
+                          }
+                      }
+                    else
+                        break;          /*  At start of name - finish        */
+                    nbr_dots--;
+                  }
+              }
+            else
+                /*  Handle '.something'                                      */
+                last_char = *new_ptr++ = *old_path++;
+          }
+        else
+            last_char = *new_ptr++ = *old_path++;
+      }
+
+    *new_ptr = '\0';                    /*  Terminate string nicely          */
+    return (new_path);
+#else
+
+    return (mem_strdup (old_path));     /*  Path resolution not supported    */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl239.htm">&lt;</A>
+ | <A href="sfl241.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,76 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>list_sort</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl183.htm">&lt;</A>
+ | <A href="sfl185.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="list_sort">&nbsp;</A>
+<H3><A NAME="TOC197"><TT>list_sort</TT></A></H3>
+<PRE>
+#include "sfllist.h"
+void list_sort (void *list, NODE_COMPARE comp)
+</PRE>
+<H4>Synopsis</H4>
+<P>Sorts a list using the "comb-sort" algorithm.
+<H4>Source Code - (sfllist.c)</H4>
+<PRE>
+{
+    int
+        jump_size,
+        i;
+    LIST
+        *base,
+        *swap,
+        *temp;
+    Bool
+        swapped;
+
+    jump_size = 0;
+    FORLIST (base, * (LIST *) list)
+        jump_size++;
+
+    swapped = TRUE;
+    while ((jump_size &gt; 1) || swapped)
+      {
+        jump_size = (10 * jump_size + 3) / 13;
+        base = ((LIST *) list)-&gt; next;
+        swap = base;
+        for (i = 0; i &lt; jump_size; i++)
+            swap = swap-&gt; next;
+
+        swapped = FALSE;
+        while (swap != (LIST *) list)
+          {
+            if ((*comp) (base, swap))
+              {
+                temp = base-&gt; prev;
+                <A href="sfl180.htm#list_unlink">list unlink</A> (base);
+                list_relink_after (base, swap);
+                <A href="sfl180.htm#list_unlink">list unlink</A> (swap);
+                list_relink_after (swap, temp);
+                temp = base;
+                base = swap;
+                swap = temp;
+                swapped = TRUE;
+              }
+            base = base-&gt; next;
+            swap = swap-&gt; next;
+          }
+      }
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl183.htm">&lt;</A>
+ | <A href="sfl185.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

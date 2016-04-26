@@ -1,0 +1,62 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>crypt_decode</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl48.htm">&lt;</A>
+ | <A href="sfl50.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="crypt_decode">&nbsp;</A>
+<H3><A NAME="TOC62"><TT>crypt_decode</TT></A></H3>
+<PRE>
+#include "sflcryp.h"
+Bool
+crypt_decode (
+    byte *buffer,                       /*  Data to decrypt, in-place        */
+    word  buffer_size,                  /*  Amount of data to decrypt        */
+    int   algorithm,                    /*  What type of decryption          */
+    const byte *key)                    /*  Decryption key                   */
+</PRE>
+<H4>Synopsis</H4>
+<P>Decrypt a buffer that was produced by <A href="sfl48.htm#crypt_encode">crypt encode</A>(). You
+   must (obviously, I reckon) use the same algorithm and key as
+   was used to encrypt the data. Returns TRUE if the buffer is
+   decrypted okay. The buffer is encrypted in-place. The algorithm
+   can be one of: <TABLE BORDER NOWRAP> <TR><TD
+   ALIGN="LEFT"><B>CRYPT IDEA</B>  <TD ALIGN="LEFT">Use IDEA
+   encryption. <TR><TD ALIGN="LEFT"><B>CRYPT MDC</B>  <TD
+   ALIGN="LEFT">Use MDC encryption. <TR><TD ALIGN="LEFT"><B>CRYPT
+   DES</B>  <TD ALIGN="LEFT">Use DES encryption. <TR><TD
+   ALIGN="LEFT"><B>CRYPT XOR</B>  <TD ALIGN="LEFT">Use XOR
+   encryption. </TABLE> The minimum buffer size, and key size
+   depends on the algorithm: <TABLE BORDER NOWRAP> <TR><TD
+   ALIGN="LEFT"><B>CRYPT IDEA</B>  <TD ALIGN="LEFT">Buffer is at
+   least 8 bytes long, key is 16 bytes. <TR><TD
+   ALIGN="LEFT"><B>CRYPT MDC</B>  <TD ALIGN="LEFT">Buffer is at
+   least 8 bytes long, key is 8 bytes. <TR><TD
+   ALIGN="LEFT"><B>CRYPT DES</B>  <TD ALIGN="LEFT">Buffer is at
+   least 32 bytes long, key is 16 bytes. <TR><TD
+   ALIGN="LEFT"><B>CRYPT XOR</B>  <TD ALIGN="LEFT">Buffer is at
+   least 16 bytes long, key is 16 bytes. </TABLE> The buffer size
+   must be a multiple of the minimum size shown above. If you
+   specify a buffer size of zero the function does nothing but
+   returns TRUE.
+<H4>Source Code - (sflcryp.c)</H4>
+<PRE>
+{
+    return (crypt_data (buffer, buffer_size, algorithm, key, FALSE));
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl48.htm">&lt;</A>
+ | <A href="sfl50.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

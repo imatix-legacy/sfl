@@ -1,0 +1,52 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>strcrop</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl275.htm">&lt;</A>
+ | <A href="sfl277.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.10
+</TABLE>
+<HR>
+<A NAME="strcrop">&nbsp;</A>
+<H3><A NAME="TOC289"><TT>strcrop</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+char *
+strcrop (
+    char *string)
+</PRE>
+<H4>Synopsis</H4>
+<P>Drops trailing whitespace from string by truncating string to
+   the last non-whitespace character. Returns string. If string is
+   null, returns null.
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+    char *last;
+
+    if (string)
+      {
+        last = string + strlen (string);
+        while (last &gt; string)
+          {
+            if (!isspace (*(last - 1)))
+                break;
+            last--;
+          }
+        *last = 0;
+      }
+    return (string);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl275.htm">&lt;</A>
+ | <A href="sfl277.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-99 iMatix Corporation</TABLE>
+</BODY></HTML>

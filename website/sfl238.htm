@@ -1,0 +1,52 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>sort_dir_list</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl237.htm">&lt;</A>
+ | <A href="sfl239.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="sort_dir_list">&nbsp;</A>
+<H3><A NAME="TOC251"><TT>sort_dir_list</TT></A></H3>
+<PRE>
+#include "sfldir.h"
+void
+sort_dir_list (NODE *file_list, const char *sort)
+</PRE>
+<H4>Synopsis</H4>
+<P>Sorts the directory list as specified. Returns the number of
+   items in the list. To specify the sort order you pass a string
+   holding one or more of these characters, which are then used in
+   order: <TABLE BORDER NOWRAP> <TR><TD ALIGN="LEFT"><B>n</B>  <TD
+   ALIGN="LEFT">Sort by ascending name. <TR><TD
+   ALIGN="LEFT"><B>N</B>  <TD ALIGN="LEFT">Sort by descending
+   name. <TR><TD ALIGN="LEFT"><B>x</B>  <TD ALIGN="LEFT">Sort by
+   ascending extension. <TR><TD ALIGN="LEFT"><B>X</B>  <TD
+   ALIGN="LEFT">Sort by descending extension. <TR><TD
+   ALIGN="LEFT"><B>t</B>  <TD ALIGN="LEFT">Sort by ascending time
+   and date. <TR><TD ALIGN="LEFT"><B>T</B>  <TD ALIGN="LEFT">Sort
+   by descending time and date. <TR><TD ALIGN="LEFT"><B>s</B>  <TD
+   ALIGN="LEFT">Sort by ascending size. <TR><TD
+   ALIGN="LEFT"><B>S</B>  <TD ALIGN="LEFT">Sort by descending
+   size. </TABLE>
+<H4>Source Code - (sfldir.c)</H4>
+<PRE>
+{
+    ASSERT (file_list);
+    sort_key = (char *) sort;
+    <A href="sfl184.htm#list_sort">list sort</A> (file_list, compare_dir);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl237.htm">&lt;</A>
+ | <A href="sfl239.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

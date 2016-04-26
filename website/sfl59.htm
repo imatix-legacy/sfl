@@ -1,0 +1,43 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>week_of_year</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl58.htm">&lt;</A>
+ | <A href="sfl60.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.10
+</TABLE>
+<HR>
+<A NAME="week_of_year">&nbsp;</A>
+<H3><A NAME="TOC72"><TT>week_of_year</TT></A></H3>
+<PRE>
+#include "sfldate.h"
+int
+week_of_year (long date)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns the week of the year, where 1 is the first full week.
+   Week 0 may or may not exist in any year. Uses a Lillian date
+   algorithm to calculate the week of the year.
+<H4>Source Code - (sfldate.c)</H4>
+<PRE>
+{
+    long
+        year = GET_CCYEAR (date) - 1501,
+        day  = year * 365 + year / 4 - 29872L + 1
+             - year / 100 + (year - 300) / 400;
+
+    return ((<A href="sfl55.htm#julian_date">julian date</A> (date) + (int) ((day + 4) % 7)) / 7);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl58.htm">&lt;</A>
+ | <A href="sfl60.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-99 iMatix Corporation</TABLE>
+</BODY></HTML>

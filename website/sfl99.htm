@@ -1,0 +1,189 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>File-access functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl98.htm">&lt;</A>
+ | <A href="sfl100.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC112">File-access functions</A></H2>
+<P>Filename: sflfile.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1992/10/25 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 1999/11/08
+<BR>Copyright: Copyright (c) 1996-2000 iMatix Corporation
+<H3>Synopsis</H3>
+<P>Provides functions to read and write files with explicit new-
+   line/carriage-return control; to find files on a path; to copy
+   files, check files' protection, etc.
+<H4>List of Functions</H4>
+<UL>
+<LI>FILE * <A href="sfl100.htm#file_open">file open</A><BR>
+   (const char *filename, char mode);
+</LI>
+<LI>FILE * <A href="sfl101.htm#file_locate">file locate</A><BR>
+   (const char *path, const char *name, const char *ext);
+</LI>
+<LI>int <A href="sfl102.htm#file_close">file close</A><BR>
+   (FILE *stream);
+</LI>
+<LI>Bool <A href="sfl103.htm#file_read">file read</A><BR>
+   (FILE *stream, char *string);
+</LI>
+<LI>Bool <A href="sfl104.htm#file_readn">file readn</A><BR>
+   (FILE *stream, char *string, int line_max);
+</LI>
+<LI>char * <A href="sfl105.htm#file_write">file write</A><BR>
+   (FILE *stream, const char *string);
+</LI>
+<LI>int <A href="sfl106.htm#file_copy">file copy</A><BR>
+   (const char *dest, const char *src, char mode);
+</LI>
+<LI>int <A href="sfl107.htm#file_concat">file concat</A><BR>
+   (const char *dest, const char *src);
+</LI>
+<LI>int <A href="sfl108.htm#file_rename">file rename</A><BR>
+   (const char *oldname, const char *newname);
+</LI>
+<LI>int <A href="sfl109.htm#file_delete">file delete</A><BR>
+   (const char *filename);
+</LI>
+<LI>char * <A href="sfl111.htm#file_where">file where</A><BR>
+   (char mode, const char *path, const char *name, const char
+   *ext);
+</LI>
+<LI>char * <A href="sfl112.htm#file_where_ext">file where ext</A><BR>
+   (char mode, const char *path, const char *name, const char
+   **ext);
+</LI>
+<LI>Bool <A href="sfl110.htm#file_exists">file exists</A><BR>
+   (const char *filename);
+</LI>
+<LI>Bool <A href="sfl113.htm#file_cycle">file cycle</A><BR>
+   (const char *filename, int how);
+</LI>
+<LI>Bool <A href="sfl114.htm#file_cycle_needed">file cycle needed</A><BR>
+   (const char *filename, int how);
+</LI>
+<LI>Bool <A href="sfl115.htm#file_has_changed">file has changed</A><BR>
+   (const char *filename, long old_date, long old_time);
+</LI>
+<LI>Bool <A href="sfl116.htm#safe_to_extend">safe to extend</A><BR>
+   (const char *filename);
+</LI>
+<LI>char * <A href="sfl117.htm#default_extension">default extension</A><BR>
+   (char *dest, const char *src, const char *ext);
+</LI>
+<LI>char * <A href="sfl118.htm#fixed_extension">fixed extension</A><BR>
+   (char *dest, const char *src, const char *ext);
+</LI>
+<LI>char * <A href="sfl119.htm#strip_extension">strip extension</A><BR>
+   (char *filename);
+</LI>
+<LI>char * <A href="sfl120.htm#add_extension">add extension</A><BR>
+   (char *dest, const char *src, const char *ext);
+</LI>
+<LI>char * <A href="sfl121.htm#strip_file_path">strip file path</A><BR>
+   (char *filename);
+</LI>
+<LI>char * <A href="sfl122.htm#strip_file_name">strip file name</A><BR>
+   (char *filename);
+</LI>
+<LI>char * <A href="sfl123.htm#get_new_filename">get new filename</A><BR>
+   (const char *filename);
+</LI>
+<LI>Bool <A href="sfl124.htm#file_is_readable">file is readable</A><BR>
+   (const char *filename);
+</LI>
+<LI>Bool <A href="sfl125.htm#file_is_writeable">file is writeable</A><BR>
+   (const char *filename);
+</LI>
+<LI>Bool <A href="sfl126.htm#file_is_executable">file is executable</A><BR>
+   (const char *filename);
+</LI>
+<LI>Bool <A href="sfl128.htm#file_is_directory">file is directory</A><BR>
+   (const char *filename);
+</LI>
+<LI>Bool <A href="sfl127.htm#file_is_program">file is program</A><BR>
+   (const char *filename);
+</LI>
+<LI>Bool <A href="sfl129.htm#file_is_legal">file is legal</A><BR>
+   (const char *filename);
+</LI>
+<LI>char * <A href="sfl130.htm#file_exec_name">file exec name</A><BR>
+   (const char *filename);
+</LI>
+<LI>long <A href="sfl131.htm#get_file_size">get file size</A><BR>
+   (const char *filename);
+</LI>
+<LI>time_t <A href="sfl132.htm#get_file_time">get file time</A><BR>
+   (const char *filename);
+</LI>
+<LI>long <A href="sfl133.htm#get_file_lines">get file lines</A><BR>
+   (const char *filename);
+</LI>
+<LI>DESCR * <A href="sfl134.htm#file_slurp">file slurp</A><BR>
+   (const char *filename);
+</LI>
+<LI>DESCR * <A href="sfl135.htm#file_slurpl">file slurpl</A><BR>
+   (const char *filename);
+</LI>
+<LI>dbyte <A href="sfl136.htm#file_set_eoln">file set eoln</A><BR>
+   (char *dest, const char *src, dbyte src_size, Bool add_cr);
+</LI>
+<LI>char * <A href="sfl137.htm#get_tmp_file_name">get tmp file name</A><BR>
+   (const char *path, qbyte *index, const char *ext);
+</LI>
+<LI>int <A href="sfl138.htm#file_fhredirect">file fhredirect</A><BR>
+   (int source, int dest);
+</LI>
+<LI>void <A href="sfl139.htm#file_fhrestore">file fhrestore</A><BR>
+   (int source, int dest);
+</LI>
+<LI>FILE * <A href="sfl140.htm#ftmp_open">ftmp open</A><BR>
+   (char **pathname);
+</LI>
+<LI>void <A href="sfl141.htm#ftmp_close">ftmp close</A><BR>
+   (FILE *tempstream);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sflfile.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>FILE_DIR_MAX</B>  </TT>
+<TD ALIGN="LEFT">64 /* Max size of directory name */
+<TR><TD ALIGN="LEFT"><TT><B>FILE_NAME_MAX</B>  </TT>
+<TD ALIGN="LEFT">160 /* Max size of filename */
+<TR><TD ALIGN="LEFT"><TT><B>FOPEN_APPEND_BINARY</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>FOPEN_APPEND_TEXT</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>FOPEN_READ_BINARY</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>FOPEN_READ_TEXT</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>FOPEN_WRITE_BINARY</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>FOPEN_WRITE_TEXT</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>SFLFILE_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>file_lines(f)</B>  </TT>
+<TD ALIGN="LEFT">get_file_lines(f) /* Changed 98/07/23 */
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl98.htm">&lt;</A>
+ | <A href="sfl100.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

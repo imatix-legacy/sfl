@@ -1,0 +1,91 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>expand_block</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl18.htm">&lt;</A>
+ | <A href="sfl20.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="expand_block">&nbsp;</A>
+<H3><A NAME="TOC32"><TT>expand_block</TT></A></H3>
+<PRE>
+#include "sflcomp.h"
+word
+expand_block (
+    const byte *src,
+    byte *dst,
+    word src_size)
+</PRE>
+<H4>Synopsis</H4>
+<P>Expands a block of data previously compressed using the
+   <A href="sfl18.htm#compress_block">compress block</A>() function. The compressed block is passed
+   in src; the expanded result in dst. dst must be large enough to
+   accomodate the largest possible decompressed block. Returns the
+   size of the uncompressed data.
+<H4>Source Code - (sflcomp.c)</H4>
+<PRE>
+{
+    word SymbolAddress;
+    word ChunkSize;
+    word Counter;
+    word Command = 0;
+    word src_index = 1;
+    word dst_size = 0;
+    byte Bit = 0;
+
+    if (src [0] == FLAG_COPY)
+      {
+        for (dst_size = 1; dst_size &lt; src_size; dst_size++)
+            dst [dst_size - 1] = src [dst_size];
+        return (src_size - 1);
+      }
+    while (src_index &lt; src_size)
+      {
+        if (Bit == 0)
+          {
+            Command  = src [src_index++] &lt;&lt; 8;
+            Command += src [src_index++];
+            Bit = 16;
+          }
+        if (Command &amp; 0x8000)
+          {
+            SymbolAddress =  (word) (src [src_index++] &lt;&lt; 4);
+            SymbolAddress += (word) (src [src_index] &gt;&gt; 4);
+            if (SymbolAddress)
+              {
+                ChunkSize = (word) (src [src_index++] &amp; 0x0f) + 3;
+                SymbolAddress = dst_size - SymbolAddress;
+                for (Counter = 0; Counter &lt; ChunkSize; Counter++)
+                    dst [dst_size++] = dst [SymbolAddress++];
+              }
+            else
+              {
+                ChunkSize  = (word) (src [src_index++] &lt;&lt; 8);
+                ChunkSize += (word) (src [src_index++] + 16);
+                for (Counter = 0; Counter &lt; ChunkSize; Counter++)
+                    dst [dst_size++] = src [src_index];
+                src_index++;
+              }
+          }
+        else
+            dst [dst_size++] = src [src_index++];
+
+        Command &lt;&lt;= 1;
+        Bit--;
+      }
+    return (dst_size);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl18.htm">&lt;</A>
+ | <A href="sfl20.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

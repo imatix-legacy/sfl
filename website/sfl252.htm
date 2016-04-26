@@ -1,0 +1,243 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>process_create</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl251.htm">&lt;</A>
+ | <A href="sfl253.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="process_create">&nbsp;</A>
+<H3><A NAME="TOC265"><TT>process_create</TT></A></H3>
+<PRE>
+#include "sflproc.h"
+PROCESS
+process_create (
+    const char *filename,               /*  Name of file to execute          */
+    char *argv [],                      /*  Arguments for process, or NULL   */
+    const char *workdir,                /*  Working directory, or NULL       */
+    const char *std_in,                 /*  Stdin device, or NULL            */
+    const char *std_out,                /*  Stdout device, or NULL           */
+    const char *std_err,                /*  Stderr device, or NULL           */
+    char *envv [],                      /*  Environment variables, or NULL   */
+    Bool  wait                          /*  Wait for process to end          */
+)
+</PRE>
+<H4>Synopsis</H4>
+<P>Creates a subprocess and returns a PROCESS identifying the new
+   process. Optionally directs standard input, output, and error
+   streams to specified devices. The caller can also specify
+   environment symbols that the subprocess can access. Accepts
+   these arguments: <TABLE BORDER NOWRAP> <TR><TD
+   ALIGN="LEFT"><B>filename</B>  <TD ALIGN="LEFT">File to execute;
+   if bare filename, searches PATH. <TR><TD ALIGN="LEFT"><B>argv
+   []</B>  <TD ALIGN="LEFT">List of arguments; argv [0] is
+   filename; ends in a NULL. <TR><TD ALIGN="LEFT"><B>workdir</B>
+   <TD ALIGN="LEFT">Working directory; if NULL, remains in current
+   directory. <TR><TD ALIGN="LEFT"><B>std in</B>  <TD
+   ALIGN="LEFT">Device to use for standard input; NULL = no
+   redirection. <TR><TD ALIGN="LEFT"><B>std out</B>  <TD
+   ALIGN="LEFT">Device to use for standard output; NULL = no
+   redirection. <TR><TD ALIGN="LEFT"><B>std err</B>  <TD
+   ALIGN="LEFT">Device to use for standard error; NULL = no
+   redirection. <TR><TD ALIGN="LEFT"><B>envs []</B>  <TD
+   ALIGN="LEFT">List of environment symbols to define, or NULL.
+   </TABLE> If argv is NULL, parses the filename argument into
+   words delimited by whitespace and builds the necessary argv
+   table automatically. Use this feature to execute a command with
+   arguments, specified as one string. The envv list consists of
+   strings in the form "name=value", ending in a NULL pointer. If
+   the envv argument is null, the environment of the current
+   process is passed. Otherwise the envv environment is used. If
+   the child command detects an error at startup, it may exit with
+   an error status. The sleep allows this error to be collected by
+   calling <A href="sfl256.htm#process_status">process status</A>() after this call. Returns child
+   process id, or 0 if there was an error. Under VMS, the filename
+   must have been defined as a command before the calling process
+   was started; the path is disregarded. Under OS/2 the filename
+   can be the name of a CMD script, and this will be run with the
+   interpreter specified in the first line (EXTPROC line, or
+   "'/'*!" line; or failing that with the default command
+   interpreter. Under Unix, Windows, and OS/2 this function is
+   implemented using the <A href="sfl251.htm#process_create_full">process create full</A>() function. Known
+   bugs: when parsing filename argument into words, does not
+   handle quotes in any special way; "this text" is 2 words,
+   '"this' and 'text"'. You should have passed the filename
+   through <A href="sfl261.htm#process_esc">process esc</A>() before adding any optional arguments.
+<H4>Source Code - (sflproc.c)</H4>
+<PRE>
+{
+#if (defined (__UNIX__) || defined (__OS2__) || defined (WIN32))
+    PROCESS_DATA
+        procinfo = PROCESS_DATA_INIT;
+    PROCESS
+        process = NULL_PROCESS;
+
+    ASSERT (filename);
+    if (!filename)
+        return (NULL_PROCESS);
+
+    /*  Set up information to start the new process                          */
+    procinfo.filename = filename;
+    procinfo.argv     = argv;
+    procinfo.workdir  = workdir;
+    procinfo.envv     = envv;
+    procinfo.wait     = wait;
+
+    /*  process_setinfo handles:
+     *  1.  Determining if the path can be searched
+     *  2.  Determining if root privileges should be preserved (if applicable)
+     *  3.  Redirecting IO streams (if required)
+     */
+    if (<A href="sfl253.htm#process_setinfo">process setinfo</A> (&amp;procinfo, std_in, std_out, TRUE, std_err, FALSE) == 0)
+      {
+        process = <A href="sfl251.htm#process_create_full">process create full</A> (&amp;procinfo);
+        <A href="sfl255.htm#process_close_io">process close io</A> (&amp;procinfo);
+        /*  Stuff value into errno, to emulate old behaviour                 */
+        errno = procinfo.error;
+      }
+    return (process);
+
+#elif (defined (__VMS__))
+    PROCESS
+        process;                        /*  Our created process handle       */
+    char
+        *curdir,                        /*  Current directory                */
+        *clean_filename,                /*  Unescaped filename               */
+        *full_filename = NULL,
+        *full_std_in   = NULL,
+        *full_std_out  = NULL;
+    qbyte
+        process_flags;                  /*  Process creation flags           */
+    int
+        argn,                           /*  Argument number                  */
+        rc;                             /*  Return code from lib$spawn       */
+    Bool
+        rebuilt_argv = FALSE;           /*  Did we rebuild argv[]?           */
+
+    VMS_STRING (command_dsc, "");       /*  Define string descriptors        */
+    VMS_STRING (std_in_dsc,  "");
+    VMS_STRING (std_out_dsc, "");
+
+    /*  If argv[] array was not supplied, build it now from filename         */
+    if (!argv)
+      {
+        argv = <A href="sfl431.htm#tok_split">tok split</A> (filename);
+        filename = argv [0];
+        rebuilt_argv = TRUE;
+      }
+    /*  If filename contains a path or extension, disregard them             */
+    clean_filename = strrchr (filename, '/');
+    if (clean_filename)
+        clean_filename++;
+    else
+        clean_filename = (char *) filename;
+    if (strchr (clean_filename, '.'))
+       *strchr (clean_filename, '.') = '\0';
+
+    /*  Rebuild full command from filename and arguments                     */
+    full_filename = mem_alloc (<A href="sfl436.htm#tok_text_size">tok text size</A> ((char **) argv)
+                               + strlen (clean_filename) + 1);
+    strcpy (full_filename, clean_filename);
+    for (argn = 1; argv [argn]; argn++)
+        <A href="sfl295.htm#xstrcat">xstrcat</A> (full_filename, " ", argv [argn], NULL);
+
+    /*  Free argument table if we allocated it dynamically here              */
+    if (rebuilt_argv)
+        <A href="sfl433.htm#tok_free">tok free</A> (argv);
+
+    command_dsc.value  = full_filename;
+    command_dsc.length = strlen (full_filename);
+
+    /*  Prepare full names for stdin and stdout                              */
+    curdir = <A href="sfl243.htm#get_curdir">get curdir</A> ();
+    if (std_in)
+      {
+        if (strchr (std_in, '/'))       /*  If already with path, use as is  */
+            full_std_in = mem_strdup (std_in);
+        else
+          {
+            xstrcpy_debug ();
+            full_std_in = <A href="sfl296.htm#xstrcpy">xstrcpy</A> (NULL, curdir, "/", std_in, NULL);
+          }
+        translate_to_vms  (full_std_in);
+        std_in_dsc.value = full_std_in;
+      }
+    if (std_out)
+      {
+        if (strchr (std_out, '/'))      /*  If already with path, use as is  */
+            full_std_out = mem_strdup (std_out);
+        else
+          {
+            xstrcpy_debug ();
+            full_std_out = <A href="sfl296.htm#xstrcpy">xstrcpy</A> (NULL, curdir, "/", std_out, NULL);
+          }
+        translate_to_vms   (full_std_out);
+        std_out_dsc.value = full_std_out;
+      }
+    std_in_dsc.length  = std_in?  strlen (std_in_dsc.value): 0;
+    std_out_dsc.length = std_out? strlen (std_out_dsc.value): 0;
+
+    /*  If requested, change to working directory                            */
+    if (workdir)
+        chdir (workdir);
+
+    /*  Prepare process flags                                                */
+    if (wait)
+        process_flags = 0;
+    else
+        process_flags = 1;              /*  Bit 1 = don't wait for child     */
+
+    process = mem_alloc (sizeof (PROC_HANDLE));
+    process-&gt; id     = 0;
+    process-&gt; status = 0;               /*  Completion status                */
+
+/*  char *envv [],  */                  /*  Environment variables, or NULL   */
+
+    rc = lib$spawn (
+        &amp;command_dsc,                   /*  Command to run                   */
+        std_in?  &amp;std_in_dsc: NULL,     /*  Stdin descriptor                 */
+        std_out? &amp;std_out_dsc: NULL,    /*  Stdout+stderr                    */
+        &amp;process_flags,                 /*  Options for new process          */
+        &amp;NULL,                          /*  Process name -- generated        */
+        &amp;process-&gt; id,                  /*  Returned process ID              */
+        &amp;process-&gt; status);
+
+    if (workdir)                        /*  Switch back to original dir      */
+        chdir (curdir);
+    mem_free (curdir);
+
+    mem_strfree (&amp;full_filename);       /*  Deallocate various buffers,      */
+    mem_strfree (&amp;full_std_in);         /*    if they were used              */
+    mem_strfree (&amp;full_std_out);        /*                                   */
+
+    /*  Return process ID.  If we waited for completion, the process id      */
+    /*  is always NULL.                                                      */
+    if (rc != 1)                        /*  Process failed with error        */
+      {
+        <A href="sfl258.htm#process_close">process close</A> (process);
+        process = NULL;
+      }
+    else
+    if (wait)                           /*  Finished with process            */
+        <A href="sfl258.htm#process_close">process close</A> (process);
+
+    return (process);
+
+#else
+    return ((PROCESS) 0);               /*  Not supported on this system     */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl251.htm">&lt;</A>
+ | <A href="sfl253.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

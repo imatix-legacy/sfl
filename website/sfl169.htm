@@ -1,0 +1,221 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>timestamp_string</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl168.htm">&lt;</A>
+ | <A href="sfl170.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="timestamp_string">&nbsp;</A>
+<H3><A NAME="TOC182"><TT>timestamp_string</TT></A></H3>
+<PRE>
+#include "sfllang.h"
+char *
+timestamp_string (char *buffer, const char *pattern)
+</PRE>
+<H4>Synopsis</H4>
+<P>Formats a timestamp according to a user-supplied pattern. The
+   result is returned in a buffer supplied by the caller; if this
+   argument is NULL, allocates a buffer and returns that (the
+   caller must then free the buffer using mem_free()). The pattern
+   consists of arbitrary text mixed with insertion symbols
+   indicated by '%': <TABLE BORDER NOWRAP> <TR><TD
+   ALIGN="LEFT"><B>%y</B>  <TD ALIGN="LEFT">day of year, 001-366
+   <TR><TD ALIGN="LEFT"><B>%yy</B>  <TD ALIGN="LEFT">year 2
+   digits, 00-99 <TR><TD ALIGN="LEFT"><B>%yyyy</B>  <TD
+   ALIGN="LEFT">year 4 digits, 0100-9999 <TR><TD
+   ALIGN="LEFT"><B>%mm</B>  <TD ALIGN="LEFT">month, 01-12 <TR><TD
+   ALIGN="LEFT"><B>%mmm</B>  <TD ALIGN="LEFT">month, Jan <TR><TD
+   ALIGN="LEFT"><B>%mmmm</B>  <TD ALIGN="LEFT">month, January
+   <TR><TD ALIGN="LEFT"><B>%MMM</B>  <TD ALIGN="LEFT">month, JAN
+   <TR><TD ALIGN="LEFT"><B>%MMMM</B>  <TD ALIGN="LEFT">month,
+   JANUARY <TR><TD ALIGN="LEFT"><B>%dd</B>  <TD ALIGN="LEFT">day,
+   01-31 <TR><TD ALIGN="LEFT"><B>%ddd</B>  <TD ALIGN="LEFT">day of
+   week, Sun <TR><TD ALIGN="LEFT"><B>%dddd</B>  <TD
+   ALIGN="LEFT">day of week, Sunday <TR><TD
+   ALIGN="LEFT"><B>%DDD</B>  <TD ALIGN="LEFT">day of week, SUN
+   <TR><TD ALIGN="LEFT"><B>%DDDD</B>  <TD ALIGN="LEFT">day of
+   week, SUNDAY <TR><TD ALIGN="LEFT"><B>%w</B>  <TD
+   ALIGN="LEFT">day of week, 1-7 (1=Sunday) <TR><TD
+   ALIGN="LEFT"><B>%ww</B>  <TD ALIGN="LEFT">week of year, 01-53
+   <TR><TD ALIGN="LEFT"><B>%q</B>  <TD ALIGN="LEFT">year quarter,
+   1-4 <TR><TD ALIGN="LEFT"><B>%h</B>  <TD ALIGN="LEFT">hour, 00-
+   23 <TR><TD ALIGN="LEFT"><B>%m</B>  <TD ALIGN="LEFT">minute, 00-
+   59 <TR><TD ALIGN="LEFT"><B>%s</B>  <TD ALIGN="LEFT">second, 00-
+   59 <TR><TD ALIGN="LEFT"><B>%c</B>  <TD
+   ALIGN="LEFT">centisecond, 00-99 <TR><TD ALIGN="LEFT"><B>%%</B>
+   <TD ALIGN="LEFT">literal character % </TABLE>
+<H4>Source Code - (sfllang.c)</H4>
+<PRE>
+{
+    long
+        date,                           /*  Current date                     */
+        time;                           /*    and time                       */
+    int
+        century,                        /*  Century component of date        */
+        year,                           /*  Year component of date           */
+        month,                          /*  Month component of date          */
+        day,                            /*  Day component of date            */
+        hour,                           /*  Hour component of time           */
+        minute,                         /*  Minute component of time         */
+        second,                         /*  Second component of time         */
+        centi,                          /*  1/100 sec component of time      */
+        cursize;                        /*  Size of current component        */
+    char
+       *dest,                           /*  Store formatted data here        */
+        ch;                             /*  Next character in picture        */
+
+    date = <A href="sfl52.htm#date_now">date now</A> ();
+    time = <A href="sfl53.htm#time_now">time now</A> ();
+
+    century = GET_CENTURY (date);
+    year    = GET_YEAR    (date);
+    month   = GET_MONTH   (date);
+    day     = GET_DAY     (date);
+    hour    = GET_HOUR    (time);
+    minute  = GET_MINUTE  (time);
+    second  = GET_SECOND  (time);
+    centi   = GET_CENTI   (time);
+
+    if (buffer == NULL)
+        buffer = mem_alloc (strlen (pattern) * 2);
+
+    /*  Scan through picture, converting each component                      */
+    dest = buffer;
+    *dest = 0;                          /*  String is empty                  */
+    while (*pattern)
+      {
+        ch = *pattern++;
+        if (ch == '%' &amp;&amp; *pattern)
+          {
+            ch = *pattern++;            /*  Count size of pattern after %    */
+            for (cursize = 1; *pattern == ch; cursize++)
+                pattern++;
+          }
+        else
+          {
+            *dest++ = ch;               /*  Something else - store and next  */
+            *dest = 0;                  /*  Terminate the string nicely      */
+            continue;
+          }
+
+        /*  Now process pattern itself                                       */
+        switch (ch)
+          {
+            case 'y':
+                if (cursize == 1)       /*  y     day of year, 001-366       */
+                    sprintf (dest, "%03d", <A href="sfl55.htm#julian_date">julian date</A> (date));
+                else
+                if (cursize == 2)       /*  yy    year 2 digits, 00-99       */
+                    sprintf (dest, "%02d", year);
+                else
+                if (cursize == 4)       /*  yyyy  year 4 digits, 0100-9999   */
+                    sprintf (dest, "%02d%02d", century, year);
+                break;
+
+            case 'm':
+                if (cursize == 1)       /*  m     minute, 00-59              */
+                    sprintf (dest, "%02d", minute);
+                else
+                if (cursize == 2)       /*  mm    month, 01-12               */
+                    sprintf (dest, "%02d", month);
+                else
+                if (cursize == 3)       /*  mmm   month, 3 letters           */
+                    strcpy (dest, <A href="sfl168.htm#get_month_abbrev">get month abbrev</A> (month, FALSE));
+                else
+                if (cursize == 4)       /*  mmmm  month, full name           */
+                    strcpy (dest, <A href="sfl167.htm#get_month_name">get month name</A> (month));
+                break;
+
+            case 'M':
+                if (cursize == 3)       /*  MMM   month, 3-letters, ucase    */
+                    strcpy (dest, <A href="sfl168.htm#get_month_abbrev">get month abbrev</A> (month, TRUE));
+                else
+                if (cursize == 4)       /*  MMMM  month, full name, ucase    */
+                  {
+                    strcpy (dest, <A href="sfl167.htm#get_month_name">get month name</A> (month));
+                    <A href="sfl284.htm#strupc">strupc</A> (dest);
+                  }
+                break;
+
+            case 'd':
+                if (cursize == 2)       /*  dd    day, 01-31                 */
+                    sprintf (dest, "%02d", day);
+                else
+                if (cursize == 3)       /*  ddd   day of week, Sun           */
+                    strcpy (dest, <A href="sfl166.htm#get_day_abbrev">get day abbrev</A> (<A href="sfl56.htm#day_of_week">day of week</A> (date), FALSE));
+                else
+                if (cursize == 4)       /*  dddd  day of week, Sunday        */
+                    strcpy (dest, <A href="sfl165.htm#get_day_name">get day name</A> (<A href="sfl56.htm#day_of_week">day of week</A> (date)));
+                break;
+
+            case 'D':
+                if (cursize == 3)       /*  DDD   day of week, SUN           */
+                    strcpy (dest, <A href="sfl166.htm#get_day_abbrev">get day abbrev</A> (<A href="sfl56.htm#day_of_week">day of week</A> (date), TRUE));
+                else
+                if (cursize == 4)       /*  DDDD  day of week, SUNDAY        */
+                  {
+                    strcpy (dest, <A href="sfl165.htm#get_day_name">get day name</A> (<A href="sfl56.htm#day_of_week">day of week</A> (date)));
+                    <A href="sfl284.htm#strupc">strupc</A> (dest);
+                  }
+                break;
+
+            case 'w':
+                if (cursize == 1)       /*  w     day of week, 1-7 (1=Sun)   */
+                    sprintf (dest, "%d", <A href="sfl56.htm#day_of_week">day of week</A> (date) + 1);
+                else
+                if (cursize == 2)       /*  ww    week of year, 01-53        */
+                    sprintf (dest, "%d", <A href="sfl59.htm#week_of_year">week of year</A> (date));
+                break;
+
+            case 'q':
+                if (cursize == 1)       /*  q     year quarter, 1-4          */
+                    sprintf (dest, "%d", <A href="sfl60.htm#year_quarter">year quarter</A> (date));
+                break;
+
+            case 'h':
+                if (cursize == 1)       /*  h     hour, 00-23                */
+                    sprintf (dest, "%02d", hour);
+                break;
+
+            case 's':
+                if (cursize == 1)       /*  s     second, 00-59              */
+                    sprintf (dest, "%02d", second);
+                break;
+
+            case 'c':
+                if (cursize == 1)       /*  c     centisecond, 00-99         */
+                    sprintf (dest, "%02d", centi);
+                break;
+
+            case '%':
+                if (cursize == 1)       /*  %     literal '%'                */
+                    strcpy (dest, "%");
+                break;
+        }
+        if (*dest)                      /*  If something was output,         */
+            while (*dest)               /*    skip to end of string          */
+                dest++;
+        else
+          {
+            while (cursize--)           /*  Else output ch once or more      */
+                *dest++ = ch;           /*    and bump dest pointer          */
+            *dest = 0;                  /*  Terminate the string nicely      */
+          }
+    }
+    return (buffer);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl168.htm">&lt;</A>
+ | <A href="sfl170.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

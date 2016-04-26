@@ -1,0 +1,108 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>strreformat</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl306.htm">&lt;</A>
+ | <A href="sfl308.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="strreformat">&nbsp;</A>
+<H3><A NAME="TOC320"><TT>strreformat</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+char *
+strreformat (const char *source, size_t width, const char *prefix)
+</PRE>
+<H4>Synopsis</H4>
+<P>Reformats a string to fit within lines of the specified width.
+   Prefixes each line with some optional text (included in the
+   width). Allocates a fresh block of memory to contain the newly
+   formatted line.
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+    size_t
+        total_size,                     /*  Total size of buffer             */
+        prefix_len,                     /*  Size of prefix string            */
+        token_len;                      /*  Size of current token            */
+    char
+        **tokens,                       /*  String broken into words         */
+        *token,                         /*  Current token                    */
+        *buffer,                        /*  Target multiline buffer          */
+        *bufptr;                        /*  Next position in buffer          */
+    int
+        cur_width,                      /*  Current line width incl. prefix  */
+        token_nbr;                      /*  Token number, 0..n               */
+
+    ASSERT (source);
+    if (source == NULL)
+        return NULL;
+
+    /*  Ignore prefix if NULL                                                */
+    if (prefix == NULL)
+        prefix = "";
+
+    /*  Calculate maximum size of resulting buffer, which is difficult to
+     *  predict accurately.  We allow for 8 wasted characters on each line
+     *  plus the line ending.
+     */
+    prefix_len = strlen (prefix);
+    total_size = strlen (source) / (width - prefix_len) + 1;
+    total_size = total_size * (width + 9);
+    buffer = mem_alloc (total_size);
+    tokens = <A href="sfl431.htm#tok_split">tok split</A> (source);
+
+    ASSERT (strlen (prefix) &lt; width);
+    ASSERT (total_size &gt; <A href="sfl436.htm#tok_text_size">tok text size</A> (tokens));
+
+    cur_width = 0;
+    bufptr = buffer;
+    for (token_nbr = 0; tokens [token_nbr]; token_nbr++)
+      {
+        token = tokens [token_nbr];
+        token_len = strlen (token);
+
+        /*  First decide if next token will fit on line or not               */
+        if (token_len + cur_width &gt; width)
+          {
+            *bufptr++ = '\n';           /*  Start new line                   */
+            cur_width = 0;
+          }
+        /*  Put prefix at at start of line if necessary                      */
+        if (cur_width == 0)
+          {
+            /*  If prefix would overflow buffer, we quit                     */
+            if ((bufptr - buffer) + prefix_len &gt;= total_size)
+                break;
+            memcpy (bufptr, prefix, prefix_len);
+            bufptr   += prefix_len;
+            cur_width = prefix_len;
+          }
+        /*  If token would overflow buffer, we quit                          */
+        if ((bufptr - buffer) + token_len + 1 &gt;= total_size)
+            break;
+
+        /*  Now append token to line and add a space                         */
+        memcpy (bufptr, token, token_len);
+        bufptr    += token_len;
+        cur_width += token_len + 1;
+        *bufptr++ = ' ';
+      }
+    *bufptr = '\0';                     /*  Terminate the last line          */
+    <A href="sfl433.htm#tok_free">tok free</A> (tokens);
+    return (buffer);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl306.htm">&lt;</A>
+ | <A href="sfl308.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

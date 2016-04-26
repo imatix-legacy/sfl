@@ -1,0 +1,109 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>decode_mime_time</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl219.htm">&lt;</A>
+ | <A href="sfl221.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="decode_mime_time">&nbsp;</A>
+<H3><A NAME="TOC233"><TT>decode_mime_time</TT></A></H3>
+<PRE>
+#include "sflmime.h"
+Bool
+decode_mime_time (const char *mime_string, long *date, long *time)
+</PRE>
+<H4>Synopsis</H4>
+<P>Takes a MIME date and time string in various formats and
+   converts to a date and time (both long values). Returns TRUE if
+   it could convert the date and time okay, else returns FALSE.
+   Accepts these formats: <TABLE BORDER NOWRAP> <TR><TD
+   ALIGN="LEFT"><B>Mon Jan 12 12:05:01 1995</B>  <TD
+   ALIGN="LEFT">ctime format <TR><TD ALIGN="LEFT"><B>Monday, 12-
+   Jan-95 12:05:01 GMT</B>  <TD ALIGN="LEFT">RFC 850 <TR><TD
+   ALIGN="LEFT"><B>Monday, 12-Jan-1995 12:05:01 GMT</B>  <TD
+   ALIGN="LEFT">RFC 850 iMatix extension <TR><TD
+   ALIGN="LEFT"><B>Mon, 12 Jan 1995 12:05:01 GMT</B>  <TD
+   ALIGN="LEFT">RFC 1123 </TABLE> The returned date and time are
+   in local time, not GMT.
+<H4>Source Code - (sflmime.c)</H4>
+<PRE>
+{
+    int
+        cent  = 0,
+        year  = 0,
+        month = 0,
+        day   = 0,
+        hour  = 0,
+        min   = 0,
+        sec   = 0;
+    char
+        month_name [20],
+        buffer     [50],
+        *p_char;
+
+    ASSERT (mime_string);
+    ASSERT (date);
+    ASSERT (time);
+
+    /*  Whatever format we're looking at, it will start with weekday.        */
+    /*  Skip to first space.                                                 */
+    if (!(p_char = strchr (mime_string, ' ')))
+        return FALSE;
+    else
+        while (isspace (*p_char))
+            ++p_char;
+
+    if (isalpha (*p_char))
+        /*  ctime                                                            */
+        sscanf (p_char, "%s %d %d:%d:%d %d",
+                month_name, &amp;day, &amp;hour, &amp;min, &amp;sec, &amp;year);
+    else
+    if (p_char [2] == '-')
+      {
+        /*  RFC 850                                                          */
+        sscanf (p_char, "%s %d:%d:%d",
+                buffer, &amp;hour, &amp;min, &amp;sec);
+        buffer [2] = '\0';
+        day        = atoi (buffer);
+        buffer [6] = '\0';
+        strcpy (month_name, &amp;buffer [3]);
+        year = atoi (&amp;buffer [7]);
+
+        /*  Use windowing at 1970 if century is missing                      */
+        if (year &lt; 70)
+            cent = 20;
+        else
+            cent = 19;
+      }
+    else
+        /*  RFC 1123                                                         */
+        sscanf (p_char, "%d %s %d %d:%d:%d",
+                &amp;day, month_name, &amp;year, &amp;hour, &amp;min, &amp;sec);
+
+    if (year &gt; 100)
+      {
+        cent = (int) year / 100;
+        year -= cent * 100;
+      }
+    month = find_month (month_name);
+    *date = MAKE_DATE (cent, year, month, day);
+    *time = MAKE_TIME (hour, min,  sec,   0  );
+
+    <A href="sfl84.htm#gmt_to_local">gmt to local</A> (*date, *time, date, time);
+    return (TRUE);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl219.htm">&lt;</A>
+ | <A href="sfl221.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

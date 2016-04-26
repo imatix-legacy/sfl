@@ -1,0 +1,84 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>load_dir_list</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl226.htm">&lt;</A>
+ | <A href="sfl228.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.10
+</TABLE>
+<HR>
+<A NAME="load_dir_list">&nbsp;</A>
+<H3><A NAME="TOC240"><TT>load_dir_list</TT></A></H3>
+<PRE>
+#include "sfldir.h"
+NODE *
+load_dir_list (
+    const char *dir_name,
+    const char *sort)
+</PRE>
+<H4>Synopsis</H4>
+<P> Loads and sorts the contents of a directory. Returns a NODE
+   pointer to a linked list containing the directory entries. Each
+   node is a FILEINFO structure (mapped onto a NODE structure for
+   purposes of manipulating the linked list). You can ask for the
+   directory list to be sorted in various ways; in this case
+   subdirectory entries are always sorted first. To specify the
+   sort order you pass a string consisting of one or more of these
+   characters, which are then used in order: <TABLE BORDER NOWRAP>
+   <TR><TD ALIGN="LEFT"><B>n</B>  <TD ALIGN="LEFT">Sort by
+   ascending name. <TR><TD ALIGN="LEFT"><B>N</B>  <TD
+   ALIGN="LEFT">Sort by descending name. <TR><TD
+   ALIGN="LEFT"><B>x</B>  <TD ALIGN="LEFT">Sort by ascending
+   extension. <TR><TD ALIGN="LEFT"><B>X</B>  <TD ALIGN="LEFT">Sort
+   by descending extension. <TR><TD ALIGN="LEFT"><B>t</B>  <TD
+   ALIGN="LEFT">Sort by ascending time and date. <TR><TD
+   ALIGN="LEFT"><B>T</B>  <TD ALIGN="LEFT">Sort by descending time
+   and date. <TR><TD ALIGN="LEFT"><B>s</B>  <TD ALIGN="LEFT">Sort
+   by ascending size. <TR><TD ALIGN="LEFT"><B>S</B>  <TD
+   ALIGN="LEFT">Sort by descending size. </TABLE> If the sort
+   string is NULL, no sort is carried out.
+<H4>Source Code - (sfldir.c)</H4>
+<PRE>
+{
+    NODE
+        *file_list;                     /*  File list head                   */
+    DIRST
+        dir;
+    Bool
+        rc;
+    int
+        nbr_files = 0;
+
+    file_list = mem_alloc (sizeof (NODE));
+    if (!file_list)
+        return (NULL);
+
+    node_reset (file_list);             /*  Initialise file list             */
+
+    /* Load directory                                                        */
+    rc = <A href="sfl221.htm#open_dir">open dir</A> (&amp;dir, dir_name);
+    while (rc)
+      {
+        <A href="sfl230.htm#add_dir_list">add dir list</A> (file_list, &amp;dir);
+        nbr_files++;
+        rc = <A href="sfl222.htm#read_dir">read dir</A> (&amp;dir);
+      }
+    <A href="sfl223.htm#close_dir">close dir</A> (&amp;dir);
+
+    if (sort &amp;&amp; nbr_files &gt; 1)
+        <A href="sfl229.htm#sort_dir_list">sort dir list</A> (file_list, sort);
+    return (file_list);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl226.htm">&lt;</A>
+ | <A href="sfl228.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-99 iMatix Corporation</TABLE>
+</BODY></HTML>

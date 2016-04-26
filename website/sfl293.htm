@@ -1,0 +1,58 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>strhash</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl292.htm">&lt;</A>
+ | <A href="sfl294.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="strhash">&nbsp;</A>
+<H3><A NAME="TOC306"><TT>strhash</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+qbyte
+strhash (
+    const char *string)
+</PRE>
+<H4>Synopsis</H4>
+<P> Calculates a 32-bit hash value for the string. The string must
+   end in a null. To use the result as a hash key, take the modulo
+   over the hash table size. The algorithm was designed by Peter
+   Weinberger. This version was adapted from Dr Dobb's Journal
+   April 1996 page 26.
+<H4>Examples</H4>
+<PRE>
+    int index;
+    index = (int) strhash (name) % TABLE_SIZE;
+</PRE>
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+    qbyte
+        high_bits,
+        hash_value = 0;
+
+    ASSERT (string);
+    while (*string)
+      {
+        hash_value = (hash_value &lt;&lt; 4) + *string++;
+        if ((high_bits = hash_value &amp; 0xF0000000L) != 0)
+            hash_value ^= high_bits &gt;&gt; 24;
+        hash_value &amp;= ~high_bits;
+      }
+    return (hash_value);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl292.htm">&lt;</A>
+ | <A href="sfl294.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

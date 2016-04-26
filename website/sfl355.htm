@@ -1,0 +1,50 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>get_hostname</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl354.htm">&lt;</A>
+ | <A href="sfl356.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.10
+</TABLE>
+<HR>
+<A NAME="get_hostname">&nbsp;</A>
+<H3><A NAME="TOC368"><TT>get_hostname</TT></A></H3>
+<PRE>
+#include "sflsock.h"
+char *
+get_hostname (void)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns a string containing the local hostname. The returned
+   string is in a static area. Only performs the local hostname
+   lookup one time; the returned value is cached for later
+   repeated calls to this function. If sockets are not supported,
+   returns the value "localhost".
+<H4>Source Code - (sflsock.c)</H4>
+<PRE>
+{
+#if (defined (DOES_SOCKETS))
+    static char
+        host_name [LINE_MAX + 1] = "";
+
+    if (strnull (host_name))
+        if (gethostname (host_name, LINE_MAX))
+            strcpy (host_name, "localhost");
+    return (host_name);
+#else
+    return ("localhost");
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl354.htm">&lt;</A>
+ | <A href="sfl356.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-99 iMatix Corporation</TABLE>
+</BODY></HTML>

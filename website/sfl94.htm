@@ -1,0 +1,76 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>strfind_rb</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl93.htm">&lt;</A>
+ | <A href="sfl95.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="strfind_rb">&nbsp;</A>
+<H3><A NAME="TOC107"><TT>strfind_rb</TT></A></H3>
+<PRE>
+#include "sflfind.h"
+char *
+strfind_rb (const char *string,         /*  String containing data           */
+            const char *pattern,        /*  Pattern to search for            */
+            size_t     *shift,          /*  Working buffer between searches  */
+            Bool       *repeat_find)    /*  Flag for first/later search      */
+</PRE>
+<H4>Synopsis</H4>
+<P>Searches for a pattern in a string using the Boyer-Moore-
+   Horspool-Sunday algorithm. The string and pattern are null-
+   terminated strings. Returns a pointer to the pattern if found
+   within the string, or NULL if the pattern was not found.
+   Supports more efficient repeat searches (for the same pattern),
+   through a supplied search buffer. The search buffer must be
+   long enough to contain 256 (2**8) size_t entries. On the first
+   call repeat_find must be set to FALSE. After the search buffer
+   has been initialised, repeat_find will be set to TRUE by the
+   function, avoiding the search buffer initialisation on later
+   calls. This function is most effective when repeated searches
+   are made for the same pattern in one or more strings. This
+   function is meant to handle character data, and is most
+   effective when you work with large strings. To search binary
+   data use <A href="sfl95.htm#memfind">memfind</A>(). Will not work on multibyte characters.
+   Reentrant.
+<H4>Examples</H4>
+<PRE>
+    char   *result;
+    Bool   repeat_search = FALSE;
+    size_t searchbuf[256];
+
+    result = strfind_rb ("abracadabra", "cad", searchbuf, &repeat_search);
+    if (result)
+      {
+        puts (result);
+        result = strfind_rb ("cad/cam", "cad", searchbuf, &repeat_search);
+        if (result)
+            puts (result);
+      }
+</PRE>
+<H4>Source Code - (sflfind.c)</H4>
+<PRE>
+{
+    ASSERT (string);                    /*  Expect non-NULL pointers, but    */
+    ASSERT (pattern);                   /*  fall through if not debugging    */
+    ASSERT (shift);
+    ASSERT (repeat_find);
+
+    return (char *) <A href="sfl97.htm#memfind_rb">memfind rb</A> (string,    strlen (string),
+                                pattern,   strlen (pattern),
+                                shift,     repeat_find);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl93.htm">&lt;</A>
+ | <A href="sfl95.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

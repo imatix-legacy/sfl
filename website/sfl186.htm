@@ -1,0 +1,313 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>smtp_send_mail_ex</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl185.htm">&lt;</A>
+ | <A href="sfl187.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="smtp_send_mail_ex">&nbsp;</A>
+<H3><A NAME="TOC199"><TT>smtp_send_mail_ex</TT></A></H3>
+<PRE>
+#include "sflmail.h"
+int smtp_send_mail_ex (
+   SMTP *smtp)
+</PRE>
+<H4>Synopsis</H4>
+<P>Format and send a SMTP message. This function gives you the
+   options of sneding to multi receivers, CC's, Bcc's and also
+   send UUencoded attachments. Receivers and files are ";" or ","
+   terminated. NOTE: The sock_init function should be called
+   before use of this function.
+<H4>Source Code - (sflmail.c)</H4>
+<PRE>
+{
+   FILE *fpin;
+   int iCnt;
+   sock_t iSocket;
+   char strOut[514], strFile[256], strRetBuff[513];
+   char strUUEFile[256], *strRcptUserIds;
+   int iOld_ip_nonblock = ip_nonblock, rcptUserIdsLen;
+
+   /*  Make sure we block on socket accesses                                 */
+   ip_nonblock = FALSE;
+
+   /* Open up the SMTP port (25 most of the time). */
+   iSocket = <A href="sfl345.htm#connect_socket">connect socket</A> (smtp-&gt;strSmtpServer,
+                             "smtp", "tcp", NULL,
+                             smtp-&gt;connect_retry_cnt,
+                             smtp-&gt;retry_wait_time);
+
+   if (getreply (iSocket, smtp) &gt; 400 || iSocket &lt; 0)
+       return -1;
+
+   /* Format a SMTP meassage header.  */
+   /* Just say hello to the mail server. */
+   <A href="sfl296.htm#xstrcpy">xstrcpy</A> (strOut, "HELO ", <A href="sfl364.htm#get_hostname">get hostname</A> (), "\n", NULL);
+   smtp_send_data (iSocket, strOut);
+   if (getreply (iSocket, smtp) &gt; 400)
+       return -2;
+
+   /* Tell the mail server who the message is from. */
+   <A href="sfl296.htm#xstrcpy">xstrcpy</A> (strOut, "MAIL FROM:&lt;", smtp-&gt;strSenderUserId, "&gt;\n", NULL);
+   smtp_send_data (iSocket, strOut);
+   if (getreply (iSocket, smtp) &gt; 400)
+       return -3;
+
+   rcptUserIdsLen = (strlen (smtp-&gt;strDestUserIds) +
+                     strlen (smtp-&gt;strCcUserIds) +
+		     strlen (smtp-&gt;strBccUserIds) + 3);
+
+   strRcptUserIds = (char *) malloc (rcptUserIdsLen);
+   snprintf (strRcptUserIds, rcptUserIdsLen, "%s;%s;%s",
+	     smtp-&gt;strDestUserIds, smtp-&gt;strCcUserIds, smtp-&gt;strBccUserIds);
+
+   /* The following tells the mail server who to send it to. */
+   iCnt = 0;
+   while (1)
+     {
+       <A href="sfl318.htm#getstrfld">getstrfld</A> (strRcptUserIds, iCnt++, 0, ",;", strRetBuff);
+
+       if (*strRetBuff)
+         {
+           <A href="sfl296.htm#xstrcpy">xstrcpy</A> (strOut, "RCPT TO:&lt;", strRetBuff, "&gt;\r\n", NULL);
+           smtp_send_data (iSocket, strOut);
+           if (getreply (iSocket, smtp) &gt; 400)
+               return -4;
+         }
+
+       else
+           break;
+     }
+
+   free (strRcptUserIds);
+
+   /* Now give it the Subject and the message to send. */
+   smtp_send_data (iSocket, "DATA\r\n");
+   if (getreply (iSocket, smtp) &gt; 400)
+       return -5;
+
+   /* Set the date and time of the message. */
+   <A href="sfl296.htm#xstrcpy">xstrcpy</A> ( strOut, "Date: ", <A href="sfl221.htm#encode_mime_time">encode mime time</A> (<A href="sfl52.htm#date_now">date now</A> (), <A href="sfl53.htm#time_now">time now</A> ()),
+             " \r\n", NULL );
+
+   /* The following shows all who it was sent to. */
+   if ( smtp-&gt;strFullDestUserIds &amp;&amp; *smtp-&gt;strFullDestUserIds )
+    {
+       <A href="sfl309.htm#replacechrswith">replacechrswith</A> (smtp-&gt;strFullDestUserIds, ";", ',');
+       <A href="sfl296.htm#xstrcpy">xstrcpy</A> (strOut, "To: ", smtp-&gt;strFullDestUserIds, "\r\n", NULL);
+     }
+   else
+    {
+       <A href="sfl309.htm#replacechrswith">replacechrswith</A> (smtp-&gt;strDestUserIds, ";", ',');
+       <A href="sfl296.htm#xstrcpy">xstrcpy</A> (strOut, "To: ", smtp-&gt;strDestUserIds, "\r\n", NULL);
+    }
+
+   /* Set up the Reply-To path. */
+   if (!smtp-&gt;strRetPathUserId || !*smtp-&gt;strRetPathUserId)
+       smtp-&gt;strRetPathUserId = smtp-&gt;strSenderUserId;
+
+   if ( strstr( smtp-&gt;strRetPathUserId, "&lt;" ) != NULL &amp;&amp;
+        strstr( smtp-&gt;strRetPathUserId, "&gt;" ) != NULL )
+     {
+       <A href="sfl295.htm#xstrcat">xstrcat</A> (strOut, "Reply-To:", smtp-&gt;strRetPathUserId, "\r\n", NULL);
+     }
+   else
+     {
+       <A href="sfl295.htm#xstrcat">xstrcat</A> (strOut, "Reply-To:&lt;", smtp-&gt;strRetPathUserId, "&gt;\r\n", NULL);
+     }
+
+   if ( smtp-&gt;strFullSenderUserId &amp;&amp; *smtp-&gt;strFullSenderUserId )
+     {
+       <A href="sfl295.htm#xstrcat">xstrcat</A> (strOut, "Sender:", smtp-&gt;strFullSenderUserId, "\r\n", NULL);
+       <A href="sfl295.htm#xstrcat">xstrcat</A> (strOut, "From:", smtp-&gt;strFullSenderUserId, "\r\n", NULL);
+     }
+   else
+     {
+       <A href="sfl295.htm#xstrcat">xstrcat</A> (strOut, "Sender:", smtp-&gt;strSenderUserId, "\r\n", NULL);
+       <A href="sfl295.htm#xstrcat">xstrcat</A> (strOut, "From:", smtp-&gt;strSenderUserId, "\r\n", NULL);
+     }
+   smtp_send_data (iSocket, strOut);
+
+   *strOut = '\0';
+
+   /* Post any CC's. */
+   if (smtp-&gt;strFullCcUserIds &amp;&amp; *smtp-&gt;strFullCcUserIds)
+     {
+       <A href="sfl309.htm#replacechrswith">replacechrswith</A> (smtp-&gt;strFullCcUserIds, ";", ',');
+       <A href="sfl295.htm#xstrcat">xstrcat</A> (strOut, "Cc:", smtp-&gt;strFullCcUserIds, "\r\n", NULL );
+     }
+   else
+   if (smtp-&gt;strCcUserIds &amp;&amp; *smtp-&gt;strCcUserIds)
+     {
+       <A href="sfl309.htm#replacechrswith">replacechrswith</A> (smtp-&gt;strCcUserIds, ";", ',');
+       <A href="sfl295.htm#xstrcat">xstrcat</A> (strOut, "Cc:", smtp-&gt;strCcUserIds, "\r\n", NULL );
+     }
+
+   /* Post any BCC's. */
+   if (smtp-&gt;strFullBccUserIds &amp;&amp; *smtp-&gt;strFullBccUserIds)
+     {
+       <A href="sfl309.htm#replacechrswith">replacechrswith</A> (smtp-&gt;strFullBccUserIds, ";", ',');
+       <A href="sfl295.htm#xstrcat">xstrcat</A> (strOut, "Bcc:", smtp-&gt;strFullBccUserIds, "\r\n", NULL);
+     }
+   else
+   if (smtp-&gt;strBccUserIds &amp;&amp; *smtp-&gt;strBccUserIds)
+     {
+       <A href="sfl309.htm#replacechrswith">replacechrswith</A> (smtp-&gt;strBccUserIds, ";", ',');
+       <A href="sfl295.htm#xstrcat">xstrcat</A> (strOut, "Bcc:", smtp-&gt;strBccUserIds, "\r\n", NULL);
+     }
+   /* Post any Return-Receipt-To. */
+   if (smtp-&gt;strRrcpUserId &amp;&amp; *smtp-&gt;strRrcpUserId)
+       <A href="sfl295.htm#xstrcat">xstrcat</A> (strOut, "Return-Receipt-To:", smtp-&gt;strRrcpUserId, "&gt;\r\n",
+                NULL);
+
+   if (smtp-&gt;strMailerName &amp;&amp; *smtp-&gt;strMailerName)
+       <A href="sfl295.htm#xstrcat">xstrcat</A> (strOut, "X-Mailer: ", smtp-&gt;strMailerName, "\r\n", NULL);
+   else
+       strcat (strOut, "X-Mailer: sflmail function\r\n");
+
+   /* Set the mime version. */
+   strcat (strOut, "MIME-Version: 1.0\r\n");
+   strcat (strOut,
+   "Content-Type: Multipart/Mixed; boundary=Message-Boundary-21132\r\n");
+
+   smtp_send_data (iSocket, strOut);
+
+   /* Write out any message comment included. */
+   <A href="sfl296.htm#xstrcpy">xstrcpy</A> (strOut, "Comments: ", smtp-&gt;strMsgComment, "\r\n", NULL);
+
+   /* Send the subject and message body. */
+   <A href="sfl295.htm#xstrcat">xstrcat</A> (strOut, "Subject:", smtp-&gt;strSubject, "\n\r\n", NULL);
+   smtp_send_data (iSocket, strOut);
+
+   /* Keep rfc822 in mind with all the sections. */
+   if (smtp-&gt;strMessageBody &amp;&amp; *smtp-&gt;strMessageBody)
+     {
+       strcat (strOut, "\r\n--Message-Boundary-21132\r\n");
+       strcat (strOut, "Content-Type: text/plain; charset=US-ASCII\r\n");
+       strcat (strOut, "Content-Transfer-Encoding: 7BIT\r\n");
+       strcat (strOut, "Content-description: Body of message\r\n\r\n");
+       smtp_send_data (iSocket, strOut);
+       smtp_send_data (iSocket, smtp-&gt;strMessageBody);
+       smtp_send_data (iSocket, "\r\n");
+     }
+
+   /* Include any Text type files and Attach them to the message. */
+   if (smtp-&gt;strTxtFiles &amp;&amp; *smtp-&gt;strTxtFiles)
+     {
+       iCnt = 0;
+       while (1)
+         {
+           <A href="sfl318.htm#getstrfld">getstrfld</A> (smtp-&gt;strTxtFiles, iCnt++, 0, ",;", strFile);
+           <A href="sfl314.htm#trim">trim</A> (strFile);
+           if (*strFile)
+             {
+               fpin = fopen (strFile, "rb");
+               if (!fpin)
+                 {
+                   strcpy (smtp-&gt;strlast_smtp_message, strFile);
+                   return -6;
+                 }
+
+               strcpy (strOut, "\r\n--Message-Boundary-21132\r\n");
+               strcat (strOut,
+                       "Content-Type: text/plain; charset=US-ASCII\r\n");
+               strcat (strOut, "Content-Transfer-Encoding: 7BIT\r\n");
+               <A href="sfl295.htm#xstrcat">xstrcat</A> (strOut, "Content-Disposition: attachment; filename=",
+                        getfilename (strFile), "\r\n\n", NULL);
+               smtp_send_data (iSocket, strOut);
+               while (!feof (fpin))
+                 {
+                   memset (strRetBuff, 0, 513);
+                   fread (strRetBuff, sizeof (char), 512, fpin);
+                   smtp_send_data (iSocket, strRetBuff);
+                 }
+
+               fclose (fpin);
+             }
+           else
+               break;
+         }
+     }
+
+   /* Attach any bin files to the message. */
+   if (smtp-&gt;strBinFiles &amp;&amp; *smtp-&gt;strBinFiles)
+     {
+       iCnt = 0;
+       while (1)
+         {
+           <A href="sfl318.htm#getstrfld">getstrfld</A> (smtp-&gt;strBinFiles, iCnt++, 0, ",;", strFile);
+           <A href="sfl314.htm#trim">trim</A> (strFile);
+           if (*strFile)
+             {
+               strcpy (strUUEFile, strFile);
+               if (strchr (strUUEFile, '.'))
+                   *((strchr (strUUEFile, '.')))= (char)NULL;
+               strcat (strUUEFile, ".uue");
+               uuencode (strFile, strUUEFile, smtp-&gt;strlast_smtp_message);
+               fpin = fopen (strUUEFile, "rb");
+               if (!fpin)
+                 {
+                   return -6;
+                 }
+
+               strcpy (strOut, "\r\n--Message-Boundary-21132\r\n");
+               <A href="sfl295.htm#xstrcat">xstrcat</A> (strOut,
+                        "Content-Type: application/octet-stream; name=",
+               getfilename (strFile), "\r\n", NULL);
+               strcat (strOut, "Content-Transfer-Encoding: x-uuencode\r\n");
+               <A href="sfl295.htm#xstrcat">xstrcat</A> (strOut, "Content-Disposition: attachment; filename=",
+                        getfilename (strFile), "\r\n\n", NULL);
+               smtp_send_data (iSocket, strOut);
+               while (!feof (fpin))
+                 {
+                   memset (strRetBuff, 0, 513);
+                   fread (strRetBuff, sizeof (char), 512, fpin);
+                   smtp_send_data (iSocket, strRetBuff);
+                 }
+
+               fclose (fpin);
+
+               if ( !smtp-&gt;debug )
+                  unlink (strUUEFile);
+             }
+           else
+               break;
+         }
+     }
+
+   /* This ends the message. */
+   smtp_send_data (iSocket, ".\r\n");
+   if (getreply (iSocket, smtp) &gt; 400)
+        return -7;
+
+   /* Now log off the SMTP port. */
+   smtp_send_data (iSocket, "QUIT\n");
+   if (getreply (iSocket, smtp) &gt; 400)
+        return -8;
+
+   /*
+      Clean-up.
+   */
+   /* Close the port up. */
+   <A href="sfl362.htm#close_socket">close socket</A> (iSocket);
+
+   /* If a clean send, then reset and leave. */
+   ip_nonblock = iOld_ip_nonblock;
+
+   return 0;
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl185.htm">&lt;</A>
+ | <A href="sfl187.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

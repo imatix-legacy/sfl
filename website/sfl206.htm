@@ -1,0 +1,66 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>mem_descr_</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl205.htm">&lt;</A>
+ | <A href="sfl207.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="mem_descr_">&nbsp;</A>
+<H3><A NAME="TOC219"><TT>mem_descr_</TT></A></H3>
+<PRE>
+#include "sflmem.h"
+DESCR *
+mem_descr_ (
+    MEMTRN     *trn,                    /*  Associated transaction           */
+    const void *data_block,             /*  Block of memory to copy          */
+    size_t      data_size,              /*  Size of memory block             */
+    const char *filename,               /*  Name of source file making call  */
+    size_t      lineno                  /*  Line number in calling source    */
+)
+</PRE>
+<H4>Synopsis</H4>
+<P>Allocates a DESCR block for a specified block of data. Use the
+   mem_descr macro to call this function! Returns a pointer to an
+   allocated DESCR block, or NULL if there was not enough memory.
+   The DESCR block is allocated as a single block, consisting of
+   the DESCR block plus the data. To free the entire block you
+   need one call to mem_free(). If the data_block argument is not
+   null, its contents are copied into the newly allocated memory.
+<H4>Source Code - (sflmem.c)</H4>
+<PRE>
+{
+    DESCR
+        *descr;
+
+    descr = <A href="sfl198.htm#mem_alloc_">mem alloc </A> (trn, data_size + sizeof (DESCR), filename, lineno);
+    if (descr == NULL)
+        return (NULL);
+
+#   if (defined (MEM_TRACE))
+    <A href="sfl458.htm#trace">trace</A> ("%s (%ld): allocate descr=%p",
+           filename? filename: "-", (long) lineno, descr);
+#   endif
+
+    /*  Fill-in descriptor block unless it is NULL                           */
+    descr-&gt; size = data_size;
+    descr-&gt; data = (byte *) descr + sizeof (DESCR);
+    if (data_block)
+        memcpy (descr-&gt; data, data_block, data_size);
+
+    return (descr);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl205.htm">&lt;</A>
+ | <A href="sfl207.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

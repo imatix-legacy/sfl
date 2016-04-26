@@ -1,0 +1,42 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>file_slurpl</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl134.htm">&lt;</A>
+ | <A href="sfl136.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="file_slurpl">&nbsp;</A>
+<H3><A NAME="TOC148"><TT>file_slurpl</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+DESCR *
+file_slurpl (
+    const char *filename)
+</PRE>
+<H4>Synopsis</H4>
+<P>Reads an entire file, and returns a DESCR containing the file
+   data. The file is read as binary data. The returned DESCR
+   should be freed using the mem_free() call. Does not impose any
+   limit on the size of the file (unlike <A href="sfl134.htm#file_slurp">file slurp</A>() which
+   stops at 64K bytes). Returns NULL if the file cannot be found.
+   Appends a null byte to the data in any case.
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+    return (file_load_data (filename, 0));
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl134.htm">&lt;</A>
+ | <A href="sfl136.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,238 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>Conversion functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl34.htm">&lt;</A>
+ | <A href="sfl36.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC48">Conversion functions</A></H2>
+<P>Filename: sflconv.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1995/12/17 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 1998/10/19
+<BR>Copyright: Copyright (c) 1996-2000 iMatix Corporation
+<H3>Synopsis</H3>
+<P>These functions provide conversion between a set of datatypes
+   (dates, times, numbers, Booleans) and external strings that
+   represent the values. The objective is to format datatypes for
+   display or printing, and to validate and convert strings
+   supplied by the user. Conversion is controlled by a set of
+   options specific to each datatype. Additionally, dates and
+   times may be formatted using picture strings. The functions
+   were written for use in an interactive 'forms' environment.
+<H4>List of Functions</H4>
+<UL>
+<LI>char * <A href="sfl39.htm#conv_number_str">conv number str</A><BR>
+   (const char *number, int flags, char point, int decimals, int
+   decimal_format, int width, int sign_format);
+</LI>
+<LI>char * <A href="sfl43.htm#conv_str_number">conv str number</A><BR>
+   (const char *string, int flags, char point, int decimals, int
+   decimal_format, int width);
+</LI>
+<LI>char * <A href="sfl38.htm#conv_date_str">conv date str</A><BR>
+   (long date, int flags, int format, int order, char datesep, int
+   width);
+</LI>
+<LI>long <A href="sfl41.htm#conv_str_date">conv str date</A><BR>
+   (const char *string, int flags, int format, int order);
+</LI>
+<LI>int <A href="sfl42.htm#conv_str_day">conv str day</A><BR>
+   (const char *day_name);
+</LI>
+<LI>char * <A href="sfl46.htm#conv_time_str">conv time str</A><BR>
+   (long time, int flags, char timesep, int width);
+</LI>
+<LI>long <A href="sfl44.htm#conv_str_time">conv str time</A><BR>
+   (const char *string);
+</LI>
+<LI>char * <A href="sfl36.htm#conv_bool_str">conv bool str</A><BR>
+   (Bool boolean, int format);
+</LI>
+<LI>int <A href="sfl40.htm#conv_str_bool">conv str bool</A><BR>
+   (const char *string);
+</LI>
+<LI>char * <A href="sfl45.htm#conv_time_pict">conv time pict</A><BR>
+   (long time, const char *picture);
+</LI>
+<LI>char * <A href="sfl37.htm#conv_date_pict">conv date pict</A><BR>
+   (long date, const char *picture);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sflconv.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>BOOL_1_0</B>  </TT>
+<TD ALIGN="LEFT">4
+<TR><TD ALIGN="LEFT"><TT><B>BOOL_TRUE_FALSE</B>  </TT>
+<TD ALIGN="LEFT">2
+<TR><TD ALIGN="LEFT"><TT><B>BOOL_T_F</B>  </TT>
+<TD ALIGN="LEFT">3
+<TR><TD ALIGN="LEFT"><TT><B>BOOL_YES_NO</B>  </TT>
+<TD ALIGN="LEFT">0 /* Boolean field formatting */
+<TR><TD ALIGN="LEFT"><TT><B>BOOL_Y_N</B>  </TT>
+<TD ALIGN="LEFT">1
+<TR><TD ALIGN="LEFT"><TT><B>CONV_ERR_BAD_MONTH</B>  </TT>
+<TD ALIGN="LEFT">8 /* Unknown month name */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_ERR_DATE_OVERFLOW</B>  </TT>
+<TD ALIGN="LEFT">5 /* Result too large for output */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_ERR_DATE_SIZE</B>  </TT>
+<TD ALIGN="LEFT">6 /* Too few or too many digits */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_ERR_DECS_HIDDEN</B>  </TT>
+<TD ALIGN="LEFT">18 /* Decimals not allowed if hidden */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_ERR_DECS_MISSING</B>  </TT>
+<TD ALIGN="LEFT">11 /* Not enough decimals supplied */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_ERR_DECS_OVERFLOW</B>  </TT>
+<TD ALIGN="LEFT">19 /* Too many decimal positions */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_ERR_DECS_REJECTED</B>  </TT>
+<TD ALIGN="LEFT">17 /* Decimals not allowed if integer */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_ERR_INVALID_INPUT</B>  </TT>
+<TD ALIGN="LEFT">1 /* Unrecognised char in input */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_ERR_MULTIPLE_AM</B>  </TT>
+<TD ALIGN="LEFT">4 /* More than one 'am' or 'pm' */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_ERR_MULTIPLE_DELIM</B>  </TT>
+<TD ALIGN="LEFT">7 /* Too many delimiters */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_ERR_MULTIPLE_MONTH</B>  </TT>
+<TD ALIGN="LEFT">10 /* More than one month name */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_ERR_MULTIPLE_POINT</B>  </TT>
+<TD ALIGN="LEFT">16 /* More than one decimal point */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_ERR_MULTIPLE_SIGN</B>  </TT>
+<TD ALIGN="LEFT">13 /* More than one sign character */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_ERR_NOT_BOOLEAN</B>  </TT>
+<TD ALIGN="LEFT">3 /* Not a yes/no or true/false value */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_ERR_NUM_OVERFLOW</B>  </TT>
+<TD ALIGN="LEFT">12 /* Result too large for output */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_ERR_OUT_OF_RANGE</B>  </TT>
+<TD ALIGN="LEFT">2 /* Value out of valid range */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_ERR_REJECT_3_5</B>  </TT>
+<TD ALIGN="LEFT">9 /* 3/5 digits in a row not allowed */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_ERR_SIGN_BAD_FIN</B>  </TT>
+<TD ALIGN="LEFT">15 /* Malformed financial negative */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_ERR_SIGN_REJECTED</B>  </TT>
+<TD ALIGN="LEFT">14 /* Sign not allowed if unsigned */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_ERR_TOO_MANY_DIGITS</B>  </TT>
+<TD ALIGN="LEFT">20 /* Too many digits for number */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_MAX_DECS</B>  </TT>
+<TD ALIGN="LEFT">100 /* Up to 100 decimal positions */
+<TR><TD ALIGN="LEFT"><TT><B>CONV_NO_ERRORS</B>  </TT>
+<TD ALIGN="LEFT">0 /* No errors */
+<TR><TD ALIGN="LEFT"><TT><B>DATE_FORMAT_FIRST</B>  </TT>
+<TD ALIGN="LEFT">0 /* Date field formatting */
+<TR><TD ALIGN="LEFT"><TT><B>DATE_FORMAT_LAST</B>  </TT>
+<TD ALIGN="LEFT">9
+<TR><TD ALIGN="LEFT"><TT><B>DATE_MD_COMPACT</B>  </TT>
+<TD ALIGN="LEFT">7
+<TR><TD ALIGN="LEFT"><TT><B>DATE_MD_DELIM</B>  </TT>
+<TD ALIGN="LEFT">8
+<TR><TD ALIGN="LEFT"><TT><B>DATE_MD_LAST</B>  </TT>
+<TD ALIGN="LEFT">9
+<TR><TD ALIGN="LEFT"><TT><B>DATE_MD_SPACE</B>  </TT>
+<TD ALIGN="LEFT">9
+<TR><TD ALIGN="LEFT"><TT><B>DATE_ORDER_DMY</B>  </TT>
+<TD ALIGN="LEFT">2
+<TR><TD ALIGN="LEFT"><TT><B>DATE_ORDER_FIRST</B>  </TT>
+<TD ALIGN="LEFT">1 /* Values for date_order */
+<TR><TD ALIGN="LEFT"><TT><B>DATE_ORDER_LAST</B>  </TT>
+<TD ALIGN="LEFT">3
+<TR><TD ALIGN="LEFT"><TT><B>DATE_ORDER_MDY</B>  </TT>
+<TD ALIGN="LEFT">3
+<TR><TD ALIGN="LEFT"><TT><B>DATE_ORDER_YMD</B>  </TT>
+<TD ALIGN="LEFT">1
+<TR><TD ALIGN="LEFT"><TT><B>DATE_YMD_COMMA</B>  </TT>
+<TD ALIGN="LEFT">3
+<TR><TD ALIGN="LEFT"><TT><B>DATE_YMD_COMPACT</B>  </TT>
+<TD ALIGN="LEFT">0
+<TR><TD ALIGN="LEFT"><TT><B>DATE_YMD_DELIM</B>  </TT>
+<TD ALIGN="LEFT">1
+<TR><TD ALIGN="LEFT"><TT><B>DATE_YMD_LAST</B>  </TT>
+<TD ALIGN="LEFT">3
+<TR><TD ALIGN="LEFT"><TT><B>DATE_YMD_SPACE</B>  </TT>
+<TD ALIGN="LEFT">2
+<TR><TD ALIGN="LEFT"><TT><B>DATE_YM_COMPACT</B>  </TT>
+<TD ALIGN="LEFT">4
+<TR><TD ALIGN="LEFT"><TT><B>DATE_YM_DELIM</B>  </TT>
+<TD ALIGN="LEFT">5
+<TR><TD ALIGN="LEFT"><TT><B>DATE_YM_LAST</B>  </TT>
+<TD ALIGN="LEFT">6
+<TR><TD ALIGN="LEFT"><TT><B>DATE_YM_SPACE</B>  </TT>
+<TD ALIGN="LEFT">6
+<TR><TD ALIGN="LEFT"><TT><B>DECS_DROP_ZEROS</B>  </TT>
+<TD ALIGN="LEFT">2
+<TR><TD ALIGN="LEFT"><TT><B>DECS_HIDE_ALL</B>  </TT>
+<TD ALIGN="LEFT">3
+<TR><TD ALIGN="LEFT"><TT><B>DECS_SCIENTIFIC</B>  </TT>
+<TD ALIGN="LEFT">4
+<TR><TD ALIGN="LEFT"><TT><B>DECS_SHOW_ALL</B>  </TT>
+<TD ALIGN="LEFT">1
+<TR><TD ALIGN="LEFT"><TT><B>FLAG_D_CENTURY</B>  </TT>
+<TD ALIGN="LEFT">8
+<TR><TD ALIGN="LEFT"><TT><B>FLAG_D_DD_AS_D</B>  </TT>
+<TD ALIGN="LEFT">1 /* Date field flags */
+<TR><TD ALIGN="LEFT"><TT><B>FLAG_D_MM_AS_M</B>  </TT>
+<TD ALIGN="LEFT">2
+<TR><TD ALIGN="LEFT"><TT><B>FLAG_D_MONTH_ABC</B>  </TT>
+<TD ALIGN="LEFT">4
+<TR><TD ALIGN="LEFT"><TT><B>FLAG_D_ORDER_DMY</B>  </TT>
+<TD ALIGN="LEFT">64
+<TR><TD ALIGN="LEFT"><TT><B>FLAG_D_ORDER_MDY</B>  </TT>
+<TD ALIGN="LEFT">128
+<TR><TD ALIGN="LEFT"><TT><B>FLAG_D_ORDER_YMD</B>  </TT>
+<TD ALIGN="LEFT">32
+<TR><TD ALIGN="LEFT"><TT><B>FLAG_D_UPPER</B>  </TT>
+<TD ALIGN="LEFT">16
+<TR><TD ALIGN="LEFT"><TT><B>FLAG_N_DECIMALS</B>  </TT>
+<TD ALIGN="LEFT">2
+<TR><TD ALIGN="LEFT"><TT><B>FLAG_N_LEFT</B>  </TT>
+<TD ALIGN="LEFT">4
+<TR><TD ALIGN="LEFT"><TT><B>FLAG_N_SIGNED</B>  </TT>
+<TD ALIGN="LEFT">1 /* Number field flags */
+<TR><TD ALIGN="LEFT"><TT><B>FLAG_N_THOUSANDS</B>  </TT>
+<TD ALIGN="LEFT">32
+<TR><TD ALIGN="LEFT"><TT><B>FLAG_N_ZERO_BLANK</B>  </TT>
+<TD ALIGN="LEFT">16
+<TR><TD ALIGN="LEFT"><TT><B>FLAG_N_ZERO_FILL</B>  </TT>
+<TD ALIGN="LEFT">8
+<TR><TD ALIGN="LEFT"><TT><B>FLAG_T_12_HOUR</B>  </TT>
+<TD ALIGN="LEFT">32
+<TR><TD ALIGN="LEFT"><TT><B>FLAG_T_CC_AS_C</B>  </TT>
+<TD ALIGN="LEFT">8
+<TR><TD ALIGN="LEFT"><TT><B>FLAG_T_COMPACT</B>  </TT>
+<TD ALIGN="LEFT">16
+<TR><TD ALIGN="LEFT"><TT><B>FLAG_T_HH_AS_H</B>  </TT>
+<TD ALIGN="LEFT">1 /* Time field flags */
+<TR><TD ALIGN="LEFT"><TT><B>FLAG_T_MM_AS_M</B>  </TT>
+<TD ALIGN="LEFT">2
+<TR><TD ALIGN="LEFT"><TT><B>FLAG_T_SS_AS_S</B>  </TT>
+<TD ALIGN="LEFT">4
+<TR><TD ALIGN="LEFT"><TT><B>FORMAT_MAX</B>  </TT>
+<TD ALIGN="LEFT">80 /* Max. size of formatted field */
+<TR><TD ALIGN="LEFT"><TT><B>SFLCONV_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>SIGN_ALL_LEAD</B>  </TT>
+<TD ALIGN="LEFT">4
+<TR><TD ALIGN="LEFT"><TT><B>SIGN_ALL_TRAIL</B>  </TT>
+<TD ALIGN="LEFT">2
+<TR><TD ALIGN="LEFT"><TT><B>SIGN_FINANCIAL</B>  </TT>
+<TD ALIGN="LEFT">5
+<TR><TD ALIGN="LEFT"><TT><B>SIGN_NEG_LEAD</B>  </TT>
+<TD ALIGN="LEFT">3
+<TR><TD ALIGN="LEFT"><TT><B>SIGN_NEG_TRAIL</B>  </TT>
+<TD ALIGN="LEFT">1 /* Number field formatting */
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl34.htm">&lt;</A>
+ | <A href="sfl36.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

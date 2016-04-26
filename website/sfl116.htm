@@ -1,0 +1,62 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>safe_to_extend</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl115.htm">&lt;</A>
+ | <A href="sfl117.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="safe_to_extend">&nbsp;</A>
+<H3><A NAME="TOC129"><TT>safe_to_extend</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+Bool
+safe_to_extend (
+    const char *filename)
+</PRE>
+<H4>Synopsis</H4>
+<P>Handles system-specific case of extending a file that may not
+   be in a valid state for such an operation. Returns TRUE if the
+   extend can go ahead; returns FALSE if the extend cannot be
+   permitted. Under MS-DOS and Windows, if the last byte in the
+   file is Ctrl-Z (26) the file is truncated by 1 position to
+   remove this character.
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+#if (defined (MSDOS_FILESYSTEM))
+    int  handle;                        /*  Opened file handle               */
+    char endoffile;                     /*  Last character in file           */
+
+    ASSERT (filename);
+
+    if (system_devicename (filename))
+        return (FALSE);                 /*  Not allowed on device names      */
+
+    handle = open (filename, O_RDWR + O_BINARY, S_IREAD | S_IWRITE);
+    if (handle)                         /*  If not found, ignore             */
+      {
+        lseek (handle, -1, SEEK_END);
+        read  (handle, &amp;endoffile, 1);
+        if (endoffile == 26)
+            chsize (handle, filelength (handle) - 1);
+
+        close (handle);
+      }
+#endif
+    return (TRUE);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl115.htm">&lt;</A>
+ | <A href="sfl117.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

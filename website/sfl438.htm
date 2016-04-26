@@ -1,0 +1,109 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>Linked-list functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl437.htm">&lt;</A>
+ | <A href="sfl439.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC451">Linked-list functions</A></H2>
+<P>Filename: sfltree.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1997/11/18 Jonathan Schultz <A
+   HREF=mailto:"jonathan@imatix.com">jonathan@imatix.com</A>
+<BR>Revised: 1998/01/03 Jonathan Schultz <A
+   HREF=mailto:"jonathan@imatix.com">jonathan@imatix.com</A>
+<BR>Copyright: Copyright (c) 1996-2000 iMatix Corporation
+<H3>Synopsis</H3>
+<P>Provides functions to maintain 'Red-Black' balanced binary
+   trees. You can use these functions to work with trees of any
+   structure. To make this work, all structures must start with
+   the following: "void *left, *right, *parent; TREE_COLOUR
+   colour;". All trees need a pointer to the root of type TREE
+   which should be initialised with tree_init - you can test
+   whether a tree is empty by comparing its root with TREE_NULL.
+   The order of nodes in the tree is determined by calling a node
+   comparison function provided by the caller - this accepts two
+   node pointers and returns zero if the two nodes are equal, -1
+   if the first is smaller and 1 if the first is larger.
+<H4>List of Functions</H4>
+<UL>
+<LI>void <A href="sfl439.htm#tree_init">tree init</A><BR>
+   (TREE **root);
+</LI>
+<LI>int <A href="sfl440.htm#tree_insert">tree insert</A><BR>
+   (TREE **root, void *tree, TREE_COMPARE *comp, Bool
+   allow_duplicates);
+</LI>
+<LI>void <A href="sfl441.htm#tree_delete">tree delete</A><BR>
+   (TREE **root, void *tree);
+</LI>
+<LI>void * <A href="sfl442.htm#tree_find_eq">tree find eq</A><BR>
+   (TREE **root, void *tree, TREE_COMPARE *comp);
+</LI>
+<LI>void * <A href="sfl443.htm#tree_find_lt">tree find lt</A><BR>
+   (TREE **root, void *tree, TREE_COMPARE *comp);
+</LI>
+<LI>void * <A href="sfl444.htm#tree_find_le">tree find le</A><BR>
+   (TREE **root, void *tree, TREE_COMPARE *comp);
+</LI>
+<LI>void * <A href="sfl445.htm#tree_find_gt">tree find gt</A><BR>
+   (TREE **root, void *tree, TREE_COMPARE *comp);
+</LI>
+<LI>void * <A href="sfl446.htm#tree_find_ge">tree find ge</A><BR>
+   (TREE **root, void *tree, TREE_COMPARE *comp);
+</LI>
+<LI>void <A href="sfl447.htm#tree_traverse">tree traverse</A><BR>
+   (void *tree, TREE_PROCESS *process, int method);
+</LI>
+<LI>void * <A href="sfl450.htm#tree_next">tree next</A><BR>
+   (void *tree);
+</LI>
+<LI>void * <A href="sfl451.htm#tree_prev">tree prev</A><BR>
+   (void *tree);
+</LI>
+<LI>void * <A href="sfl448.htm#tree_first">tree first</A><BR>
+   (void *tree);
+</LI>
+<LI>void * <A href="sfl449.htm#tree_last">tree last</A><BR>
+   (void *tree);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sfltree.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>SFLTREE_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>TREE_DUPLICATE</B>  </TT>
+<TD ALIGN="LEFT">-1
+<TR><TD ALIGN="LEFT"><TT><B>TREE_NULL</B>  </TT>
+<TD ALIGN="LEFT">&TREE_EMPTY
+<TR><TD ALIGN="LEFT"><TT><B>TREE_OK</B>  </TT>
+<TD ALIGN="LEFT">0
+</TABLE>
+<H4>List of Type Definitions</H4>
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Type name:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>TREE_COLOUR</B>  </TT>
+<TD ALIGN="LEFT">enum {BLACK, RED}
+<TR><TD ALIGN="LEFT"><TT><B>TREE_COMPARE</B>  </TT>
+<TD ALIGN="LEFT">int () (void *t1, void *t2)
+<TR><TD ALIGN="LEFT"><TT><B>TREE_PROCESS</B>  </TT>
+<TD ALIGN="LEFT">void () (void *t)
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl437.htm">&lt;</A>
+ | <A href="sfl439.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

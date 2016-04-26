@@ -1,0 +1,107 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>process_status</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl255.htm">&lt;</A>
+ | <A href="sfl257.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="process_status">&nbsp;</A>
+<H3><A NAME="TOC269"><TT>process_status</TT></A></H3>
+<PRE>
+#include "sflproc.h"
+int
+process_status (
+    PROCESS process)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns status of process specified by process ID. Returns one
+   of these values, or -1 if there was an error: <TABLE BORDER
+   NOWRAP> <TR><TD ALIGN="LEFT"><B>PROCESS RUNNING</B>  <TD
+   ALIGN="LEFT">Process is still running. <TR><TD
+   ALIGN="LEFT"><B>PROCESS ENDED OK</B>  <TD ALIGN="LEFT">Process
+   ended normally. <TR><TD ALIGN="LEFT"><B>PROCESS ENDED ERROR</B>
+   <TD ALIGN="LEFT">Process ended with an error status. <TR><TD
+   ALIGN="LEFT"><B>PROCESS INTERRUPTED</B>  <TD
+   ALIGN="LEFT">Process was interrupted (killed). </TABLE> In the
+   case of PROCESS_ENDED_ERROR, the global variable process_errno
+   is set to the exit code returned by the process.
+<H4>Source Code - (sflproc.c)</H4>
+<PRE>
+{
+#if (defined (__UNIX__) || defined (__OS2__))
+    int
+        status;
+    pid_t
+        return_pid;
+
+    /*  waitpid() returns 0 if the child process is still running, or the    */
+    /*  process id if it stopped.  It can also return -1 in case of error.   */
+    /*  No other return value is possible.                                   */
+
+    return_pid = waitpid (process, &amp;status, WNOHANG | WUNTRACED);
+    if (return_pid == 0)
+        return (PROCESS_RUNNING);
+    else
+    if (return_pid == process)
+      {
+        if (WIFEXITED (status))        /*  Program called exit()             */
+          {
+            process_errno = WEXITSTATUS (status);
+            if (process_errno)         /*  Treat exit (0) as normal end      */
+                return (PROCESS_ENDED_ERROR);
+            else
+                return (PROCESS_ENDED_OK);
+          }
+        else
+        if (WIFSIGNALED (status))       /*  Process was interrupted          */
+            return (PROCESS_INTERRUPTED);
+        else
+            return (PROCESS_ENDED_OK);
+      }
+    else
+        return (-1);
+
+#elif (defined (WIN32))
+    DWORD
+         status;
+
+    ASSERT (process);
+    status = WaitForSingleObject (process-&gt; process, 0);
+
+    if (status == WAIT_TIMEOUT)
+        return (PROCESS_RUNNING);
+    else
+    if (status == WAIT_OBJECT_0)
+        return (PROCESS_ENDED_OK);
+    else
+    if (status == WAIT_ABANDONED)
+        return (PROCESS_ENDED_ERROR);
+    else
+        return (-1);
+
+#elif (defined (__VMS__))
+    ASSERT (process);
+    if (process-&gt; status == 0)
+        return (PROCESS_RUNNING);
+    else
+        return (PROCESS_ENDED_OK);
+
+#else
+    return (-1);                        /*  Not supported on this system     */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl255.htm">&lt;</A>
+ | <A href="sfl257.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

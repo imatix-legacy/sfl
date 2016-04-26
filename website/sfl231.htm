@@ -1,0 +1,69 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>read_dir</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl230.htm">&lt;</A>
+ | <A href="sfl232.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="read_dir">&nbsp;</A>
+<H3><A NAME="TOC244"><TT>read_dir</TT></A></H3>
+<PRE>
+#include "sfldir.h"
+Bool
+read_dir (
+    DIRST *dir)
+</PRE>
+<H4>Synopsis</H4>
+<P> Reads the next entry from the directory stream. Returns TRUE
+   if there was more data to read; returns FALSE if there was
+   nothing more to read. Updates the fields in the directory
+   structure when it returns TRUE. The strings in DIRST all point
+   to static areas that may change after a further call to
+   read_dir. If you need persistent data (i.e. because you want to
+   collect a set of DIRSTs and then sort them, call <A href="sfl234.htm#fix_dir">fix dir</A>()
+   after each call to open_dir and read_dir. You should then call
+   <A href="sfl235.htm#free_dir">free dir</A>() to release each DIRST when you are finished.
+<H4>Source Code - (sfldir.c)</H4>
+<PRE>
+{
+    ASSERT (dir != NULL);
+
+#if (defined (__UNIX__) || defined (__VMS_XOPEN) || defined (__OS2__))
+    if ((dir-&gt; _dir_entry =
+        (struct Dirent *) readdir (dir-&gt; _dir_handle)) != NULL)
+        return (populate_entry (dir));
+    else
+
+#elif (defined (WIN32))
+    if (FindNextFile (dir-&gt; _dir_handle, &amp;dir-&gt; _dir_entry))
+        return (populate_entry (dir));
+    else
+
+#elif (defined (_MSC_VER))
+    if (_dos_findnext (&amp;dir-&gt; _dir_entry) == 0)
+        return (populate_entry (dir));
+    else
+
+#elif (defined (__TURBOC__) || defined (__DJGPP__))
+    if (findnext (&amp;dir-&gt; _dir_entry) == 0)
+        return (populate_entry (dir));
+    else
+#endif
+
+    return (FALSE);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl230.htm">&lt;</A>
+ | <A href="sfl232.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

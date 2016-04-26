@@ -1,0 +1,50 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>process_close</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl257.htm">&lt;</A>
+ | <A href="sfl259.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="process_close">&nbsp;</A>
+<H3><A NAME="TOC271"><TT>process_close</TT></A></H3>
+<PRE>
+#include "sflproc.h"
+void
+process_close (
+    PROCESS process)
+</PRE>
+<H4>Synopsis</H4>
+<P>You should call this function when a process has ended
+   normally, if you did not specify the wait option when calling
+   the <A href="sfl252.htm#process_create">process create</A>() function. On some systems, each
+   created process uses some memory. <A href="sfl258.htm#process_close">process close</A>()
+   guarantees that this memory is correctly freed. Does nothing if
+   the process handle is NULL.
+<H4>Source Code - (sflproc.c)</H4>
+<PRE>
+{
+#if (defined (WIN32))
+    if (process)
+      {
+        mem_free (process-&gt; envd);
+        mem_free (process);
+      }
+#elif (defined (__VMS__))
+    mem_free (process);
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl257.htm">&lt;</A>
+ | <A href="sfl259.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

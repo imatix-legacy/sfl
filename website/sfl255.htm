@@ -1,0 +1,52 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>process_close_io</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl254.htm">&lt;</A>
+ | <A href="sfl256.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="process_close_io">&nbsp;</A>
+<H3><A NAME="TOC268"><TT>process_close_io</TT></A></H3>
+<PRE>
+#include "sflproc.h"
+void
+process_close_io (PROCESS_DATA *procinfo)
+</PRE>
+<H4>Synopsis</H4>
+<P>Closes any file handles opened for the process. Use this
+   function after you're finished with a <A href="sfl251.htm#process_create_full">process create full</A>()
+   call.
+<H4>Source Code - (sflproc.c)</H4>
+<PRE>
+{
+    if (procinfo-&gt; in &gt;= 0)
+      {
+        close (procinfo-&gt; in);
+        procinfo-&gt; in = NULL_HANDLE;
+      }
+    if (procinfo-&gt; out &gt;= 0)
+      {
+        close (procinfo-&gt; out);
+        procinfo-&gt; out = NULL_HANDLE;
+      }
+    if (procinfo-&gt; err &gt;= 0)
+      {
+        close (procinfo-&gt; err);
+        procinfo-&gt; err = NULL_HANDLE;
+      }
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl254.htm">&lt;</A>
+ | <A href="sfl256.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

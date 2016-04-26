@@ -1,0 +1,53 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>console_capture</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl30.htm">&lt;</A>
+ | <A href="sfl32.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="console_capture">&nbsp;</A>
+<H3><A NAME="TOC44"><TT>console_capture</TT></A></H3>
+<PRE>
+#include "sflcons.h"
+int
+console_capture (const char *filename, char mode)
+</PRE>
+<H4>Synopsis</H4>
+<P>Starts capturing console output to the specified file. If the
+   mode is 'w', creates an empty capture file. If the mode is 'a',
+   appends to any existing data. Returns 0 if okay, -1 if there
+   was an error - in this case you can test the value of errno. If
+   the filename is NULL or an empty string, closes any current
+   capture file.
+<H4>Source Code - (sflcons.c)</H4>
+<PRE>
+{
+    if (console_file)
+      {
+        <A href="sfl102.htm#file_close">file close</A> (console_file);
+        console_file = NULL;
+      }
+    if (filename &amp;&amp; *filename)
+      {
+        ASSERT (mode == 'w' || mode == 'a');
+        console_file = <A href="sfl100.htm#file_open">file open</A> (filename, mode);
+        if (console_file == NULL)
+            return (-1);
+      }
+    return (0);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl30.htm">&lt;</A>
+ | <A href="sfl32.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

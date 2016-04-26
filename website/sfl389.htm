@@ -1,0 +1,94 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>sym_sort_table</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl388.htm">&lt;</A>
+ | <A href="sfl390.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="sym_sort_table">&nbsp;</A>
+<H3><A NAME="TOC402"><TT>sym_sort_table</TT></A></H3>
+<PRE>
+#include "sflsymb.h"
+void
+sym_sort_table (SYMTAB *table, symsort sort_function)
+</PRE>
+<H4>Synopsis</H4>
+<P>Sorts a symbol table using the qsort library function. To
+   access the symbol table, use the next and prev symbol pointers.
+   If the sort_function is NULL, sorts on the symbol name.
+<H4>Examples</H4>
+<PRE>
+    int compare (const void *sym1, const void *sym2)
+    {
+        return (strcmp (*(SYMBOL **) sym1)-&gt; value,
+                        *(SYMBOL **) sym2)-&gt; value));
+    }
+    SYMTAB
+        *table;
+    SYMBOL
+        *symbol;
+
+    table = sym_create_table ();
+    sym_create_symbol (table, "Symbol 1", "A");
+    sym_create_symbol (table, "Symbol 2", "D");
+    sym_create_symbol (table, "Symbol 4", "B");
+    sym_create_symbol (table, "Symbol 3", "C");
+    sym_sort_table (table, compare);
+    for (symbol = symtab-&gt; symbols; symbol; symbol = symbol-&gt; next)
+        printf ("Symbol %s = %s\n", symbol-&gt; name, symbol-&gt; value);
+    sym_delete_table (table);
+</PRE>
+<H4>Source Code - (sflsymb.c)</H4>
+<PRE>
+{
+    SYMBOL
+        *symbol,
+        **array;
+    int
+        index;
+
+    ASSERT (table);
+
+    if (table-&gt; size == 0)
+        return;
+
+    array = mem_alloc (table-&gt; size * sizeof (SYMBOL *));
+    if (array == NULL)
+        return;                         /*  Not enough memory                */
+
+    /*  Build sorting array                                                  */
+    for (symbol = table-&gt; symbols, index = 0;
+         symbol &amp;&amp; index &lt; table-&gt; size;
+         symbol = symbol-&gt; next, index++)
+        array [index] = symbol;
+
+    if (sort_function == NULL)
+        sort_function = sym_sort_by_name;
+
+    qsort ((void *) array, table-&gt; size, sizeof (SYMBOL *), sort_function);
+
+    /*  Re-order symbol table links                                          */
+    table-&gt; symbols = array [0];
+    for (index = 0; index &lt; table-&gt; size; index++)
+      {
+        symbol = array [index];
+        symbol-&gt; prev = (index &gt; 0)? array [index -1]: NULL;
+        symbol-&gt; next = (index &lt; table-&gt; size - 1)? array [index + 1]: NULL;
+      }
+    mem_free (array);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl388.htm">&lt;</A>
+ | <A href="sfl390.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

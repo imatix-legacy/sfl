@@ -1,0 +1,69 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>default_extension</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl116.htm">&lt;</A>
+ | <A href="sfl118.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="default_extension">&nbsp;</A>
+<H3><A NAME="TOC130"><TT>default_extension</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+char *
+default_extension (
+    char *dest,
+    const char *src,
+    const char *ext)
+</PRE>
+<H4>Synopsis</H4>
+<P>Copies src to dest and adds ext if necessary. Returns dest.
+   Dest must be large enough for a fully-formatted filename;
+   define it as char [FILE_NAME_MAX + 1]. The ext argument can
+   start with or without a dot. If ext is null or empty, does
+   nothing.
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+    int len, i;
+    char *ptr;
+
+    ASSERT (dest);
+    ASSERT (src);
+
+    if (dest != src)                    /*  Copy src to dest if not same     */
+        strcpy (dest, src);
+
+    if (ext != NULL &amp;&amp; *ext != 0)
+      {
+        len = strlen (dest);
+        for (i = len - 1, ptr = dest + i; i &gt;= 0; i--, ptr--)
+            if (*ptr == '\\' || *ptr == '/' || *ptr == '.')
+                break;
+
+        if (i &lt; 0 || *ptr != '.')
+          {
+            if (*ext != '.')
+              {
+                dest [len++] = '.';
+                dest [len] = '\0';
+              }
+            strcat (dest + len, ext);
+          }
+      }
+    return (dest);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl116.htm">&lt;</A>
+ | <A href="sfl118.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,57 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>strunique</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl287.htm">&lt;</A>
+ | <A href="sfl289.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="strunique">&nbsp;</A>
+<H3><A NAME="TOC301"><TT>strunique</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+char *
+strunique (
+    char *string,
+    char  unique)
+</PRE>
+<H4>Synopsis</H4>
+<P>Reduces chains of some character to a single instances. For
+   example: replace multiple spaces by one space. Returns string.
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+    char
+        *from,
+        *to;
+
+    ASSERT (string);
+    if (strnull (string))
+        return (string);                /*  Get rid of special cases         */
+
+    from = string + 1;
+    to   = string;
+    while (*from)
+      {
+        if (*from == unique &amp;&amp; *to == unique)
+            from++;
+        else
+            *++to = *from++;
+      }
+    *++to = '\0';
+    return (string);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl287.htm">&lt;</A>
+ | <A href="sfl289.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

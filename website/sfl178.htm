@@ -1,0 +1,65 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>linebuf_prev</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl177.htm">&lt;</A>
+ | <A href="sfl179.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="linebuf_prev">&nbsp;</A>
+<H3><A NAME="TOC191"><TT>linebuf_prev</TT></A></H3>
+<PRE>
+#include "sfllbuf.h"
+char *
+linebuf_prev (LINEBUF *buffer, DESCR *descr, const char *curline)
+</PRE>
+<H4>Synopsis</H4>
+<P>Fetches the previous line in the buffer, using the pointer that
+   was returned by <A href="sfl177.htm#linebuf_last">linebuf last</A>(). Returns NULL if there are
+   no more lines in the buffer, or a pointer for further calls.
+   The line is stored in the supplied descriptor, and is truncated
+   if the descriptor is too small.
+<H4>Source Code - (sfllbuf.c)</H4>
+<PRE>
+{
+    ASSERT (buffer);
+    ASSERT (descr);
+    ASSERT (curline);
+
+    if (curline == buffer-&gt; tail)
+        return (NULL);                  /*  We're at the start               */
+    else
+      {
+        /*  We're pointing to the byte after the line's null byte            */
+        buffer_dec (curline);           /*  Bump down to null                */
+        ASSERT (*curline == '\0');
+
+        do
+          {
+            buffer_dec (curline);       /*  And now look for previous null   */
+            if (*curline == '\0')
+              {
+                buffer_inc (curline);   /*  Bump up to start of string       */
+                break;
+              }
+          }
+        until (curline == buffer-&gt; tail);
+
+        get_line (buffer, descr, curline);
+        return ((char *) curline);
+      }
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl177.htm">&lt;</A>
+ | <A href="sfl179.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

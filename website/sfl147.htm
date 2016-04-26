@@ -1,0 +1,138 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>ini_scan_section</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl146.htm">&lt;</A>
+ | <A href="sfl148.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="ini_scan_section">&nbsp;</A>
+<H3><A NAME="TOC160"><TT>ini_scan_section</TT></A></H3>
+<PRE>
+#include "sflini.h"
+Bool
+ini_scan_section (
+    FILE *inifile,
+    char **keyword,
+    char **value)
+</PRE>
+<H4>Synopsis</H4>
+<P> Scans the current section of the ini file, and returns a
+   keyword and value if such was found. Returns the address of
+   these values in the supplied arguments. The addresses point to
+   static values that are overwritten with each call. Returns TRUE
+   when a keyword/value pair is found. Returns FALSE if a new
+   section name or end of file is found. In the first case, sets
+   the keyword to the section name; in the second case sets the
+   keyword to NULL. Ignores blank and comment lines, and lines
+   that look like junk. Keyword and section names are returned as
+   lower-case; values are returned exactly as specified in the ini
+   file.
+<H4>Source Code - (sflini.c)</H4>
+<PRE>
+{
+    int
+        remaining;                      /*  Space remaining in line buffer   */
+    char
+        *first,
+        *valueptr,
+        *lineptr;
+
+    /*  Read through file until we find what we are looking for              */
+    while (<A href="sfl103.htm#file_read">file read</A> (inifile, iniline))
+      {
+        <A href="sfl285.htm#strcrop">strcrop</A> (iniline);
+        if (strnull (iniline))
+            continue;                   /*  Skip empty lines                 */
+
+        /*  Calculate space remaining in buffer after this line; we need to
+         *  know this later if we start reading continuation lines.
+         */
+        remaining = LINE_MAX - strlen (iniline);
+
+        first = <A href="sfl280.htm#strskp">strskp</A> (iniline);       /*  Skip leading spaces              */
+        if (*first == ';' || *first == '#' || *first == 0)
+            continue;                   /*  Comment line                     */
+        else
+        if (*first == '!')
+          {
+            first = <A href="sfl280.htm#strskp">strskp</A> (first + 1);
+            <A href="sfl458.htm#trace">trace</A> (first);
+          }
+        else                            /*  Have name = value                */
+        if ((valueptr = strchr (first, '=')) != NULL)
+          {
+            *valueptr++ = '\0';
+            strcpy (ini_keyword, <A href="sfl285.htm#strcrop">strcrop</A> (<A href="sfl283.htm#strlwc">strlwc</A> (first)));
+            while (*valueptr == ' ')
+                valueptr++;             /*    and leading spaces             */
+
+            if (*valueptr == '"')
+              {                         /*  Have value in quotes             */
+                /*  Get continuation lines as necessary and possible         */
+                first = &amp;strlast (valueptr);
+                while (*first == '-' &amp;&amp; remaining &gt; 0)
+                  {
+                    if (!<A href="sfl104.htm#file_readn">file readn</A> (inifile, first, remaining))
+                        break;                  /*  Abrubt end of file       */
+                    <A href="sfl285.htm#strcrop">strcrop</A> (first);
+                    remaining -= strlen (first) - 1;
+                    first     += strlen (first) - 1;
+                  }
+                /*  Now find closing quote and terminate value there         */
+                for (lineptr = valueptr + 1; *lineptr; lineptr++)
+                  {
+                    if (*lineptr == '\\')
+                        lineptr++;      /*  Ignore next char                 */
+                    else
+                    if (*lineptr == '"')
+                      {
+                        lineptr [1] = '\0';
+                        break;          /*  Closing quote, end of value      */
+                      }
+                  }
+              }
+            else
+              {                         /*  Have unquoted value              */
+                <A href="sfl294.htm#strconvch">strconvch</A> (valueptr, ';', '\0');
+                <A href="sfl294.htm#strconvch">strconvch</A> (valueptr, '#', '\0');
+              }
+            <A href="sfl285.htm#strcrop">strcrop</A> (valueptr);
+            strcpy (ini_value, valueptr);
+            *keyword = ini_keyword;
+            *value   = ini_value;
+            return (TRUE);              /*  Found keyword = value            */
+          }
+        else
+        if (sscanf (first, "[%[^]]", ini_section) == 1)
+          {
+            *keyword = <A href="sfl283.htm#strlwc">strlwc</A> (ini_section);
+            *value   = NULL;
+            return (FALSE);             /*  New section name                 */
+          }
+        else
+        if (streq (first, "[]"))        /*  Allow empty section names        */
+          {
+            strcpy (ini_section, "");
+            *keyword = ini_section;
+            *value   = NULL;
+            return (FALSE);             /*  New section name                 */
+          }
+      }
+    *keyword = NULL;
+    return (FALSE);                     /*  End of file                      */
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl146.htm">&lt;</A>
+ | <A href="sfl148.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,120 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>process_alarm</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl259.htm">&lt;</A>
+ | <A href="sfl261.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="process_alarm">&nbsp;</A>
+<H3><A NAME="TOC273"><TT>process_alarm</TT></A></H3>
+<PRE>
+#include "sflproc.h"
+Bool
+process_alarm (long delay)
+</PRE>
+<H4>Synopsis</H4>
+<P>Sets a system timer to raise a SIGALRM after a specified
+   interval in milliseconds. Returns TRUE if the timer could be
+   created and FALSE if there were insufficient resources, or if
+   the system does not support timers. Permits a single alarm for
+   the current process: any alarm that was still pending when you
+   called this function is annulled. The implementation is system-
+   dependent and highly non-portable. Under UNIX we use the
+   setitimer() system function, which is clean and simple. BeOS
+   does not support this, so we use the good old alarm() function.
+   Under 16-bit Windows we use the SetTimer() call. This does not
+   work in 32-bit console applications. Under 32-bit Windows we
+   use the 'multimedia' timer, which provides better resolution
+   and does work in console applications. In both these cases we
+   cache the id of the last-created alarm (and kill it before each
+   new request), to avoid multiple active alarms. It is not a good
+   idea to create too many concurrent timers; after 16 or so the
+   alarms start to fail. This is not supposed to happen with MM
+   timers, but does anyway. Under Windows, SIGALRM does not exist.
+   Since signal() only accepts one of a small set of fixed
+   signals, we hijack the SIGFPE signal... It's a compromise and
+   requires that any code which expects a SIGALRM does not use
+   SIGFPE. This can be tweaked in prelude.h. Under OS/2 we use the
+   alarm() function which is accurate to one second only. The
+   required accuracy of timing is not easily achieved, so
+   <A href="sfl260.htm#process_alarm">process alarm</A>() rounds down to whole seconds (except if
+   rounding down would give 0, in which case it will delay 1
+   second). This will probably cause problems in code applications
+   that depends on sub-second timing resolution. Under OpenVMS 7
+   and later we use the setitimer() function as for UNIX. Under
+   OpenVMS 6 and earlier we use the alarm() function as for OS/2.
+   This code may be tuned to use native VMS system calls.
+<H4>Source Code - (sflproc.c)</H4>
+<PRE>
+{
+#if ((defined (__UNIX__) &amp;&amp; !defined (__UTYPE_BEOS)) || defined (__VMS_XOPEN))
+    struct itimerval
+        timeout;                        /*  Timeout for setitimer            */
+
+    /*  If the system supports interval timers, ask for a signal             */
+    timeout.it_interval.tv_sec  = 0;
+    timeout.it_interval.tv_usec = 0;
+    timeout.it_value.tv_sec     = delay / 1000;
+    timeout.it_value.tv_usec    = delay % 1000 * 1000L;
+    setitimer (ITIMER_REAL, &amp;timeout, 0);
+    return (TRUE);
+
+#elif (defined (__OS2__) || defined (__VMS__) || defined (__UTYPE_BEOS))
+    /*  Since we use alarm() for our timeout, we can only time to            */
+    /*  the nearest second, and alarm(0) turns off the alarm.                */
+    /*  NOTE: we also have only one timer -- if alarm() is called while      */
+    /*  the alarm is active, then it will be reset to the new value, and     */
+    /*  only a single SIGALRM will be generated.                             */
+    delay = (delay &lt; 1000) ? 1 : (delay / 1000);
+    alarm (delay);
+    return (TRUE);
+
+#elif (defined (__WINDOWS__))
+#   if (defined (WIN32))
+#   pragma comment (lib, "winmm")       /*  Link-in multimedia library       */
+    /*  The multimedia timer gives the best accuracy, and works in console   */
+    /*  applications                                                         */
+    int rc;
+    if (last_timer)
+        __try {
+            rc = timeKillEvent (last_timer);
+        }
+        __except (1) {
+            <A href="sfl32.htm#coprintf">coprintf</A> ("timeKillEvent %d failed", last_timer);
+        }
+    __try {
+        last_timer = timeSetEvent (delay, 50, handle_timer, 0, TIME_ONESHOT);
+    }
+    __except (1) {
+        <A href="sfl32.htm#coprintf">coprintf</A> ("timeSetEvent %ld failed", delay);
+    }
+    return (TRUE);
+
+#   else
+    /*  But the normal Windows timer will do if we're in 16 bits             */
+    if (last_timer)
+        KillTimer ((HWND) NULL, last_timer);
+
+    last_timer = SetTimer ((HWND) NULL, 0, (UINT) delay, handle_timer);
+    return (TRUE);
+#   endif
+
+#else
+    return (FALSE);                     /*  No timers - function failed      */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl259.htm">&lt;</A>
+ | <A href="sfl261.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

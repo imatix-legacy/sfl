@@ -1,0 +1,50 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>day_slot_set</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl272.htm">&lt;</A>
+ | <A href="sfl274.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="day_slot_set">&nbsp;</A>
+<H3><A NAME="TOC286"><TT>day_slot_set</TT></A></H3>
+<PRE>
+#include "sflslot.h"
+int
+day_slot_set (byte *range, int min_from, int min_to)
+</PRE>
+<H4>Synopsis</H4>
+<P>Sets the slots for the specified minute range. If min_to is
+   zero, it is ignored; only the slot for min_from is set. Returns
+   0 if okay, -1 if the specified range is invalid.
+<H4>Source Code - (sflslot.c)</H4>
+<PRE>
+{
+    if (min_to == 0)
+        min_to = min_from;              /*  Range is just one minute         */
+
+    if (min_from &gt; min_to)
+        return (-1);                    /*  Bad range                        */
+
+    while (min_from &lt;= min_to)          /*  Find and set each bit            */
+      {
+        ASSERT (min_from &gt;= 0 &amp;&amp; min_from &lt; MAX_MIN);
+        range [BYTE (min_from)] |= BIT (min_from);
+        min_from++;
+      }
+    return (0);                         /*  No errors                        */
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl272.htm">&lt;</A>
+ | <A href="sfl274.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

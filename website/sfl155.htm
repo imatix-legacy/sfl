@@ -1,0 +1,51 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>srcdoc W (sflini.c 649): function ini_dyn_default not known</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl154.htm">&lt;</A>
+ | <A href="sfl156.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="srcdoc">&nbsp;</A>
+<H3><A NAME="TOC168"><TT>srcdoc W (sflini.c 649): function ini_dyn_default not known</TT></A></H3>
+<PRE>
+#include "(unknown)"
+char *
+ini_dyn_default (
+    SYMTAB *symtab,
+    const char *section,
+    const char *keyword,
+    const char *default_value)
+</PRE>
+<H4>Synopsis</H4>
+<P>As ini_dyn_value, but creates an entry with the default value
+   if none already exists.
+<H4>Source Code - (sflini.c)</H4>
+<PRE>
+{
+    ASSERT (section);
+    if (keyword &amp;&amp; *keyword)
+        snprintf (ini_keyword, sizeof (ini_keyword), "%s:%s", section, keyword);
+    else
+        strncpy  (ini_keyword, section, sizeof (ini_keyword));
+
+    <A href="sfl283.htm#strlwc">strlwc</A> (ini_keyword);
+    if (!<A href="sfl378.htm#sym_lookup_symbol">sym lookup symbol</A> (symtab, ini_keyword))
+        <A href="sfldoc.htm#sym_assume_symbol">sym assume symbol</A> (symtab, ini_keyword, default_value);
+
+    return (<A href="sfl385.htm#sym_get_value">sym get value</A> (symtab, ini_keyword, default_value));
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl154.htm">&lt;</A>
+ | <A href="sfl156.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

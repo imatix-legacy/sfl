@@ -1,0 +1,151 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>conv_date_str</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl37.htm">&lt;</A>
+ | <A href="sfl39.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="conv_date_str">&nbsp;</A>
+<H3><A NAME="TOC51"><TT>conv_date_str</TT></A></H3>
+<PRE>
+#include "sflconv.h"
+char *
+conv_date_str (
+    long date,
+    int  flags,
+    int  format,
+    int  order,
+    char datesep,
+    int  width)
+</PRE>
+<H4>Synopsis</H4>
+<P>Converts a date to a string. The format argument defines how
+   the date is shown: <TABLE BORDER NOWRAP> <TR><TD
+   ALIGN="LEFT"><B>DATE YMD COMPACT</B>  <TD ALIGN="LEFT">ddmmyy
+   <TR><TD ALIGN="LEFT"><B>DATE YMD SLASH</B>  <TD
+   ALIGN="LEFT">dd/mm/yy <TR><TD ALIGN="LEFT"><B>DATE YMD
+   SPACE</B>  <TD ALIGN="LEFT">dd mm yy <TR><TD
+   ALIGN="LEFT"><B>DATE YMD COMMA</B>  <TD ALIGN="LEFT">dd mm, yy
+   (DM,Y or MD,Y or Y,MD) <TR><TD ALIGN="LEFT"><B>DATE YM
+   COMPACT</B>  <TD ALIGN="LEFT">mmyy <TR><TD ALIGN="LEFT"><B>DATE
+   YM SLASH</B>  <TD ALIGN="LEFT">mm/yy <TR><TD
+   ALIGN="LEFT"><B>DATE YM SPACE</B>  <TD ALIGN="LEFT">mm yy
+   <TR><TD ALIGN="LEFT"><B>DATE MD COMPACT</B>  <TD
+   ALIGN="LEFT">ddmm <TR><TD ALIGN="LEFT"><B>DATE MD SLASH</B>
+   <TD ALIGN="LEFT">dd/mm <TR><TD ALIGN="LEFT"><B>DATE MD
+   SPACE</B>  <TD ALIGN="LEFT">dd mm </TABLE> The date order
+   (year/month/day) is normally supplied in the order argument.
+   However, the date flags can override this. The flags are:
+   <TABLE BORDER NOWRAP> <TR><TD ALIGN="LEFT"><B>FLAG D DD AS
+   D</B>  <TD ALIGN="LEFT">Show day without leading zero <TR><TD
+   ALIGN="LEFT"><B>FLAG D MM AS M</B>  <TD ALIGN="LEFT">Show month
+   without leading zero <TR><TD ALIGN="LEFT"><B>FLAG D MONTH
+   ABC</B>  <TD ALIGN="LEFT">Show month as letters (fullname if
+   width &gt; 16) <TR><TD ALIGN="LEFT"><B>FLAG D CENTURY</B>  <TD
+   ALIGN="LEFT">Show year as four digits <TR><TD
+   ALIGN="LEFT"><B>FLAG D UPPERCASE</B>  <TD ALIGN="LEFT">Month
+   name in uppercase <TR><TD ALIGN="LEFT"><B>FLAG D ORDER DMY</B>
+   <TD ALIGN="LEFT">Order is DMY for this date <TR><TD
+   ALIGN="LEFT"><B>FLAG D ORDER MDY</B>  <TD ALIGN="LEFT">Order is
+   MDY for this date <TR><TD ALIGN="LEFT"><B>FLAG D ORDER YMD</B>
+   <TD ALIGN="LEFT">Order is YMD for this date </TABLE> Returns a
+   pointer to a static area holding the string, or NULL if there
+   was an error (for instance, formatted date greater than width).
+<H4>Source Code - (sflcvds.c)</H4>
+<PRE>
+{
+    static char *format_table [] = {
+        "ymd",    "dmy",    "mdy",      /*  DATE_YMD_COMPACT                 */
+        "y/m/d",  "d/m/y",  "m/d/y",    /*  DATE_YMD_DELIM                   */
+        "y m d",  "d m y",  "m d y",    /*  DATE_YMD_SPACE                   */
+        "y, m d", "d m, y", "m d, y",   /*  DATE_YMD_COMMA                   */
+        "ym",     "my",     "my",       /*  DATE_YM_COMPACT                  */
+        "y/m",    "m/y",    "m/y",      /*  DATE_YM_DELIM                    */
+        "y m",    "m y",    "m y",      /*  DATE_YM_SPACE                    */
+        "md",     "dm",     "md",       /*  DATE_MD_COMPACT                  */
+        "m/d",    "d/m",    "m/d",      /*  DATE_MD_DELIM                    */
+        "m d",    "d m",    "m d"       /*  DATE_MD_SPACE                    */
+    };
+    char
+        *format_ptr,                    /*  Scan through format string       */
+        delim [2],                      /*  Delimiter character              */
+        picture [14],                   /*  Largest picture: dd mmmm, yyyy   */
+        ch;                             /*  Next char in format string       */
+    int
+        index,
+        date_order = order;             /*  Order to use                     */
+
+    ASSERT (format &gt;= DATE_FORMAT_FIRST &amp;&amp; format &lt;= DATE_FORMAT_LAST);
+    ASSERT (order  &gt;= DATE_ORDER_FIRST  &amp;&amp; order  &lt;= DATE_ORDER_LAST);
+
+    conv_reason = 0;                    /*  No conversion errors so far      */
+
+    if (flags &amp; FLAG_D_ORDER_YMD)
+        date_order = DATE_ORDER_YMD;
+    else
+    if (flags &amp; FLAG_D_ORDER_DMY)
+        date_order = DATE_ORDER_DMY;
+    else
+    if (flags &amp; FLAG_D_ORDER_MDY)
+        date_order = DATE_ORDER_MDY;
+
+    /*  Get index into table                                                 */
+    index = format * 3 + date_order - 1;
+
+    /*  Now build-up picture according to format string                      */
+    strclr (picture);
+    for (format_ptr = format_table [index]; *format_ptr; format_ptr++)
+      {
+        ch = *format_ptr;
+        switch (ch)
+          {
+            case 'y':
+                strcat (picture, flags &amp; FLAG_D_CENTURY? "yyyy": "yy");
+                break;
+
+            case 'm':
+                if (flags &amp; FLAG_D_MONTH_ABC)
+                    if (width &gt; 16)
+                        strcat (picture, flags &amp; FLAG_D_UPPER? "MMMM": "mmmm");
+                    else
+                        strcat (picture, flags &amp; FLAG_D_UPPER? "MMM": "mmm");
+                else
+                    strcat (picture, flags &amp; FLAG_D_MM_AS_M? "m": "mm");
+                break;
+
+            case 'd':
+                strcat (picture, flags &amp; FLAG_D_DD_AS_D? "d": "dd");
+                break;
+
+            case '/':
+                ch = datesep;           /*  Use supplied date separator      */
+            default:
+                delim [0] = ch;
+                delim [1] = 0;
+                strcat (picture, delim);
+          }
+      }
+    format_ptr = <A href="sfl37.htm#conv_date_pict">conv date pict</A> (date, picture);
+    if (strlen (format_ptr) &gt; (unsigned) width)
+      {
+        conv_reason = CONV_ERR_DATE_OVERFLOW;
+        return (NULL);
+      }
+    else
+        return (format_ptr);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl37.htm">&lt;</A>
+ | <A href="sfl39.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

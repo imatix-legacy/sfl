@@ -1,0 +1,54 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>safe_gmtime</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl85.htm">&lt;</A>
+ | <A href="sfl87.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="safe_gmtime">&nbsp;</A>
+<H3><A NAME="TOC99"><TT>safe_gmtime</TT></A></H3>
+<PRE>
+#include "sfldate.h"
+struct tm
+*safe_gmtime (const time_t *time_secs)
+</PRE>
+<H4>Synopsis</H4>
+<P>Handles time_t values that exceed 2038. The standard C gmtime()
+   function fails on most systems when the date passes 2038.
+<H4>Source Code - (sfldate.c)</H4>
+<PRE>
+{
+    qbyte
+        adjusted_time;
+    struct tm
+        *time_struct;
+    int
+        adjust_years = 0;
+
+    adjusted_time = (qbyte) *time_secs;
+    while (adjusted_time &gt; LONG_MAX)
+      {
+        adjust_years  += 20;
+        adjusted_time -= 631152000;     /*  Nbr seconds in 20 years          */
+      }
+    time_struct = gmtime ((const time_t *) &amp;adjusted_time);
+    if (time_struct)                    /*  gmtime may be unimplemented      */
+        time_struct-&gt; tm_year += adjust_years;
+
+    return (time_struct);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl85.htm">&lt;</A>
+ | <A href="sfl87.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,91 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>coprintf</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl31.htm">&lt;</A>
+ | <A href="sfl33.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="coprintf">&nbsp;</A>
+<H3><A NAME="TOC45"><TT>coprintf</TT></A></H3>
+<PRE>
+#include "sflcons.h"
+int
+coprintf (const char *format, ...)
+</PRE>
+<H4>Synopsis</H4>
+<P>As printf() but sends output to the current console. This is by
+   default the stdout device, unless you used <A href="sfl27.htm#console_send">console send</A>()
+   to direct console output to some function. A newline is added
+   automatically.
+<H4>Source Code - (sflcons.c)</H4>
+<PRE>
+{
+    va_list
+        argptr;                         /*  Argument list pointer            */
+    int
+        fmtsize = 0;                    /*  Size of formatted line           */
+    char
+        *formatted = NULL,              /*  Formatted line                   */
+        *prefixed = NULL;               /*  Prefixed formatted line          */
+
+    if (console_active)
+      {
+        formatted = mem_alloc (LINE_MAX + 1);
+        if (!formatted)
+            return (0);
+        va_start (argptr, format);      /*  Start variable args processing   */
+        vsnprintf (formatted, LINE_MAX, format, argptr);
+        va_end (argptr);                /*  End variable args processing     */
+        switch (console_mode)
+          {
+            case CONSOLE_DATETIME:
+                xstrcpy_debug ();
+                prefixed = <A href="sfl296.htm#xstrcpy">xstrcpy</A> (NULL, date_str (), " ", time_str (), ": ",
+                                    formatted, NULL);
+                break;
+            case CONSOLE_TIME:
+                xstrcpy_debug ();
+                prefixed = <A href="sfl296.htm#xstrcpy">xstrcpy</A> (NULL, time_str (), ": ", formatted, NULL);
+                break;
+          }
+        if (console_file)
+          {
+            <A href="sfl105.htm#file_write">file write</A> (console_file, prefixed? prefixed: formatted);
+            fflush (console_file);
+          }
+        if (console_fct)
+            (console_fct) (prefixed? prefixed: formatted);
+
+        if (console_echo)
+          {
+            fprintf (stdout, "%s", prefixed? prefixed: formatted);
+            fprintf (stdout, "\n");
+            fflush  (stdout);
+          }
+        if (prefixed)
+          {
+            fmtsize = strlen (prefixed);
+            mem_free (prefixed);
+          }
+        else
+            fmtsize = strlen (formatted);
+
+        mem_free (formatted);
+      }
+    return (fmtsize);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl31.htm">&lt;</A>
+ | <A href="sfl33.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

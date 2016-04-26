@@ -1,0 +1,98 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>address_end_point</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl346.htm">&lt;</A>
+ | <A href="sfl348.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="address_end_point">&nbsp;</A>
+<H3><A NAME="TOC360"><TT>address_end_point</TT></A></H3>
+<PRE>
+#include "sflsock.h"
+int
+address_end_point (
+    const char *host,                   /*  Name of host, "" = localhost     */
+    const char *service,                /*  Service name or port as string   */
+    const char *protocol,               /*  Protocol "tcp" or "udp"          */
+    struct sockaddr_in *sin             /*  Block for formatted address      */
+)
+</PRE>
+<H4>Synopsis</H4>
+<P> Formats an address block (struct sockaddr_in) for the
+   specified host and service (port) information. Returns 0 if
+   okay, SOCKET_ERROR if there was an error, in which case you can
+   call <A href="sfl355.htm#connect_error">connect error</A> () to get the reason for the error. This
+   may be one of: <TABLE BORDER NOWRAP> <TR><TD ALIGN="LEFT"><B>IP
+   NOSOCKETS</B>  <TD ALIGN="LEFT">Sockets not supported on this
+   system <TR><TD ALIGN="LEFT"><B>IP BADHOST</B>  <TD
+   ALIGN="LEFT">Host is not known </TABLE>
+<H4>Source Code - (sflsock.c)</H4>
+<PRE>
+{
+#if (defined (DOES_SOCKETS))
+    struct hostent
+        *phe;                           /*  Host information entry           */
+    struct servent
+        *pse;                           /*  Service information entry        */
+    char
+        hostname [MAXHOSTNAMELEN + 1];  /*  Name of this system              */
+    int
+        feedback = 0;                   /*  Assume everything works          */
+
+    ASSERT (service &amp;&amp; *service);
+    ASSERT (protocol &amp;&amp; *protocol);
+    ASSERT (sin);
+
+    connect_error_value = IP_NOERROR;   /*  Assume no errors                 */
+    memset ((void *) sin, 0, sizeof (*sin));
+    sin-&gt; sin_family = AF_INET;
+
+    /*  Map service name to a port number                                    */
+    pse = getservbyname (service, protocol);
+    if (pse)
+        sin-&gt; sin_port = htons ((short) (ntohs (pse-&gt; s_port)));
+    else
+        sin-&gt; sin_port = htons ((short) (atoi (service)));
+
+    /*  Map host name to IP address, allowing for dotted decimal             */
+    if (host &amp;&amp; strused (host))
+        strcpy (hostname, host);
+    else
+        strcpy (hostname, "127.0.0.1");
+
+    /*  Check if it's a valid IP address first                               */
+    sin-&gt; sin_addr.s_addr = inet_addr (hostname);
+    if (sin-&gt; sin_addr.s_addr == INADDR_NONE)
+      {
+        /*  Not a dotted address -- try to translate the name                */
+        phe = gethostbyname (hostname);
+        if (phe)
+            memcpy ((void *) &amp;sin-&gt; sin_addr, phe-&gt; h_addr, phe-&gt; h_length);
+        else
+          {                             /*  Cannot map to host               */
+            connect_error_value = IP_BADHOST;
+            feedback = (int) SOCKET_ERROR;
+          }
+      }
+    return (feedback);
+
+#else
+    connect_error_value = IP_NOSOCKETS;
+    return ((int) SOCKET_ERROR);        /*  Sockets not supported            */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl346.htm">&lt;</A>
+ | <A href="sfl348.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

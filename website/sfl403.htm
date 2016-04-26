@@ -1,0 +1,96 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>http_query2strt</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl402.htm">&lt;</A>
+ | <A href="sfl404.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="http_query2strt">&nbsp;</A>
+<H3><A NAME="TOC416"><TT>http_query2strt</TT></A></H3>
+<PRE>
+#include "sflhttp.h"
+char **
+http_query2strt (
+    const char *original_query)
+</PRE>
+<H4>Synopsis</H4>
+<P>Parses a HTTP query string, building an array of strings of the
+   format "name=value". The query string is assumed to be in
+   escaped format, so <A href="sfl401.htm#http_unescape">http unescape</A>() is always applied to the
+   query string. Within the query string, field=value pairs are
+   delimited by &amp; or ;. Returns a pointer to the array. The
+   array is allocated dynamically. The array ends with a NULL
+   string. To free the table, call <A href="sfl304.htm#strtfree">strtfree</A>(). If there was
+   not enough memory to allocate the table, returns NULL.
+<H4>Source Code - (sflhttp.c)</H4>
+<PRE>
+{
+    char
+        *query,                         /*  Local copy of query string       */
+        *query_ptr,                     /*  Pointer into query string        */
+        *query_next,                    /*  Pointer to next query chunk      */
+        **strings;                      /*  Returned string array            */
+    int
+        char_nbr,                       /*  Index into query string          */
+        string_count,                   /*  Size of string table             */
+        string_nbr;                     /*  Index into string table          */
+
+    ASSERT (original_query);
+
+    if (*original_query == '&amp;')         /*  Skip leading &amp; if present        */
+        original_query++;
+
+    if ((query = mem_strdup (original_query)) == NULL)
+        return (NULL);                  /*  Could not allocate memory        */
+
+    /*  Break query string at &amp; and ; delimiters and count strt size         */
+    string_count = 1;                   /*  Last string has no delimiter     */
+    for (char_nbr = 0; original_query [char_nbr]; char_nbr++)
+        if (query [char_nbr] == '&amp;' || query [char_nbr] == ';')
+          {
+            query [char_nbr] = '\0';
+            string_count++;
+          }
+
+    /*  Allocate the array of pointers with one slot for the final NULL      */
+    if ((strings = mem_alloc (sizeof (char *) * (string_count + 1))) == NULL)
+      {
+        mem_free (query);
+        return (NULL);                  /*  Could not allocate memory        */
+      }
+
+    /*  Query string now consists of a series of substrings, each ending in
+     *  a null character.  We have to unescape each substring, which we do
+     *  in-place: the unescaped string is never larger than the original
+     *  string.
+     */
+    query_ptr = query;
+    for (string_nbr = 0; string_nbr &lt; string_count; string_nbr++)
+      {
+        /*  Unescape next query string component                             */
+        query_next = query_ptr + strlen (query_ptr) + 1;
+        <A href="sfl401.htm#http_unescape">http unescape</A> (query_ptr, NULL);
+
+        /*  Allocate space for "name=value" plus final null char             */
+        strings [string_nbr] = mem_strdup (query_ptr);
+        query_ptr = query_next;
+      }
+    strings [string_nbr] = NULL;        /*  Store final null pointer         */
+    mem_free (query);                   /*  Release temporary memory         */
+    return (strings);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl402.htm">&lt;</A>
+ | <A href="sfl404.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

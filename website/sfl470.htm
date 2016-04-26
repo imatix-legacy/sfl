@@ -1,0 +1,53 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>xml_new</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl469.htm">&lt;</A>
+ | <A href="sfl471.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="xml_new">&nbsp;</A>
+<H3><A NAME="TOC483"><TT>xml_new</TT></A></H3>
+<PRE>
+#include "sflxml.h"
+XML_ITEM *
+xml_new (
+    XML_ITEM   *parent,
+    const char *name,
+    const char *value)
+</PRE>
+<H4>Synopsis</H4>
+<P>Creates and initialises a new XML_ITEM item with a specified
+   parent item. Returns the address of the created XML_ITEM item
+   or NULL if there was not enough memory. Sets the new item's
+   name and value as specified; only one of these should contain a
+   value, although sflxml will not complain if both do. If the
+   name is non-NULL this is a child node; if the value is non-NULL
+   then this is a value node. If the parent argument is non-NULL,
+   attaches the new item to the end of the parent item list.
+<H4>Source Code - (sflxml.c)</H4>
+<PRE>
+{
+    XML_ITEM
+        *item;
+
+    item = <A href="sfl469.htm#xml_create">xml create</A> (name, value);
+    if (item &amp;&amp; parent)
+        <A href="sfl476.htm#xml_attach_child">xml attach child</A> (parent, item);
+
+    return item;
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl469.htm">&lt;</A>
+ | <A href="sfl471.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

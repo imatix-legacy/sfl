@@ -1,0 +1,333 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>Installing The SFL</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl.htm">&lt;</A>
+ | <A href="sfl2.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC5">Installing The SFL</A></H2>
+
+<H3><A NAME="TOC6">Availability and Distribution</A></H3>
+
+<P>We supply the SFL as two archives: a source kit and a documentation kit
+(in HTML). These files are available for download by HTTP from our
+<A href="http://www.imatix.com/">website</A> on a permanent basis. You need to recompile the SFL for
+your specific system, using an ANSI C compiler. We don't provide binary kits
+for several reasons:
+<UL>
+<LI>With one source archive and one documentation archive, the
+SFL is easier to distribute.
+<LI>The SFL changes rapidly - a source distribution is simpler.
+<LI>You can pick and choose the functions you want.
+<LI>The sources are the primary source of documentation.
+<LI>The license terms are such that the sources must be supplied
+or be available in any case.
+</UL>
+
+<H4>Getting The Source Archive</H4>
+
+<P>The SFL source archive is supplied as a <A href="/pub/sfl/src/sflsrc21.zip">zip file</A>
+and a <A href="/pub/sfl/src/sflsrc21.tgz">GNU gzipped tar file</A>.  These are the files in
+the /pub/sfl/src directory:
+<PRE>
+<A href="/pub/sfl/src/sflsrc20.tgz">sflsrc20.tgz </A>   383249 100/04/01 16:25:11  Gzip/tar archive
+<A href="/pub/sfl/src/sflsrc20.zip">sflsrc20.zip </A>   482192 100/04/01 16:25:01  ZIP archive
+<A href="/pub/sfl/src/sflsrc21.tgz">sflsrc21.tgz </A>   332405 99/08/27 16:53:46  Gzip/tar archive
+<A href="/pub/sfl/src/sflsrc21.zip">sflsrc21.zip </A>   478117 99/12/30 14:08:19  ZIP archive
+</PRE>
+
+<P>If you have trouble accessing the iMatix site, send us an
+<A href="mailto:info@imatix.com">e-mail</A> and we'll send you the SFL archives by return
+e-mail.
+
+<H4>Getting The The Documentation Kit</H4>
+
+<P>The SFL documentation is supplied as HTML files, available on-line or
+off-line as a <A href="/pub/sfl/doc/sfldoc21.zip">single .zip file</A> that you can install on a hard
+disk for rapid access, and also as a <A href="/pub/sfl/doc/sfldoc21.tgz">gzipped tar file</A>.
+These are the files in the /pub/sfl/doc directory:
+<PRE>
+<A href="/pub/sfl/doc/sflbig20.tgz">sflbig20.tgz </A>   206059 100/04/01 16:25:14  Gzip/tar archive
+<A href="/pub/sfl/doc/sflbig20.zip">sflbig20.zip </A>   207473 100/04/01 16:24:54  ZIP archive
+<A href="/pub/sfl/doc/sflbig21.tgz">sflbig21.tgz </A>   199270 99/08/27 16:53:48  Gzip/tar archive
+<A href="/pub/sfl/doc/sflbig21.zip">sflbig21.zip </A>   200592 99/08/27 16:53:31  ZIP archive
+<A href="/pub/sfl/doc/sfldoc20.tgz">sfldoc20.tgz </A>   254613 100/04/01 16:25:42  Gzip/tar archive
+<A href="/pub/sfl/doc/sfldoc20.zip">sfldoc20.zip </A>   685112 100/04/01 16:24:53  ZIP archive
+<A href="/pub/sfl/doc/sfldoc21.tgz">sfldoc21.tgz </A>   246972 99/08/27 16:54:35  Gzip/tar archive
+<A href="/pub/sfl/doc/sfldoc21.zip">sfldoc21.zip </A>   663278 99/08/27 16:53:30  ZIP archive
+</PRE>
+
+<P>We recommend that you unzip or gunzip/detar the archive into a
+subdirectory.  Point your browser at the <TT>index.htm</TT> file.
+We use relative addressing in all HTML documents, so that links
+work just as well on a local hard-disk as on-line on our website.
+In a windowing environment is it easy and useful to create an icon
+that runs a Web browser on this file.
+
+<HR>
+<H3><A NAME="TOC7">Installation for UNIX Systems</A></H3>
+
+<P>To install the SFL on a UNIX system you need to:
+<OL>
+<LI>Download the source archive and decompress it.
+<LI>Run the 'build' script to compile the SFL sources and build
+the libsfl.a archive file.
+<LI>Optionally, install the libsfl.a file in the /usr/lib
+directory.
+<LI>Optionally, install the SFL header file(s) in the /usr/include
+directory.
+</OL>
+
+<H4>Decompressing The Source Archive</H4>
+
+<P>To unzip the <A href="/pub/sfl/src/sflsrc21.zip">source .zip file</A>, you need the Infozip
+<A href="http://quest.jpl.nasa.gov/Info-Zip/Info-Zip.html">unzip</A> tool:
+<PRE>$ mkdir temp
+$ mv sflsrc21.zip temp
+$ cd temp
+$ unzip -a sflsrc21
+</PRE>
+
+<P>To decompress the <A href="/pub/sfl/src/sflsrc21.tgz">source archive</A> you need GNU
+gzip/gunzip and tar:
+<PRE>$ mkdir temp
+$ mv sflsrc21.tgz temp
+$ cd temp
+$ gzip -d sflsrc21.tgz
+  or
+$ gunzip sflsrc21.tgz
+$ tar -xvf sflsrc21.tar
+</PRE>
+
+<P>You can also, in extreme cases, unzip the files on a PC and
+transfer the individual files to the UNIX system.
+
+<H4>Compiling The SFL Sources</H4>
+
+<P>The SFL source archive includes a script, <TT><B>c</B></TT>,
+that you can (and should) use to compile the SFL sources.  This
+script invokes the ANSI C compiler to produce an object code file.
+It detects the platform and invokes the compiler with the
+necessary switches for ANSI C compilation.  On some systems this
+is the normal behaviour for the <B>cc</B> command.  On other
+systems it is not normal.  You should make the <TT>c</TT> script
+executable, (preferrably) install it in a shared directory like
+/usr/local/bin, and try it out:
+<PRE>$ chmod a+rx c
+$ mv c /usr/local/bin
+$ c
+</PRE>
+
+<P>To compile the SFL sources, use this command:
+<PRE>$ chmod +x build
+$ ./build
+</PRE>
+
+<P>If you get warnings or error messages, this is usually a bad
+sign.  Some compilers issue warnings just because you ask for ANSI
+compilation.  If you get any other error messages, please let us
+know.
+
+<P>You can use individual SFL files simply by specifying them on
+the command line when you compile and link a program.  However,
+this is usually a pain.  Therefore, the build script creates a
+library file called libsfl.a.  The linker can automatically search
+this file for the SFL functions.  To install libsfl.a in the
+/usr/lib directory, do this:
+<PRE>$ mv libsfl.a /usr/lib
+</PRE>
+
+<H4>Using The SFL In Your Applications</H4>
+
+<P>To use an SFL function in your applications you must include a
+header file that defines the structures, prototypes, and types for
+the function API.  The SFL provides three types of header
+files:
+<OL>
+<LI>One header file per function group.  These are provided for
+reference; you will normally not use these directly.
+<LI>A <A href="sfl2.htm#uhf">Universal Header File</A> which encapsulates and
+replaces all local header files.  Again, this is provided for
+reference; you do not normally use this directly.
+<LI>A <A href="sfl2.htm#lhf">Library Header File</A> that contains the Universal
+Header File and all the SFL header files in one go.  This is meant
+to simplify application programming and installation.
+</OL>
+
+<P>We recommend that you install the <TT>sfl.h</TT> file in
+/usr/include.  A typical application program starts like this:
+<PRE>#include &lt;sfl.h&gt;
+</PRE>
+
+<P>To link an application program, use the <TT>c -l</TT> command.
+This assumes that libsfl.a is installed /usr/lib.
+
+<HR>
+<H3><A NAME="TOC8">Installation for Digital VMS Systems</A></H3>
+
+<P>To install the SFL on a Digital VMS system you need to:
+<OL>
+<LI>Download the source archive and decompress it.
+<LI>Run the 'build.txt' command file to build the libsfl.olb
+library file.
+<LI>Optionally, install the libsfl.olb file in the SYS$LIBRARY
+directory.
+<LI>Optionally, install the SFL header file(s) in the SYS$LIBRARY
+directory.
+</OL>
+
+<H4>Decompressing The Source Archive</H4>
+
+<P>To unzip the <A href="/pub/sfl/src/sflsrc21.zip">source .zip file</A>, you need the Infozip
+<A href="http://quest.jpl.nasa.gov/Info-Zip/Info-Zip.html">unzip</A> tool (note that you need the -a switch):
+<PRE>$ create/dir [.temp]
+$ ren sflsrc21.zip [.temp]
+$ set def [.temp]
+$ unzip -a sflsrc21
+</PRE>
+
+<P>You can also, in extreme cases, unzip the files on a PC and
+transfer the individual files to the VMS system.
+
+<H4>Compiling The SFL Sources</H4>
+
+<P>To compile the SFL sources, use this command:
+<PRE>$ @build.txt
+</PRE>
+
+<P>If you get warnings or error messages, this is a bad sign -
+please let us know.
+
+<P>The build.txt command file creates a library file called
+libsfl.olb.  You can install this in a central directory like
+SYS$LIBRARY if you wish.  You'll need system privileges to do
+this.
+
+<H4>Using The SFL In Your Applications</H4>
+
+<P>To use an SFL function in your applications you must include a
+header file that defines the structures, prototypes, and types for
+the function API.  The SFL provides three types of header
+files:
+<OL>
+<LI>One header file per function group.  These are provided for
+reference; you will normally not use these directly.
+<LI>A <A href="sfl2.htm#uhf">Universal Header File</A> which encapsulates and
+replaces all local header files.  Again, this is provided for
+reference; you do not normally use this directly.
+<LI>A <A href="sfl2.htm#lhf">Library Header File</A> that contains the Universal
+Header File and all the SFL header files in one go.  This is meant
+to simplify application programming and installation.
+</OL>
+
+<P>We recommend that you install the <TT>sfl.h</TT> file in
+SYS$LIBRARY.  A typical application program starts like this:
+<PRE>#include &lt;sfl.h&gt;
+</PRE>
+
+<HR>
+<H3><A NAME="TOC9">Installation for Windows</A></H3>
+
+<P>Briefly, either create a static library, and include that in
+your project; create a .DLL and call that, or add the files you
+want to use to your project and compile them as part of the
+application.
+
+<P>With MSVC 4.0, we find it useful to create a main project for the
+application in hand, and a subproject for the SFL. We build the SFL as a
+static library. If you use MFC, you must compile everything (including MFC)
+in single-threaded mode, and use libd.
+
+<P>Under MSVC 1.5x, there is a bug in the project manager that generates
+invalid make files: the SFL prelude.h file refers to various non-Windows
+include files, within #if statements. The MSVC 1.5x project manager includes
+these in the make file; you must manually remove them. One solution is to
+edit prelude.h; another is to use a Perl or Awk script to edit the make file
+each time you change the project. You could also move to a different 16-bit
+compiler. Finally, you can create the make files as empty files in the C
+include directory.
+
+<P>To build using the build.bat file with MSVC, you need to increase the
+environment space to (e.g. to 16K), and define some variables in the
+autoexec.bat file:
+<PRE>SET CCNAME=msvc
+SET CCDIR=C:\MSDEVSTD
+SET INCDEF=C:\MSDEVSTD\INCLUDE
+SET LIBDIR=C:\MSDEVSTD\sfl\lib
+</PRE>
+Where the LIBDIR variable is the directory where you unzipped the SFL stuff.
+
+
+<HR>
+<H3><A NAME="TOC10">Installation for MS-DOS</A></H3>
+
+<P>To install the SFL on a MS-DOS system you need to:
+<OL>
+<LI>Download the source archive and decompress it.
+<LI>Run build.bat to build the libsfl.lib library file.
+<LI>Optionally, install the libsfl.lib file in central
+directory.
+<LI>Optionally, install the SFL header file(s) in a central
+directory.
+</OL>
+
+<H4>Decompressing The Source Archive</H4>
+
+<P>To unzip the <A href="/pub/sfl/src/sflsrc21.zip">source .zip file</A>, you need the Infozip
+<A href="http://quest.jpl.nasa.gov/Info-Zip/Info-Zip.html">unzip</A> tool, or PKzip version 2.04g or later, or a
+compatible unzip program.:
+<PRE>C:\DOWNLOAD> md temp
+C:\DOWNLOAD> copy sflsrc21.zip temp
+C:\DOWNLOAD> del sflsrc21.zip
+C:\DOWNLOAD> cd temp
+C:\DOWNLOAD> unzip sflsrc21
+</PRE>
+
+<H4>Compiling The SFL Sources</H4>
+
+<P>To compile under MS-DOS you need a Borland, Microsoft, or Watcom
+compiler, or lcc-win32 or djgpp.  Look at the c.bat file, and set the
+CCNAME and/or CCDIR environment variables as required.  Then, check that you
+can compile a single program. e.g. 'c sflbits'.  When this works, run the
+build.bat file to rebuild everything.
+
+<P>The build scripts create a library file called libsfl.lib. You can
+install this, and sfl.h, in a central directory if you wish.
+
+<H4>Using The SFL In Your Applications</H4>
+
+<P>To use an SFL function in your applications you must include a
+header file that defines the structures, prototypes, and types for
+the function API.  The SFL provides three types of header
+files:
+<OL>
+<LI>One header file per function group.  These are provided for
+reference; you will normally not use these directly.
+<LI>A <A href="sfl2.htm#uhf">Universal Header File</A> which encapsulates and
+replaces all local header files.  Again, this is provided for
+reference; you do not normally use this directly.
+<LI>A <A href="sfl2.htm#lhf">Library Header File</A> that contains the Universal
+Header File and all the SFL header files in one go.  This is meant
+to simplify application programming and installation.
+</OL>
+
+<P>We recommend that you install the <TT>sfl.h</TT> file in the
+/include directory of your compiler.  A typical application
+program starts like this:
+<PRE>#include &lt;sfl.h&gt;
+</PRE>
+
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl.htm">&lt;</A>
+ | <A href="sfl2.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>
