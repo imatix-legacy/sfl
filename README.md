@@ -39,11 +39,15 @@ git repository.
 ## `src`
 
 The `src` directory was created from the unpacked contents of
-`pub/src/sflsrc21.tgz`, for ease of reference.  
+`pub/src/sflsrc21.tgz`, for ease of reference.  To this the `sfldoc*.txt`
+files and `*.def` files were added from an early 2000 build directory, with
+approximately the equivalent documentation version.
 
 The build scripts were built with
 [otto](https://github.com/imatix-legacy/otto) from
-[src/buildsfl.txt](src/buildsfl.txt).
+[src/buildsfl.txt](src/buildsfl.txt).  Building the documentation requires
+[srcdoc](https://github.com/imatix-legacy/srcdoc) and 
+[htmlpp](https://github.com/imatix-legacy/htmlpp).
 
 ## `website`
 
@@ -52,6 +56,7 @@ is approximately equivalent to the contents of `pub/doc/sfldoc21.tgz`, but
 was taken directly from http://legacy.imatix.com/html/sfl.
 
 The documentation was built (with `htmlpp`) from a marked up text file.
-At present there is no known version of the SFL documentation source file,
-only rendered HTML files.  If the source file is found it will be added
-to this repository.
+`src/sfldoc.txt`, `src/sfldoc1.txt` and `src/sfldoc2.txt` contain
+*approximately* equivalent source for the documentation, taken from 
+an early 2000 build directory.  These should rebuild to *similiar* 
+documentaton but it may not be exactly identical.
