@@ -1,0 +1,88 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>file_copy</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl105.htm">&lt;</A>
+ | <A href="sfl107.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="file_copy">&nbsp;</A>
+<H3><A NAME="TOC119"><TT>file_copy</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+int
+file_copy (
+    const char *dest,
+    const char *src,
+    char mode)
+</PRE>
+<H4>Synopsis</H4>
+<P>Copies a file called src to one called dest. The dest file may
+   not already exist. If mode is 'b', copies a binary file; if
+   mode is 't', copies a text file. This distinction only applies
+   to MS-DOS file systems; on other platforms the two modes are
+   equivalent. Returns 0 if no problems occurred, -1 if an error
+   occurred, 1 if the destination file already exists.
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+    FILE *inf, *outf;
+    char *buffer,
+         openmode [3] = "??";
+    size_t chars_read;                  /*  Amount read from stream          */
+    int  feedback = 0;
+
+    ASSERT (dest);
+    ASSERT (src);
+    if (<A href="sfl110.htm#file_exists">file exists</A> (dest))
+        return (1);                     /*  Cancel: dest already exists      */
+
+#   if (defined (MSDOS_FILESYSTEM))
+    if (system_devicename (dest) || system_devicename (src))
+        return (-1);                    /*  Not allowed on device names      */
+#   endif
+#   if (defined (MSDOS_FILESYSTEM))
+    openmode [1] = mode;
+#   else
+    openmode [1] = 0;
+#   endif
+    openmode [0] = 'r';
+    if ((inf = fopen (src, openmode)) == NULL)
+        return (-1);                    /*  Input file not found             */
+
+    if ((buffer = mem_alloc (SHRT_MAX)) == NULL)
+        feedback = -1;                  /*  Insufficient memory for buffer   */
+    else
+      {
+        openmode [0] = 'w';
+        if ((outf = fopen (dest, openmode)) == NULL)
+          {
+            mem_free (buffer);
+            return (-1);                /*  Could not create output file     */
+          }
+        while ((chars_read = fread (buffer, 1, SHRT_MAX, inf)) != 0)
+            if (fwrite (buffer, 1, chars_read, outf) != chars_read)
+              {
+                feedback = -1;
+                break;
+              }
+        fclose (outf);
+        mem_free (buffer);
+      }
+    fclose (inf);
+    return (feedback);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl105.htm">&lt;</A>
+ | <A href="sfl107.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

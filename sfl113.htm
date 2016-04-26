@@ -1,0 +1,114 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>file_cycle</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl112.htm">&lt;</A>
+ | <A href="sfl114.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="file_cycle">&nbsp;</A>
+<H3><A NAME="TOC126"><TT>file_cycle</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+Bool
+file_cycle (
+    const char *filename,
+    int how)
+</PRE>
+<H4>Synopsis</H4>
+<P>Cycles the file: if the file already exists, renames the
+   existing file. This function tries to rename the file using the
+   date of creation of the file; if this fails because an existing
+   file had the same name, generates a guaranteed unique file
+   name. Returns TRUE if the cycle operation succeeded, or FALSE
+   if it failed (e.g. due to a protection problem). The how
+   argument must be one of: <TABLE BORDER NOWRAP> <TR><TD
+   ALIGN="LEFT"><B>CYCLE ALWAYS</B>  <TD ALIGN="LEFT">Cycle file
+   unconditionally <TR><TD ALIGN="LEFT"><B>CYCLE HOURLY</B>  <TD
+   ALIGN="LEFT">Cycle file if hour has changed <TR><TD
+   ALIGN="LEFT"><B>CYCLE DAILY</B>  <TD ALIGN="LEFT">Cycle file if
+   day has changed <TR><TD ALIGN="LEFT"><B>CYCLE WEEKLY</B>  <TD
+   ALIGN="LEFT">Cycle file if week has changed <TR><TD
+   ALIGN="LEFT"><B>CYCLE MONTHLY</B>  <TD ALIGN="LEFT">Cycle file
+   if month has changed <TR><TD ALIGN="LEFT"><B>CYCLE NEVER</B>
+   <TD ALIGN="LEFT">Don't cycle the file </TABLE>
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+    long
+        file_date;                      /*  Datestamp of file                */
+    char
+        *point,
+        *insert_at;                     /*  Where we start messing name      */
+    int
+        unique_nbr;                     /*  To generate a unique name        */
+
+    ASSERT (filename);
+
+    /*  If no cycling needed, do nothing                                     */
+    if (!<A href="sfl114.htm#file_cycle_needed">file cycle needed</A> (filename, how))
+        return (TRUE);                  /*  No errors, nothing in fact       */
+
+    file_date = <A href="sfl69.htm#timer_to_date">timer to date</A> (<A href="sfl132.htm#get_file_time">get file time</A> (filename));
+    strcpy (full_name, filename);
+    point = strrchr (full_name, '.');
+    if (point)
+      {
+        strcpy (work_name, point);      /*  Save extension, if any           */
+        *point = '\0';                  /*    and truncate original name     */
+      }
+    else
+        strclr (work_name);
+
+    /*  We leave up to 2 original letters of the filename, then stick-in     */
+    /*  the 6-digit timestamp.                                               */
+    insert_at = strrchr (full_name, '/');
+#if (defined (MSDOS_FILESYSTEM))
+    if (!insert_at)
+        insert_at = strrchr (full_name, '\\');
+#endif
+    if (insert_at)
+        insert_at++;                    /*  Bump past slash, if found        */
+    else
+        insert_at = full_name;
+
+    if (*insert_at)                     /*  Bump insert_at twice, to leave   */
+        insert_at++;                    /*    up to 2 letters before we      */
+    if (*insert_at)                     /*    stick-in the date stamp        */
+        insert_at++;
+
+    /*  Format new name for file and make sure it does not already exist     */
+    sprintf (insert_at, "%06d", (int) (file_date % 1000000L));
+    strcat  (insert_at, work_name);
+    if (<A href="sfl110.htm#file_exists">file exists</A> (full_name))
+      {
+        point = strrchr (full_name, '.') + 1;
+        for (unique_nbr = 0; unique_nbr &lt; 1000; unique_nbr++)
+          {
+            sprintf (point, "%03d", unique_nbr);
+            if (!<A href="sfl110.htm#file_exists">file exists</A> (full_name))
+                break;
+          }
+      }
+    if (<A href="sfl110.htm#file_exists">file exists</A> (full_name))
+        return (FALSE);                 /*  We give up!                      */
+
+    if (<A href="sfl108.htm#file_rename">file rename</A> (filename, full_name))
+        return (FALSE);                 /*  No permission                    */
+    else
+        return (TRUE);                  /*  Okay, it worked                  */
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl112.htm">&lt;</A>
+ | <A href="sfl114.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

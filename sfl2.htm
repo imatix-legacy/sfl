@@ -1,0 +1,224 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>Using The SFL</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl1.htm">&lt;</A>
+ | <A href="sfl3.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC11">Using The SFL</A></H2>
+
+<A NAME="uhf">&nbsp;</A>
+<H3><A NAME="TOC12">The Universal Header File - prelude.h</A></H3>
+
+<H4>What and Why?</H4>
+
+<P>The Universal Header File a technology that we have developed
+to make C applications more easily portable with less effort.  One
+of the big difficulties in compiling C code on different platforms
+is that header files change their names, locations, and internal
+functions from system to system, even on one system over time.
+
+<P>Typically, you may see C programs that start with a rash of
+<TT>#ifdef</TT>'s mixed with <TT>#include</TT>'s depending on the
+system, compiler, and specific needs of the program.
+
+<P>Since we are basically really lazy, all this unnecessary work
+is intolerable.  We would <EM>much</EM> rather make the compiler
+work harder.  The systems we develop on (typically MS-DOS with
+Turbo-C) are so fast that we can afford to take a really lazy
+approach.
+
+<P>So, what we do is this: we include every 'useful' and
+'standard' header file that we can think of.  We then include
+every 'useful' non-portable file that we've ever needed, in a
+clean way, so that application code does not need to 'know' how it
+was done.
+
+<P>At the same time we define lots of things that make life
+easier.  Generally we don't like macros, since these create
+'pseudo languages' that are just more work to learn.  However,
+some things (like <TT>#define FOREVER for (;;)</TT>) are so useful
+and pretty comonplace, so we stick them in too.
+
+<P>Lastly, we flatten-out the problem called 'what system am I
+running on', by providing a set of definitions like
+<TT>__UNIX__</TT> and <TT>__UTYPE_SUNOS</TT> that code can use if
+it has to.  Again, it can be quite messy to figure-out that we're
+compiling on a Brand X, so we need this-and-that header file.  We
+hide this so that we can forget about it.
+
+<P>Okay, those are the benefits of this approach.  What are the
+costs?  We typically hear these criticisms:
+<UL>
+<LI>Compilation is a <EM>lot</EM> slower.  True, but when you
+create portable applications, you can do 90% of your compiles on a
+system that is so fast that this is irrelevant
+<LI>Some C programmers may feel they are losing control over which
+header files are included, in which order, etc.  True, but it's
+the kind of control we don't want.
+<LI>We get some comments about 'polluting the namespace'.  We
+don't really understand this one.  We try to stay away from
+already-defined symbols.
+<LI>People don't like the macros we define, like TRUE and FALSE.
+This can become a matter of personal choice; we've tried to
+provide useful stuff without becoming baroque.
+</UL>
+
+<P>We use the Universal Header File in <EM>all</EM> C projects
+(not just those based on the SFL).  If it was not for the simple
+fact that it has helped us a lot, we'd probably not make it
+available.
+
+<H4>Using the Universal Header File</H4>
+
+<P>You should probably read through the <TT>prelude.h</TT> file to
+best understand it.  Our usual habit is to comment the code first,
+so that it's self-explanatory.  The SFL documentation has a
+section on the Universal Header File.  This section is generated
+from the code.
+
+<P>When you use the SFL Library Header File (<TT>sfl.h</TT>), you
+don't need to include <TT>prelude.h</TT>, since it's already
+embedded in <TT>sfl.h</TT>.  This makes application programming
+easier (just one header file to include).  If you need to change
+<TT>prelude.h</TT>, you can either change <TT>sfl.h</TT> as well,
+or rebuild <TT>sfl.h</TT> using the build script.  Better still,
+tell us what you want to change, so that we can maintain a single
+version of the file.
+
+<A NAME="lhf">&nbsp;</A>
+<H3><A NAME="TOC13">The Library Header File - sfl.h</A></H3>
+
+<P>Each module in the SFL consists of a header file and one or
+more C source files.  You can choose to include the header files
+that you want (this is what the SFL source code does), but this
+can quickly become burdensome.  To simplify matters, a single
+header file <TT>sfl.h</TT> contains all the individual header
+files.  It also contains the Universal Header File.
+
+<H3><A NAME="TOC14">System Notes</A></H3>
+
+<H4>MS-DOS</H4>
+
+<P>Most of the SFL is portable to MS-DOS.  Exceptions are: the
+socket i/o functions (sflsock), the user/group ID functions
+(sfluid) and the server process functions (sflserv).  These are
+all null; you can call any of the functions, but they will return
+either an okay feedback (in most cases) or an error feedback (for
+the socket functions).  The SFL compiles cleanly with Borland
+Turbo C/C++ 1.0 and Microsoft VC++ 4.x and 5.x, and should work
+with Borland C/C++ and C++ Builder.
+
+<H4>MS-Windows</H4>
+
+<P>Most of the SFL is portable to Windows 3.x, Windows 95, and
+Windows NT.  Exceptions are: the user/group ID functions (sfluid)
+and the server process functions (sflserv).  These are all null;
+you can call any of the functions, but they will return an okay
+feedback.  The SFL compiles cleanly with Microsoft VC++ 4.x and
+5.x, and should work with Borland C/C++ and C++ Builder.
+
+<H4>Digital VAX</H4>
+
+<P>The SFL is portable to Digital VMS except for the directory
+access functions (sfldir), user/group functions (sfluid) and the
+server process functions (sflserv).  The sfldir functions will be
+implemented at a later date.  The other functions are null; you
+can call any of the functions, but they will return an okay
+feedback.  The SFL compiles cleanly with Vax C and Dec C and has
+been tested with various releases of these compilers.
+
+<H4>Linux</H4>
+
+<P>The SFL is fully portable to Linux and has been tested with GNU
+C.  It should give no compiler warning errors.
+
+<H4>Sun OS and Sun Sparc</H4>
+
+<P>The SFL is fully portable to Sun OS.  You may have trouble
+finding an ANSI C compiler, especially on Sparc systems.  People
+sometimes install GNU C, using the Sun header files and libraries.
+This should work, although we have not tested it recently.
+Sometimes the Sun ANSI C compiler is called acc, not cc.  You can
+use the CCNAME environment variable to point to the right compiler
+name.  Some Sun C compilers give warnings when you use the ANSI
+compile mode.  You can ignore these warnings.
+
+<P>See also the warning about 'Other UNIX Systems'; some SunOS
+installations show this symptom.
+
+<H4>HP/UX</H4>
+
+<P>The SFL is fully portable to HP/UX.  It should give no compiler
+warning errors.
+
+<H4>IBM AIX</H4>
+
+<P>The SFL is fully portable to IBM/AIX.  It should give no
+compiler warning errors.
+
+<H4>Digital UNIX</H4>
+
+<P>The SFL is fully portable to Digital UNIX.  It should give no
+compiler warning errors.  When compiling on an Alpha system, the
+word size is 64 bits.
+
+<H4>Other UNIX Systems</H4>
+
+<P>The directory functions can fail on SVr4 if the &lt;dirent.h&gt;
+file does not match the C library.  Recompile with CCDEFINES set to
+the value "-D _USE_BSD_DIRENT" and they should work a bit better.
+Under Solaris with GCC, you should <EM>not</EM> define this macro.
+
+<H4>OS/2</H4>
+
+<P>The SFL was ported to OS/2 by Ewen McNiell around New Year's
+Eve 1996.  It runs under EMX.  The SFL distribution kit includes
+an OS/2 build script.  The 'c' script runs under OS/2 as well as
+UNIX.
+
+<H3><A NAME="TOC15">To Do List</A></H3>
+
+<UL>
+<LI>There are many areas that we've just started to look at, or
+have ignored completely.  For instance, the encryption functions
+are useful but basic.
+<LI>We have not conducted exhaustive tests on all platforms, so
+while older routines are certainly very well tested and portable,
+some of the newer ones are still doubtful.  What we would really
+like (sigh) is an automated test suite that checks-out every
+function.
+<LI>The bitstring functions in SFLBITS are part of an ongoing
+project.  We are building an indexing tool that provides the kind
+of fast lookup you find in modern search engines.  The basic idea
+is really quite simple.  You number each text block (page, file,
+paragraph).  Then you read the text and take each word.  The word
+corresponds to a bitstring, with one bit corresponding to each
+text block.  So, if you have a million text blocks, the bitstring
+is a million bits long.  You set the corresponding bit for that
+text block to 1, and save the bitmap.  You repeat this for all
+words in all blocks of text.  That's the indexing part.  Now, to
+do a lookup, you take the bitstrings that correspond to the words
+entered.  Each bitstring is effectively a list of text blocks.
+You can AND and OR the bitstrings to come-up with a final result.
+Find all the 1's, read the text blocks, and that's it.  Of course
+the real work is to make the results useful: you have to filter
+junk, false matches, etc.  The bitstring functions currently just
+do one thing: they let you store and change really long bitmaps
+in a compressed form.
+</UL>
+
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl1.htm">&lt;</A>
+ | <A href="sfl3.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

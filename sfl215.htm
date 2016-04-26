@@ -1,0 +1,67 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>mem_scavenger</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl214.htm">&lt;</A>
+ | <A href="sfl216.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="mem_scavenger">&nbsp;</A>
+<H3><A NAME="TOC228"><TT>mem_scavenger</TT></A></H3>
+<PRE>
+#include "sflmem.h"
+int
+mem_scavenger (
+    scavenger scav_fct,                 /*  File to dump display to          */
+    void    * scav_arg
+)
+</PRE>
+<H4>Synopsis</H4>
+<P>Registers a memory scavenger function. A memory scavenger
+   function is an application function that is invoked by
+   <A href="sfl198.htm#mem_alloc_">mem alloc </A>() when memory is exhausted, so that unused
+   application objects can be released. This allows you to
+   allocate large amounts of memory -- for instance for caches --
+   and then release them when memory runs short. When you register
+   a scavenger function you may provide a void * argument; this is
+   passed back to the scavenger if it is ever invoked. The
+   scavenger function returns TRUE if it could release some
+   memory, otherwise it returns FALSE. Note that there is no way
+   to unregister such a function. Furthermore, a scavenger
+   function should not itself allocate any new memory, unless it
+   can definitely free excess memory first. Scavenger functions
+   are called in an unspecified order. Returns 0 if the scavenger
+   function could be registered, -1 if not. There is no limit to
+   the number of scavenger functions you can register, except
+   available memory. The same scavenger function can be registered
+   several times.
+<H4>Source Code - (sflmem.c)</H4>
+<PRE>
+{
+    SCAVFCT
+        *scavfct;                       /*  Allocated registry function      */
+
+    /*  Allocate an SCAVFCT block and attach it to the scavfcts list         */
+    list_create (scavfct, sizeof (SCAVFCT));
+    if (scavfct == NULL)
+        return (-1);
+    list_relink_before (scavfct, &amp;scavfcts);
+
+    scavfct-&gt; scav_fct = scav_fct;
+    scavfct-&gt; scav_arg = scav_arg;
+    return (0);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl214.htm">&lt;</A>
+ | <A href="sfl216.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

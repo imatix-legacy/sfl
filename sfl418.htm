@@ -1,0 +1,71 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>cgi_fld_by_index</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl417.htm">&lt;</A>
+ | <A href="sfl419.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="cgi_fld_by_index">&nbsp;</A>
+<H3><A NAME="TOC431"><TT>cgi_fld_by_index</TT></A></H3>
+<PRE>
+#include "sflhttp.h"
+char *
+cgi_fld_by_index (
+    int iPos,
+    char *strIn,
+    char *strRetBuf,
+    char *strFldName)
+</PRE>
+<H4>Synopsis</H4>
+<P>Gets field data from a CGI input stream based off a field
+   index. The index is from 0 to n. Where 0 would be the first
+   field in the stream, and n would be the last. This function
+   returns the HTML form field name and the value of the field.
+   example: Form snippet: Product &lt;INPUT TYPE="text"
+   NAME="SENDERID" SIZE=80 VALUE="mailto"&gt; Version &lt;INPUT
+   TYPE="text" NAME="VERSION" SIZE=80 VALUE="v1.4"&gt; E-mail
+   &lt;INPUT TYPE="text" NAME="Email" SIZE=80&gt; CGI code to get
+   form field: <A href="sfl418.htm#cgi_fld_by_index">cgi fld by index</A> (1, strStdin, strFldValue,
+   strFldName); On return from the call: strFldValue would =
+   "v1.4" and would strFldName be = "VERSION" Submitted by Scott
+   Beasley <A
+   HREF=mailto:"jscottb@infoave.com">jscottb@infoave.com</A>
+<H4>Source Code - (sflhttp.c)</H4>
+<PRE>
+{
+    int iLen;
+    char *strTmp;
+
+    ASSERT (strIn);
+
+    *strRetBuf = (char) NULL;
+    iLen = <A href="sfl320.htm#getstrfldlen">getstrfldlen</A> (strIn, iPos, 0, "&amp;");
+    if (iLen)
+      {
+        strTmp = (char *) malloc (sizeof (char) * iLen + 1);
+
+        <A href="sfl318.htm#getstrfld">getstrfld</A> (strIn, iPos, 0, "&amp;", strTmp);
+        <A href="sfl322.htm#getequval">getequval</A> (strTmp, strRetBuf);
+        <A href="sfl401.htm#http_unescape">http unescape</A> (strRetBuf, NULL);
+        if (strFldName)
+            <A href="sfl318.htm#getstrfld">getstrfld</A> (strTmp, 0, 0, "=", strFldName);
+
+        free (strTmp);
+      }
+    return strRetBuf;
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl417.htm">&lt;</A>
+ | <A href="sfl419.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

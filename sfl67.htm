@@ -1,0 +1,72 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>days_to_date</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl66.htm">&lt;</A>
+ | <A href="sfl68.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="days_to_date">&nbsp;</A>
+<H3><A NAME="TOC80"><TT>days_to_date</TT></A></H3>
+<PRE>
+#include "sfldate.h"
+long
+days_to_date (long days)
+</PRE>
+<H4>Synopsis</H4>
+<P>Converts a number of days since some distant but unspecified
+   epoch into a date. You can use this function to calculate
+   differences between dates, and forward dates. Use
+   <A href="sfl66.htm#date_to_days">date to days</A>() to calculate the reverse function. Author:
+   Robert G. Tantzen, translated from the Algol original in
+   Collected Algorithms of the CACM (algorithm 199). Original
+   translation into C by Nat Howard, posted to Usenet 5 Jul 1985.
+<H4>Source Code - (sfldate.c)</H4>
+<PRE>
+{
+    long
+        century,
+        year,
+        month,
+        day;
+
+    days   -= 1721119L;
+    century = (4L * days - 1L) / 146097L;
+    days    =  4L * days - 1L  - 146097L * century;
+    day     =  days / 4L;
+
+    year    = (4L * day + 3L) / 1461L;
+    day     =  4L * day + 3L  - 1461L * year;
+    day     = (day + 4L) / 4L;
+
+    month   = (5L * day - 3L) / 153L;
+    day     =  5L * day - 3   - 153L * month;
+    day     = (day + 5L) / 5L;
+
+    if (month &lt; 10)
+        month += 3;
+    else
+      {
+        month -= 9;
+        if (year++ == 99)
+          {
+            year = 0;
+            century++;
+          }
+      }
+    return (MAKE_DATE (century, year, month, day));
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl66.htm">&lt;</A>
+ | <A href="sfl68.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

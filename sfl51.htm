@@ -1,0 +1,207 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>Date and time functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl50.htm">&lt;</A>
+ | <A href="sfl52.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC64">Date and time functions</A></H2>
+<P>Filename: sfldate.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1996/01/05 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 1998/08/05
+<BR>Copyright: Copyright (c) 1996-2000 iMatix Corporation
+<H3>Synopsis</H3>
+<P>Includes functions to get the current date/time, calculate the
+   day or week, week of year and leap year. Dates and times are
+   each stored in a 32-bit long value of 8 digits: dates are
+   CCYYMMDD; times are HHMMSSCC. You can compare dates and times
+   directly - e.g. if (date_wanted &gt;= date_now).
+<H4>List of Functions</H4>
+<UL>
+<LI>long <A href="sfl52.htm#date_now">date now</A><BR>
+   (void);
+</LI>
+<LI>long <A href="sfl53.htm#time_now">time now</A><BR>
+   (void);
+</LI>
+<LI>Bool <A href="sfl54.htm#leap_year">leap year</A><BR>
+   (int year);
+</LI>
+<LI>int <A href="sfl55.htm#julian_date">julian date</A><BR>
+   (long date);
+</LI>
+<LI>int <A href="sfl56.htm#day_of_week">day of week</A><BR>
+   (long date);
+</LI>
+<LI>int <A href="sfl59.htm#week_of_year">week of year</A><BR>
+   (long date);
+</LI>
+<LI>int <A href="sfl60.htm#year_quarter">year quarter</A><BR>
+   (long date);
+</LI>
+<LI>long <A href="sfl57.htm#next_weekday">next weekday</A><BR>
+   (long date);
+</LI>
+<LI>long <A href="sfl58.htm#prev_weekday">prev weekday</A><BR>
+   (long date);
+</LI>
+<LI>word <A href="sfl62.htm#pack_date">pack date</A><BR>
+   (long date);
+</LI>
+<LI>word <A href="sfl63.htm#pack_time">pack time</A><BR>
+   (long time);
+</LI>
+<LI>long <A href="sfl64.htm#unpack_date">unpack date</A><BR>
+   (word packdate);
+</LI>
+<LI>long <A href="sfl65.htm#unpack_time">unpack time</A><BR>
+   (word packtime);
+</LI>
+<LI>long <A href="sfl61.htm#default_century">default century</A><BR>
+   (long *date);
+</LI>
+<LI>long <A href="sfl66.htm#date_to_days">date to days</A><BR>
+   (long date);
+</LI>
+<LI>long <A href="sfl67.htm#days_to_date">days to date</A><BR>
+   (long days);
+</LI>
+<LI>time_t <A href="sfl68.htm#date_to_timer">date to timer</A><BR>
+   (long date, long time);
+</LI>
+<LI>long <A href="sfl69.htm#timer_to_date">timer to date</A><BR>
+   (time_t time_secs);
+</LI>
+<LI>long <A href="sfl70.htm#timer_to_time">timer to time</A><BR>
+   (time_t time_secs);
+</LI>
+<LI>long <A href="sfl71.htm#timer_to_gmdate">timer to gmdate</A><BR>
+   (time_t time_secs);
+</LI>
+<LI>long <A href="sfl72.htm#timer_to_gmtime">timer to gmtime</A><BR>
+   (time_t time_secs);
+</LI>
+<LI>long <A href="sfl73.htm#time_to_csecs">time to csecs</A><BR>
+   (long time);
+</LI>
+<LI>long <A href="sfl74.htm#csecs_to_time">csecs to time</A><BR>
+   (long csecs);
+</LI>
+<LI>void <A href="sfl75.htm#future_date">future date</A><BR>
+   (long *date, long *time, long days, long csecs);
+</LI>
+<LI>void <A href="sfl76.htm#past_date">past date</A><BR>
+   (long *date, long *time, long days, long csecs);
+</LI>
+<LI>void <A href="sfl77.htm#date_diff">date diff</A><BR>
+   (long date1, long time1, long date2, long time2, long *days,
+   long *csecs);
+</LI>
+<LI>Bool <A href="sfl78.htm#valid_date">valid date</A><BR>
+   (long date);
+</LI>
+<LI>Bool <A href="sfl79.htm#valid_time">valid time</A><BR>
+   (long time);
+</LI>
+<LI>Bool <A href="sfl80.htm#date_is_future">date is future</A><BR>
+   (long date, long time);
+</LI>
+<LI>Bool <A href="sfl81.htm#date_is_past">date is past</A><BR>
+   (long date, long time);
+</LI>
+<LI>char * <A href="sfl82.htm#timezone_string">timezone string</A><BR>
+   (void);
+</LI>
+<LI>void <A href="sfl83.htm#local_to_gmt">local to gmt</A><BR>
+   (long date, long time, long *gmdate, long *gmtime);
+</LI>
+<LI>void <A href="sfl84.htm#gmt_to_local">gmt to local</A><BR>
+   (long gmdate, long gmtime, long *date, long *time);
+</LI>
+<LI>struct tm * <A href="sfl85.htm#safe_localtime">safe localtime</A><BR>
+   (const time_t *time_secs);
+</LI>
+<LI>struct tm * <A href="sfl86.htm#safe_gmtime">safe gmtime</A><BR>
+   (const time_t *time_secs);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sfldate.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>DAY_FRIDAY</B>  </TT>
+<TD ALIGN="LEFT">5
+<TR><TD ALIGN="LEFT"><TT><B>DAY_MONDAY</B>  </TT>
+<TD ALIGN="LEFT">1
+<TR><TD ALIGN="LEFT"><TT><B>DAY_SATURDAY</B>  </TT>
+<TD ALIGN="LEFT">6
+<TR><TD ALIGN="LEFT"><TT><B>DAY_SUNDAY</B>  </TT>
+<TD ALIGN="LEFT">0
+<TR><TD ALIGN="LEFT"><TT><B>DAY_THURSDAY</B>  </TT>
+<TD ALIGN="LEFT">4
+<TR><TD ALIGN="LEFT"><TT><B>DAY_TUESDAY</B>  </TT>
+<TD ALIGN="LEFT">2
+<TR><TD ALIGN="LEFT"><TT><B>DAY_WEDNESDAY</B>  </TT>
+<TD ALIGN="LEFT">3
+<TR><TD ALIGN="LEFT"><TT><B>GET_CCYEAR(d)</B>  </TT>
+<TD ALIGN="LEFT">(int) ( (d) / 10000L)
+<TR><TD ALIGN="LEFT"><TT><B>GET_CENTI(t)</B>  </TT>
+<TD ALIGN="LEFT">(int) ( (t) % 100)
+<TR><TD ALIGN="LEFT"><TT><B>GET_CENTURY(d)</B>  </TT>
+<TD ALIGN="LEFT">(int) ( (d) / 1000000L)
+<TR><TD ALIGN="LEFT"><TT><B>GET_DAY(d)</B>  </TT>
+<TD ALIGN="LEFT">(int) ( (d) % 100)
+<TR><TD ALIGN="LEFT"><TT><B>GET_HOUR(t)</B>  </TT>
+<TD ALIGN="LEFT">(int) ( (t) / 1000000L)
+<TR><TD ALIGN="LEFT"><TT><B>GET_MINUTE(t)</B>  </TT>
+<TD ALIGN="LEFT">(int) (((t) % 1000000L) / 10000L)
+<TR><TD ALIGN="LEFT"><TT><B>GET_MONTH(d)</B>  </TT>
+<TD ALIGN="LEFT">(int) (((d) % 10000L) / 100)
+<TR><TD ALIGN="LEFT"><TT><B>GET_SECOND(t)</B>  </TT>
+<TD ALIGN="LEFT">(int) (((t) % 10000L) / 100)
+<TR><TD ALIGN="LEFT"><TT><B>GET_YEAR(d)</B>  </TT>
+<TD ALIGN="LEFT">(int) (((d) % 1000000L) / 10000L)
+<TR><TD ALIGN="LEFT"><TT><B>INTERVAL_CENTI</B>  </TT>
+<TD ALIGN="LEFT">1
+<TR><TD ALIGN="LEFT"><TT><B>INTERVAL_DAY</B>  </TT>
+<TD ALIGN="LEFT">8640000L
+<TR><TD ALIGN="LEFT"><TT><B>INTERVAL_HOUR</B>  </TT>
+<TD ALIGN="LEFT">360000L
+<TR><TD ALIGN="LEFT"><TT><B>INTERVAL_MIN</B>  </TT>
+<TD ALIGN="LEFT">6000
+<TR><TD ALIGN="LEFT"><TT><B>INTERVAL_SEC</B>  </TT>
+<TD ALIGN="LEFT">100
+<TR><TD ALIGN="LEFT"><TT><B>MAKE_DATE(c,y,m,d)</B>  </TT>
+<TD ALIGN="LEFT">(long) (c) * 1000000L + <TR><TD ALIGN="LEFT"><TT><B>MAKE_TIME(h,m,s,c)</B>  </TT>
+<TD ALIGN="LEFT">(long) (h) * 1000000L + <TR><TD ALIGN="LEFT"><TT><B>SFLDATE_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>timeeq(d1,t1,d2,t2)</B>  </TT>
+<TD ALIGN="LEFT">((d1) == (d2) && (t1) == (t2))
+<TR><TD ALIGN="LEFT"><TT><B>timege(d1,t1,d2,t2)</B>  </TT>
+<TD ALIGN="LEFT">((d1) &gt; (d2) || ((d1) == (d2) && (t1) &gt;= (t2)))
+<TR><TD ALIGN="LEFT"><TT><B>timegt(d1,t1,d2,t2)</B>  </TT>
+<TD ALIGN="LEFT">((d1) &gt; (d2) || ((d1) == (d2) && (t1) &gt; (t2)))
+<TR><TD ALIGN="LEFT"><TT><B>timele(d1,t1,d2,t2)</B>  </TT>
+<TD ALIGN="LEFT">((d1) &lt; (d2) || ((d1) == (d2) && (t1) &lt;= (t2)))
+<TR><TD ALIGN="LEFT"><TT><B>timelt(d1,t1,d2,t2)</B>  </TT>
+<TD ALIGN="LEFT">((d1) &lt; (d2) || ((d1) == (d2) && (t1) &lt; (t2)))
+<TR><TD ALIGN="LEFT"><TT><B>timeneq(d1,t1,d2,t2)</B>  </TT>
+<TD ALIGN="LEFT">((d1) != (d2) || (t1) != (t2))
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl50.htm">&lt;</A>
+ | <A href="sfl52.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

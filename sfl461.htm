@@ -1,0 +1,89 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>get_gid_name</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl460.htm">&lt;</A>
+ | <A href="sfl462.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="get_gid_name">&nbsp;</A>
+<H3><A NAME="TOC474"><TT>get_gid_name</TT></A></H3>
+<PRE>
+#include "sfluid.h"
+char *
+get_gid_name (gid_t gid)
+</PRE>
+<H4>Synopsis</H4>
+<P> Get group name from group file. We optimise by keeping a table
+   of gids and names in memory. Note that this will cause problems
+   if the program stays running when the group file has been
+   changed. Returns a string containing the translated user name,
+   or "&lt;none&gt;" if the gid could not be translated. Under MS-
+   DOS the gid must be zero. The returned string is in a static
+   area that is _not_ overwritten with each call, but which should
+   be treated as read-only, and unstable: i.e. the value returned
+   by one call to get_gid_name may change as a result of a later
+   call. If you need persistent strings, use <A href="sfl278.htm#strdupl">strdupl</A>() after
+   each call.
+<H4>Source Code - (sfluid.c)</H4>
+<PRE>
+{
+#   if (defined (DOES_UID))
+    static struct gids {                /*  Table of cache'd gids            */
+        gid_t id;
+        char  *name;
+    } cache [GID_CACHE_MAX];
+    static int
+        cache_size = 0,                 /*  Number of gid's in cache         */
+        cache_oldest = 0;               /*  Oldest entry in cache            */
+    int
+        cache_scan;                     /*  Scan through cache               */
+    struct group
+        *group_entry;
+
+    /*  First, look for gid in cache                                         */
+    for (cache_scan = 0; cache_scan &lt; cache_size; cache_scan++)
+        if (cache [cache_scan].id == gid)
+            return (cache [cache_scan].name);
+
+    /*  Add new name to cache: if cache was full, kick-out oldest entry      */
+    if (cache_size == GID_CACHE_MAX)
+      {
+        cache_scan = cache_oldest++;
+        cache_oldest %= GID_CACHE_MAX;
+        free (cache [cache_scan].name);
+      }
+    else
+        cache_scan = cache_size++;
+
+    cache [cache_scan].id = gid;
+#   if (defined (__VMS__))
+        cache [cache_scan].name = "&lt;none&gt;";
+#   else
+    if ((group_entry = getgrgid (gid)) == NULL)
+        cache [cache_scan].name = "&lt;none&gt;";
+    else
+        cache [cache_scan].name = <A href="sfl278.htm#strdupl">strdupl</A> (group_entry-&gt; gr_name);
+#   endif
+
+    return (cache [cache_scan].name);
+
+#   elif (defined (__MSDOS__))
+    return (gid == 0? "group": "&lt;none&gt;");
+
+#   endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl460.htm">&lt;</A>
+ | <A href="sfl462.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

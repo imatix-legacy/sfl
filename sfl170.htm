@@ -1,0 +1,67 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>Line buffering functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl169.htm">&lt;</A>
+ | <A href="sfl171.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC183">Line buffering functions</A></H2>
+<P>Filename: sfllbuf.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1997/09/07 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 1997/09/08
+<BR>Copyright: Copyright (c) 1996-2000 iMatix Corporation
+<H3>Synopsis</H3>
+<P>Provides circular line buffering functions. A line buffer is a
+   data structure that holds a fixed amount of data in a serial
+   fashion; the oldest data gets discarded as new data is added.
+<H4>List of Functions</H4>
+<UL>
+<LI>LINEBUF * <A href="sfl171.htm#linebuf_create">linebuf create</A><BR>
+   (size_t maxsize);
+</LI>
+<LI>void <A href="sfl172.htm#linebuf_destroy">linebuf destroy</A><BR>
+   (LINEBUF *buffer);
+</LI>
+<LI>void <A href="sfl173.htm#linebuf_reset">linebuf reset</A><BR>
+   (LINEBUF *buffer);
+</LI>
+<LI>void <A href="sfl174.htm#linebuf_append">linebuf append</A><BR>
+   (LINEBUF *buffer, const char *line);
+</LI>
+<LI>char * <A href="sfl175.htm#linebuf_first">linebuf first</A><BR>
+   (LINEBUF *buffer, DESCR *line);
+</LI>
+<LI>char * <A href="sfl176.htm#linebuf_next">linebuf next</A><BR>
+   (LINEBUF *buffer, DESCR *line, const char *cur);
+</LI>
+<LI>char * <A href="sfl177.htm#linebuf_last">linebuf last</A><BR>
+   (LINEBUF *buffer, DESCR *line);
+</LI>
+<LI>char * <A href="sfl178.htm#linebuf_prev">linebuf prev</A><BR>
+   (LINEBUF *buffer, DESCR *line, const char *cur);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sfllbuf.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>SFLLBUF_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl169.htm">&lt;</A>
+ | <A href="sfl171.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

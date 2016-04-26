@@ -1,0 +1,143 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>process_create_full</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl250.htm">&lt;</A>
+ | <A href="sfl252.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="process_create_full">&nbsp;</A>
+<H3><A NAME="TOC264"><TT>process_create_full</TT></A></H3>
+<PRE>
+#include "sflproc.h"
+PROCESS
+process_create_full (PROCESS_DATA *procinfo)
+</PRE>
+<H4>Synopsis</H4>
+<P>Creates a subprocess and returns a PROCESS identifying the new
+   process. Optionally redirects standard input, output, error
+   file handles to supplied file handles, changes working
+   directory, and environment. In some operating systems can also
+   optinally change the root directory (chroot()), and the uid/gid
+   with which the new process runs. All information required to
+   start the new process is specified in a PROCESS_DATA structure.
+   Where elements are not specified, they remain the same as the
+   current process. The following elements can be specified in the
+   PROCESS_DATA structure: <TABLE BORDER NOWRAP> <TR><TD
+   ALIGN="LEFT"><B>filename</B>  <TD ALIGN="LEFT">File to execute,
+   can include arguments if argv is NULL. <TR><TD
+   ALIGN="LEFT"><B>argv []</B>  <TD ALIGN="LEFT">List of
+   arguments; argv [0] is filename; ends in a NULL. <TR><TD
+   ALIGN="LEFT"><B>path</B>  <TD ALIGN="LEFT">Search path
+   (environments PATH is used if NULL). <TR><TD
+   ALIGN="LEFT"><B>shell</B>  <TD ALIGN="LEFT">Shell to use if
+   useshell is TRUE (default is OS specific) <TR><TD
+   ALIGN="LEFT"><B>searchext</B>  <TD ALIGN="LEFT">Array of
+   extensions to search when looking for filename <TR><TD
+   ALIGN="LEFT"><B>searchpath</B>  <TD ALIGN="LEFT">Flag: TRUE
+   indicates path should be searched for filename <TR><TD
+   ALIGN="LEFT"><B>useshell</B>  <TD ALIGN="LEFT">Flag: TRUE
+   indicates program should be started via a shell <TR><TD
+   ALIGN="LEFT"><B>createdaemon</B>  <TD ALIGN="LEFT">Flag: TRUE
+   indicates a (separate) daemon should be started <TR><TD
+   ALIGN="LEFT"><B>wait</B>  <TD ALIGN="LEFT">Flag: TRUE indicates
+   wait for process to finish <TR><TD ALIGN="LEFT"><B>delay</B>
+   <TD ALIGN="LEFT">Amount of time to wait around for errors to
+   happen (unix) <TR><TD ALIGN="LEFT"><B>rootdir</B>  <TD
+   ALIGN="LEFT">Root directory for new process (chroot()) if not
+   NULL <TR><TD ALIGN="LEFT"><B>workdir</B>  <TD
+   ALIGN="LEFT">Working directory; if NULL, remains in current
+   directory. <TR><TD ALIGN="LEFT"><B>in</B>  <TD
+   ALIGN="LEFT">File handle to use for standard input; -2 = no
+   redirection. <TR><TD ALIGN="LEFT"><B>out</B>  <TD
+   ALIGN="LEFT">File handle to use for standard output; -2 = no
+   redirection. <TR><TD ALIGN="LEFT"><B>err</B>  <TD
+   ALIGN="LEFT">File handle to use for standard error; -2 = no
+   redirection. <TR><TD ALIGN="LEFT"><B>no handles</B>  <TD
+   ALIGN="LEFT">Number of file handles to pass to child process
+   (default: 3) <TR><TD ALIGN="LEFT"><B>envv []</B>  <TD
+   ALIGN="LEFT">Whole environment for new process; if NULL current
+   env used <TR><TD ALIGN="LEFT"><B>envadd</B>  <TD
+   ALIGN="LEFT">Strings to add into current environment (if envv
+   NULL). <TR><TD ALIGN="LEFT"><B>envrm</B>  <TD ALIGN="LEFT">Keys
+   to remove from current environment (if envv NULL). <TR><TD
+   ALIGN="LEFT"><B>username</B>  <TD ALIGN="LEFT">user name under
+   which to run process <TR><TD ALIGN="LEFT"><B>groupname</B>  <TD
+   ALIGN="LEFT">groupname associated with user name <TR><TD
+   ALIGN="LEFT"><B>password</B>  <TD ALIGN="LEFT">required if
+   calling process is not privileged </TABLE> If argv is NULL,
+   parses the filename argument into words delimited by whitespace
+   and builds the necessary argv table automatically. Use this
+   feature to execute a command with arguments, specified as one
+   string. To search for the program in the path set searchpath to
+   TRUE, and optionally supply a path to search. To run shell
+   builtins set useshell to TRUE. The envv list consists of
+   strings in the form "name=value", ending in a NULL pointer. If
+   the envv argument is null, the environment of the current
+   process is passed, with additions from envadd (if not NULL),
+   and the keys listed in envrm removed (if not NULL). If envv is
+   not null then the envv environment is used as is. The child
+   process may optionally start in a new root directory and with a
+   different user/group (if supported by the operating system). If
+   rootdir, workdir, user, and group are all non null, then they
+   are processed in the order: rootdir, workdir, group, user, to
+   ensure all changes take place. Note that in this instance
+   workdir is relative to the new root directory. Under DOS,
+   Windows, and OS/2, the rootdir may be used to specify a change
+   to a new drive letter (processed by _chdir() or _chdir2()). If
+   the child command detects an error at startup, it may exit with
+   an error status. The sleep allows this error to be collected by
+   calling <A href="sfl256.htm#process_status">process status</A>() after this call. Returns child
+   process id, or 0 if there was an error. The PROCESS_DATA
+   structure contains the following fields used for output: <TABLE
+   BORDER NOWRAP> <TR><TD ALIGN="LEFT"><B>pid</B>  <TD
+   ALIGN="LEFT">Process identifier (as returned by function)
+   <TR><TD ALIGN="LEFT"><B>returncode</B>  <TD ALIGN="LEFT">Return
+   code from sub process (only set if wait is TRUE) <TR><TD
+   ALIGN="LEFT"><B>error</B>  <TD ALIGN="LEFT">Code indicating
+   error that occured (like libc errno) </TABLE> Under VMS, the
+   filename must have been defined as a command before the calling
+   process was started; the path is disregarded. Under Windows and
+   OS/2 processing of the #! line is emulated, and the interpreter
+   mentioned in the #! line will be invoked on the script. Under
+   OS/2 the filename can be the name of a CMD script, and this
+   will be run with the interpreter specified in the first line
+   (EXTPROC line, or "'/'*!" line; or failing that with the
+   default command interpreter.
+<H4>Source Code - (sflproc.c)</H4>
+<PRE>
+{
+    /*  Implementation note: due to the size of this function, and the       */
+    /*  sizeable differences between operating systems supported, the        */
+    /*  implementation of this function for each operating system is in      */
+    /*  a different file, and the appropriate one is included here.          */
+
+    /*  WARNING: do not put any code here, otherwise it will prevent the     */
+    /*  implementations from declaring variables.                            */
+
+#if   (defined (__UNIX__))
+#   include "sflprocu.imp"              /*  Unix implementation              */
+#elif (defined (__OS2__))
+#   include "sflproco.imp"              /*  OS/2 implementation              */
+#elif (defined (WIN32))
+#   include "sflprocw.imp"              /*  Windows (32-bit) implementation  */
+#elif (defined (__VMS__))
+#   include "sflprocv.imp"              /*  VMS implementation               */
+#else
+    return ((PROCESS) 0);               /*  Not supported on this system     */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl250.htm">&lt;</A>
+ | <A href="sfl252.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

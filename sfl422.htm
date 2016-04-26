@@ -1,0 +1,55 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>env_get_string</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl421.htm">&lt;</A>
+ | <A href="sfl423.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="env_get_string">&nbsp;</A>
+<H3><A NAME="TOC435"><TT>env_get_string</TT></A></H3>
+<PRE>
+#include "sflenv.h"
+char *
+env_get_string (
+    const char *name,
+    const char *default_value)
+</PRE>
+<H4>Synopsis</H4>
+<P>Translates the specified environment variable and returns a
+   static string containing the value. If the variable is not
+   defined in the environment, returns the specified default
+   value. Note: if you want to use the value in a program you
+   should use <A href="sfl278.htm#strdupl">strdupl</A>() to make a copy. The environment
+   variable name is always translated into upper case. The default
+   value may be NULL.
+<H4>Examples</H4>
+<PRE>
+    config_file = strdupl (env_get_string ("config", "default.cfg"));
+</PRE>
+<H4>Source Code - (sflenv.c)</H4>
+<PRE>
+{
+    char
+        *variable_name,
+        *variable_value;
+
+    variable_name = mem_strdup (name);
+    variable_value = getenv (<A href="sfl284.htm#strupc">strupc</A> (variable_name));
+    mem_free (variable_name);
+    return (variable_value? variable_value: (char *) default_value);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl421.htm">&lt;</A>
+ | <A href="sfl423.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

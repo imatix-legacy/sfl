@@ -1,0 +1,82 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>write_UDP</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl360.htm">&lt;</A>
+ | <A href="sfl362.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="write_UDP">&nbsp;</A>
+<H3><A NAME="TOC374"><TT>write_UDP</TT></A></H3>
+<PRE>
+#include "sflsock.h"
+int
+write_UDP (
+    sock_t handle,                      /*  Socket handle                    */
+    const void *buffer,                 /*  Buffer containing data           */
+    size_t length,                      /*  Amount of data to write          */
+    const struct sockaddr_in *sin       /*  Address to send to, or null      */
+)
+</PRE>
+<H4>Synopsis</H4>
+<P> Writes data to a connected or unconnected UDP socket. To
+   prepare a connected UDP socket you call <A href="sfl342.htm#connect_UDP">connect UDP</A> ().
+   This makes a connection to a specific port on a specific host,
+   and returns a socket handle. When you call this function with a
+   null value for the address argument, it assumes you are using a
+   connected UDP socket. To prepare an unconnected UDP socket,
+   call <A href="sfl340.htm#create_socket">create socket</A> () with the string "udp" as argument.
+   This returns a sock_t handle that you can use in this function.
+   If you use an unconnected UDP socket you must provide an
+   address structure containing a valid host and port. You can get
+   this information from a <A href="sfl360.htm#read_UDP">read UDP</A> () or through
+   <A href="sfl347.htm#address_end_point">address end point</A> (). If there is an error on the write
+   this function returns SOCKET_ERROR. You can handle errors as
+   fatal except for EAGAIN which indicates that the operation
+   would cause a non-blocking socket to block. Treat EWOULDBLOCK
+   as EAGAIN.
+<H4>Source Code - (sflsock.c)</H4>
+<PRE>
+{
+#if (defined (DOES_SOCKETS))
+    int
+        sin_length,                     /*  Length of address                */
+        flags = 0,                      /*  Flags for call                   */
+        rc;                             /*  Return code from call            */
+
+    ASSERT (buffer);
+    ASSERT (sin);
+    sin_length = (int) sizeof (*sin);
+    if (sin)
+        /*  Write to unconnected UDP socket; we provide the address of       */
+        /*  the receiving party in the sin argument.                         */
+        rc = sendto ((SOCKET) handle, buffer, length, flags,
+                    (struct sockaddr *) sin, sin_length);
+    else
+        /*  Write to a connected UDP socket; we don't need to supply         */
+        /*  the address, since we already know it.                           */
+        rc = send   ((SOCKET) handle, buffer, length, flags);
+
+#   if (defined (__WINDOWS__))
+    return (win_error (rc));
+#   else
+    return (rc);
+#   endif
+#else
+    return ((int) SOCKET_ERROR);        /*  Sockets not supported            */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl360.htm">&lt;</A>
+ | <A href="sfl362.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

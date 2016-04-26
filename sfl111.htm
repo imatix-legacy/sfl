@@ -1,0 +1,190 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>file_where</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl110.htm">&lt;</A>
+ | <A href="sfl112.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="file_where">&nbsp;</A>
+<H3><A NAME="TOC124"><TT>file_where</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+char *
+file_where (
+    char mode,
+    const char *path,
+    const char *name,
+    const char *ext)
+</PRE>
+<H4>Synopsis</H4>
+<P>Scans a user-specified path symbol for a specific file, and
+   returns the fully-specified filename. Also adds an extension if
+   this is required. The mode argument can be one of: r, w, a, or
+   s for read, write, append, or static. The function tries to
+   locate existing files somewhere on the path. New files are
+   always created in the current directory. Static files are
+   created in the first directory on the path. The path argument
+   is only used when more is r, a, or s. If the path is NULL or
+   empty, it is ignored. Otherwise, the path is translated as an
+   environment variable, and cut into a list of directory names.
+   The path is cut up as follows: <TABLE BORDER NOWRAP> <TR><TD
+   ALIGN="LEFT"><B>MS-DOS</B>  <TD ALIGN="LEFT">directory names
+   separated by ';'. ;; means current. <TR><TD
+   ALIGN="LEFT"><B>OS/2</B>  <TD ALIGN="LEFT">directory names
+   separated by ';'. ;; means current. <TR><TD
+   ALIGN="LEFT"><B>Unix</B>  <TD ALIGN="LEFT">directory names
+   separated by ':'. :: means current. <TR><TD
+   ALIGN="LEFT"><B>VMS</B>  <TD ALIGN="LEFT">directory names
+   separated by ','. " ", means current. <TR><TD
+   ALIGN="LEFT"><B>Other</B>  <TD ALIGN="LEFT">single directory
+   name. </TABLE> When the mode is 'r' or 'a', searches the
+   current directory before considering the path value. When the
+   path cannot be translated, and is not null or empty, it is used
+   as a literal value. The name argument is the filename with or
+   without extension. It will be prefixed by the path and suffixed
+   by the extension, if required. The ext argument is a default or
+   mandatory extension. If ext starts with a dot, it is mandatory
+   and always used. Otherwise it is used only if the name does not
+   already have an extension. If ext is NULL or empty, it is
+   ignored. The total length of a name including path, name,
+   extension, and any delimiters is FILE_NAME_MAX. Names are
+   truncated if too long. The maximum size of one directory
+   component is FILE_DIR_MAX chars. All parameters are case-
+   sensitive; the precise effect of this depends on the system. On
+   MS-DOS, filenames are always folded to uppercase, but the path
+   must be supplied in uppercase correctly. On UNIX, all
+   parameters are case sensitive. On VMS, path and filenames are
+   folded into uppercase. Returns a pointer to a static character
+   array containing the filename; if mode is 'r' and the file does
+   not exist, returns NULL. If the mode is 'w', 'a', or 's',
+   always returns a valid filename. Under VMS, all filenames are
+   handled in POSIX mode, i.e. /disk/path/file instead of
+   $disk:[path]file.
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+    const char
+        *pathptr;                       /*  End of directory in path         */
+    char
+        *curdir;
+    Bool
+        search_curdir = TRUE;           /*  Look in current directory?       */
+
+    ASSERT (name);
+    if (ext != NULL &amp;&amp; *ext)            /*  Append extension if not null     */
+      {                                 /*    to get name + ext into         */
+        if (ext [0] == '.')             /*    work_name.                     */
+            <A href="sfl118.htm#fixed_extension">fixed extension</A> (work_name, name, ext);
+        else
+            <A href="sfl117.htm#default_extension">default extension</A> (work_name, name, ext);
+      }
+    else
+        strcpy (work_name, name);
+#if (NAMEFOLD == TRUE)
+    <A href="sfl284.htm#strupc">strupc</A> (work_name);                 /*  Fold to uppercase if needed      */
+#endif
+
+    if (path != NULL &amp;&amp; *path)          /*  Get value of path, or NULL       */
+      {
+        pathptr = getenv (path);        /*  Translate path symbol            */
+        if (pathptr == NULL)
+          {
+            pathptr = path;             /*  If not found, use literally      */
+            search_curdir = FALSE;      /*  Path now takes priority          */
+          }
+#if (PATHFOLD == TRUE)                  /*  Fold to uppercase if necessary   */
+        if (pathptr)
+          {
+            ASSERT (strlen (pathptr) &lt; PATH_MAX);
+            strcpy (path_name, pathptr);
+            <A href="sfl284.htm#strupc">strupc</A> (path_name);
+            pathptr = path_name;        /*  Redirect to uppercase version    */
+          }
+#endif
+      }
+    else
+        pathptr = NULL;
+
+#if (defined (MSDOS_FILESYSTEM))
+    /*  Normalise the path value by changing any slashes to backslashes      */
+    if (pathptr)
+      {
+        if (pathptr != path_name)
+          {
+            strcpy (path_name, pathptr);
+            pathptr = path_name;
+          }
+        <A href="sfl294.htm#strconvch">strconvch</A> (path_name, '/', '\\');
+      }
+#endif
+
+    /*  Take care of 'w' and 's' options first                               */
+    if (mode == 'w')                    /*  Create output file locally       */
+        return (work_name);
+
+    if (mode == 's')                    /*  Get specific directory name      */
+      {
+        if (fully_specified (work_name))
+            strncpy (full_name, work_name, sizeof (full_name));
+        else
+        if (pathptr &amp;&amp; <A href="sfl128.htm#file_is_directory">file is directory</A> (pathptr))
+            build_next_path (full_name, pathptr, work_name);
+        else
+#if (defined (MSDOS_FILESYSTEM))
+            build_next_path (full_name, ".\\", work_name);
+#else
+            build_next_path (full_name, "./", work_name);
+#endif
+        return (full_name);
+      }
+
+    /*  If file exists as defined, prefix with current directory if not an   */
+    /*  absolute filename, then return the resulting filename                */
+    if (search_curdir &amp;&amp; <A href="sfl110.htm#file_exists">file exists</A> (work_name))
+      {
+        if (fully_specified (work_name))
+            strncpy (full_name, work_name, sizeof (full_name));
+        else
+          {
+            curdir = <A href="sfl243.htm#get_curdir">get curdir</A> ();
+            snprintf (full_name, sizeof (full_name), "%s%s", curdir, work_name);
+            mem_free (curdir);
+          }
+#if (defined (MSDOS_FILESYSTEM))
+        <A href="sfl294.htm#strconvch">strconvch</A> (full_name, '/', '\\');
+#endif
+        return (full_name);             /*  Then return path + name + ext    */
+      }
+    if (!pathptr)                       /*  Now we need a path               */
+        return (NULL);                  /*   - if none defined, give up      */
+
+    for (;;)                            /*  Try each path component          */
+      {
+        pathptr = build_next_path (full_name, pathptr, work_name);
+        if (<A href="sfl110.htm#file_exists">file exists</A> (full_name))
+            return (full_name);         /*  Until we find one,               */
+
+        if (*pathptr == '\0')           /*    or we come to the end of       */
+          {                             /*    the path                       */
+            if (mode == 'r')
+                return (NULL);          /*  Input file was not found...      */
+            else
+                return (full_name);
+          }
+      }
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl110.htm">&lt;</A>
+ | <A href="sfl112.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

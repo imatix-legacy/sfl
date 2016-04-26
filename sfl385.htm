@@ -1,0 +1,59 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>sym_get_value</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl384.htm">&lt;</A>
+ | <A href="sfl386.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="sym_get_value">&nbsp;</A>
+<H3><A NAME="TOC398"><TT>sym_get_value</TT></A></H3>
+<PRE>
+#include "sflsymb.h"
+char *
+sym_get_value (
+    const SYMTAB *table,                /*  Symbol table to process          */
+    const char *name,                   /*  Name of symbol to look for       */
+    const char *default_value)          /*  Value to return if not defined   */
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns value for specified symbol, if defined in table, or a
+   default value otherwise. You can use this in situations where a
+   symbol does not need to exist, and where frequent look-up by
+   name is required. The symbol table must exist and be populated
+   beforehand as appropriate. Returns a pointer to the value; you
+   should never write to this string since it may exist as a
+   string constant, not writable memory.
+<H4>Examples</H4>
+<PRE>
+    value = sym_get_value (env, "PATH", NULL);
+    if (!value)
+        puts ("PATH not defined");
+</PRE>
+<H4>Source Code - (sflsymb.c)</H4>
+<PRE>
+{
+    SYMBOL
+        *symbol;                        /*  Search through symbol table      */
+
+    ASSERT (table);
+    symbol = <A href="sfl378.htm#sym_lookup_symbol">sym lookup symbol</A> (table, name);
+    if (symbol)
+        return (symbol-&gt; value);
+    else
+        return ((char *) default_value);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl384.htm">&lt;</A>
+ | <A href="sfl386.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

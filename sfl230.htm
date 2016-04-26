@@ -1,0 +1,131 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>open_dir</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl229.htm">&lt;</A>
+ | <A href="sfl231.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="open_dir">&nbsp;</A>
+<H3><A NAME="TOC243"><TT>open_dir</TT></A></H3>
+<PRE>
+#include "sfldir.h"
+Bool
+open_dir (
+    DIRST *dir,
+    const char *dir_name)
+</PRE>
+<H4>Synopsis</H4>
+<P> Creates a directory stream and returns the first entry in the
+   directory. The order of entries is arbitrary, and it is
+   undefined whether you will get entries like '.' and '..' or
+   not. Returns TRUE if something was found, else FALSE. If TRUE,
+   fills-in the values in the directory stream block. Use the same
+   directory stream block for the read_dir and <A href="sfl232.htm#close_dir">close dir</A>()
+   functions. You must supply a DIRST block when calling
+   <A href="sfl230.htm#open_dir">open dir</A>(). If you do not supply a dir_name (i.e. it is
+   NULL or ""), <A href="sfl230.htm#open_dir">open dir</A>() assumes you want to read from the
+   current working directory. You must call <A href="sfl232.htm#close_dir">close dir</A>() after
+   an <A href="sfl230.htm#open_dir">open dir</A>(), even if it fails. The strings in DIRST all
+   point to static areas that may change after a further call to
+   read_dir. If you need persistent data (i.e. because you want to
+   collect a set of DIRSTs and then sort them, call <A href="sfl234.htm#fix_dir">fix dir</A>()
+   after each call to open_dir and read_dir. You should then call
+   <A href="sfl235.htm#free_dir">free dir</A>() to release each DIRST when you are finished.
+<H4>Source Code - (sfldir.c)</H4>
+<PRE>
+{
+    char
+        *dir_spec,                      /*  Directory to search through      */
+        *dir_spec_end;                  /*  Points to NULL in dir_spec       */
+
+    ASSERT (dir != NULL);
+    memset (dir, 0, sizeof (DIRST));
+
+    /*  Copy and prepare the directory specification                         */
+    dir_spec = mem_alloc (NAME_MAX);
+    if (dir_name == NULL || *dir_name == 0)
+        strcpy (dir_spec, DEFAULT_DIR);
+    else
+        strcpy (dir_spec, dir_name);
+
+#if (defined (MSDOS_FILESYSTEM))
+    <A href="sfl294.htm#strconvch">strconvch</A> (dir_spec, '/', '\\');
+#endif
+    /*  Remove a trailing slash from the directory name                      */
+    dir_spec_end = dir_spec + strlen (dir_spec);
+    if (dir_spec_end [-1] == PATHEND)
+      {
+        dir_spec_end [-1] = '\0';
+        dir_spec_end--;
+      }
+
+    /*  Open directory stream or find first directory entry                  */
+#if (defined (__UNIX__) || defined (__VMS_XOPEN) || defined (__OS2__))
+    if (strnull (dir_spec))
+        strcpy (dir_spec, "/");
+#   if (defined (__OS2__))
+    if (dir_spec_end [-1] == ':')                /*  Special case d: to d:\  */
+        strcat (dir_spec, "\\");
+#  endif
+    if ((dir-&gt; _dir_handle = opendir (dir_spec)) == NULL)
+
+#elif (defined (WIN32))
+    strcat (dir_spec, "\\*");
+    if ((dir-&gt; _dir_handle = FindFirstFile (dir_spec, &amp;dir-&gt; _dir_entry))
+                           == INVALID_HANDLE_VALUE)
+
+#elif (defined (_MSC_VER))
+    strcat (dir_spec, "\\*.*");
+    if ((dir-&gt; _dir_handle = _dos_findfirst (dir_spec, _A_NORMAL | _A_SUBDIR,
+                                             &amp;dir-&gt; _dir_entry)) != 0)
+
+#elif (defined (__TURBOC__) || defined (__DJGPP__))
+    strcat (dir_spec, "\\*.*");
+    if (findfirst (dir_spec, &amp;dir-&gt; _dir_entry, 255 - FA_LABEL) == -1)
+#endif
+      {
+        mem_free (dir_spec);
+        return (FALSE);                 /*  Could not open directory         */
+      }
+
+    /*  Save the directory name in directory stream structure                */
+#if (defined (__MSDOS__) || defined (__OS2__))
+    *dir_spec_end = '\0';               /*  Kill the \*.* again              */
+#endif
+    dir-&gt; dir_name = dir_spec;          /*  Now owned by DIRST structure     */
+
+#if (defined (__UNIX__) || defined (__VMS_XOPEN) || defined (__OS2__))
+    /*  Under UNIX &amp; VMS we still need to fetch the first file entry         */
+    return (<A href="sfl231.htm#read_dir">read dir</A> (dir));
+
+#elif (defined (WIN32))
+    /*  Under Win32 we have read an entry, so return those values            */
+    return (populate_entry (dir));
+
+#elif (defined (_MSC_VER))
+    /*  Under MSC we have read an entry, so return those values              */
+    return (populate_entry (dir));
+
+#elif (defined (__TURBOC__) || defined (__DJGPP__))
+    /*  Under Borland C we have read an entry, so return those values        */
+    return (populate_entry (dir));
+#else
+
+    return (FALSE);                     /*  Directory access not supported   */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl229.htm">&lt;</A>
+ | <A href="sfl231.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

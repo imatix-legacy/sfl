@@ -1,0 +1,57 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>socket_nodelay</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl350.htm">&lt;</A>
+ | <A href="sfl352.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="socket_nodelay">&nbsp;</A>
+<H3><A NAME="TOC364"><TT>socket_nodelay</TT></A></H3>
+<PRE>
+#include "sflsock.h"
+int
+socket_nodelay (
+    sock_t handle)
+</PRE>
+<H4>Synopsis</H4>
+<P>Disables Nagle's algorithm for the specified socket; use this
+   when you want to ensure that data is sent outwards as fast as
+   possible, and when you are certain that Nagle's algorithm is
+   causing a slowdown in performance. Recommended for HTTP, but
+   not recommended for telnet. Returns 0 if okay, SOCKET_ERROR if
+   there was a problem.
+<H4>Source Code - (sflsock.c)</H4>
+<PRE>
+{
+#if (defined (__WINDOWS__))
+    int
+        true_value = 1;                 /*  Boolean value for setsockopt()   */
+
+    return (setsockopt ((SOCKET) handle, IPPROTO_TCP, TCP_NODELAY,
+                        (char *) &amp;true_value, sizeof (true_value)));
+
+#elif (defined (TCP_NODELAY) &amp;&amp; defined (SOL_TCP))
+    int
+        true_value = 1;                 /*  Boolean value for setsockopt()   */
+
+    return (setsockopt ((SOCKET) handle, SOL_TCP, TCP_NODELAY,
+                        (char *) &amp;true_value, sizeof (true_value)));
+#else
+    return (0);                         /*  Not applicable to this system    */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl350.htm">&lt;</A>
+ | <A href="sfl352.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

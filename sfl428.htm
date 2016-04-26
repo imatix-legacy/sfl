@@ -1,0 +1,89 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>symb2env</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl427.htm">&lt;</A>
+ | <A href="sfl429.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="symb2env">&nbsp;</A>
+<H3><A NAME="TOC441"><TT>symb2env</TT></A></H3>
+<PRE>
+#include "sflenv.h"
+char **
+symb2env (
+    const SYMTAB *symtab)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns an environment block from the supplied symbol table.
+   The returned block is an array of strings, terminated by a null
+   pointer. Each string is allocated independently using
+   mem_alloc(). Returns NULL if there was not enough memory to
+   allocate the block. Normalises the environment variable names
+   as follows: converts all letters to uppercase, and non-
+   alphanumeric characters to underlines. To free the array, use
+   <A href="sfl304.htm#strtfree">strtfree</A>(). See also <A href="sfldoc.htm#symb2strt">symb2strt</A>().
+<H4>Source Code - (sflenv.c)</H4>
+<PRE>
+{
+    MEMTRN
+        *memtrn;                        /*  Memory transation                */
+    SYMBOL
+        *symbol;                        /*  Pointer to symbol                */
+    char
+        **strings,                      /*  Returned string array            */
+        *name_and_value,                /*  Name=value string                */
+        *nameptr;                       /*  Pointer into name                */
+    int
+        string_nbr;                     /*  Index into symbol_array          */
+
+    if (!symtab)
+        return (NULL);                  /*  Return NULL if argument is null  */
+
+    /*  Allocate the array of pointers with one slot for the final NULL      */
+    memtrn  = <A href="sfldoc.htm#mem_new_trans">mem new trans</A> ();
+    strings = memt_alloc (memtrn, sizeof (char *) * (symtab-&gt; size + 1));
+    if (strings)
+      {
+        string_nbr = 0;
+        for (symbol = symtab-&gt; symbols; symbol; symbol = symbol-&gt; next)
+          {
+            /*  Allocate space for "name=value" plus final null char         */
+            name_and_value = memt_alloc (memtrn,
+                                        (strlen (symbol-&gt; name)
+                                         + strlen (symbol-&gt; value) + 2));
+            if (!name_and_value)        /*  Quit if no memory left           */
+              {
+                <A href="sfldoc.htm#mem_rollback">mem rollback</A> (memtrn);
+                return (NULL);
+              }
+            /*  Get symbol name in uppercase, using underlines               */
+            strcpy (name_and_value, symbol-&gt; name);
+            for (nameptr = name_and_value; *nameptr; nameptr++)
+                if (isalnum (*nameptr))
+                    *nameptr = toupper (*nameptr);
+                else
+                    *nameptr = '_';
+            strcat (name_and_value, "=");
+            strcat (name_and_value, symbol-&gt; value);
+            strings [string_nbr++] = name_and_value;
+          }
+        strings [string_nbr] = NULL;    /*  Store final null pointer         */
+      }
+    <A href="sfldoc.htm#mem_commit">mem commit</A> (memtrn);
+    return (strings);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl427.htm">&lt;</A>
+ | <A href="sfl429.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

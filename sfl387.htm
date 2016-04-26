@@ -1,0 +1,48 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>sym_get_boolean</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl386.htm">&lt;</A>
+ | <A href="sfl388.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="sym_get_boolean">&nbsp;</A>
+<H3><A NAME="TOC400"><TT>sym_get_boolean</TT></A></H3>
+<PRE>
+#include "sflsymb.h"
+Bool
+sym_get_boolean (
+    const SYMTAB *table,                /*  Symbol table to process          */
+    const char *name,                   /*  Name of symbol to look for       */
+    const Bool default_value)           /*  Value to return if not defined   */
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns value for specified symbol, as TRUE or FALSE. If the
+   symbol is not defined in the table, returns a default value.
+<H4>Examples</H4>
+<PRE>
+    value = sym_get_boolean (env, "CONNECTS_ENABLED", TRUE);
+</PRE>
+<H4>Source Code - (sflsymb.c)</H4>
+<PRE>
+{
+    char
+        *value;
+
+    value = <A href="sfl385.htm#sym_get_value">sym get value</A> (table, name, NULL);
+    return (value? (<A href="sfl40.htm#conv_str_bool">conv str bool</A> (value) != 0): default_value);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl386.htm">&lt;</A>
+ | <A href="sfl388.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,56 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>date_to_timer</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl67.htm">&lt;</A>
+ | <A href="sfl69.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="date_to_timer">&nbsp;</A>
+<H3><A NAME="TOC81"><TT>date_to_timer</TT></A></H3>
+<PRE>
+#include "sfldate.h"
+time_t
+date_to_timer (long date, long time)
+</PRE>
+<H4>Synopsis</H4>
+<P>Converts the supplied date and time into a time_t timer value.
+   This is the number of non-leap seconds since 00:00:00 GMT Jan
+   1, 1970. Function was rewritten by Bruce Walter <A
+   HREF=mailto:"walter@fortean.com">walter@fortean.com</A>. If the
+   input date and time are invalid, returns 0.
+<H4>Source Code - (sfldate.c)</H4>
+<PRE>
+{
+    struct tm
+        time_struct;
+    time_t
+        timer;
+
+    time_struct.tm_sec   = GET_SECOND (time);
+    time_struct.tm_min   = GET_MINUTE (time);
+    time_struct.tm_hour  = GET_HOUR   (time);
+    time_struct.tm_mday  = GET_DAY    (date);
+    time_struct.tm_mon   = GET_MONTH  (date) - 1;
+    time_struct.tm_year  = GET_CCYEAR (date) - 1900;
+    time_struct.tm_isdst = -1;
+    timer = mktime (&amp;time_struct);
+    if (timer == -1)
+        return (0);
+    else
+        return (timer);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl67.htm">&lt;</A>
+ | <A href="sfl69.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

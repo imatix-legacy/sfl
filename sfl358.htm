@@ -1,0 +1,67 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>read_TCP</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl357.htm">&lt;</A>
+ | <A href="sfl359.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="read_TCP">&nbsp;</A>
+<H3><A NAME="TOC371"><TT>read_TCP</TT></A></H3>
+<PRE>
+#include "sflsock.h"
+int
+read_TCP (
+    sock_t handle,                      /*  Socket handle                    */
+    void *buffer,                       /*  Buffer to receive data           */
+    size_t length                       /*  Maximum amount of data to read   */
+)
+</PRE>
+<H4>Synopsis</H4>
+<P> Reads data from the socket. On UNIX, VMS, OS/2, passes through
+   to the standard read function; some other systems have
+   particular ways of accessing sockets. If there is an error on
+   the read this function returns SOCKET_ERROR. You can handle
+   errors (in sockerrno) as fatal except for EAGAIN which
+   indicates that the operation would cause a non-blocking socket
+   to block, and EPIPE or ECONNRESET which indicate that the
+   socket was closed at the other end. Treat EWOULDBLOCK as
+   EAGAIN.
+<H4>Source Code - (sflsock.c)</H4>
+<PRE>
+{
+#if (defined (DOES_SOCKETS))
+#   if (defined (__UTYPE_BEOS))
+    return (recv ((SOCKET) handle, buffer, length, 0));
+
+#   elif (defined (__UNIX__) || defined (__VMS__) || defined (__OS2__))
+    return (read ((SOCKET) handle, buffer, length));
+
+#   elif (defined (__WINDOWS__))
+    int
+        rc;                             /*  Return code from call            */
+
+    ASSERT (buffer);
+    rc = recv ((SOCKET) handle, buffer, length, 0);
+    return (win_error (rc));
+#   else
+#       error "No code for function body."
+#   endif
+#else
+    return ((int) SOCKET_ERROR);        /*  Sockets not supported            */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl357.htm">&lt;</A>
+ | <A href="sfl359.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

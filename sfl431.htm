@@ -1,0 +1,101 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>tok_split</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl430.htm">&lt;</A>
+ | <A href="sfl432.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="tok_split">&nbsp;</A>
+<H3><A NAME="TOC444"><TT>tok_split</TT></A></H3>
+<PRE>
+#include "sfltok.h"
+char **
+tok_split (
+    const char *string)
+</PRE>
+<H4>Synopsis</H4>
+<P>Accepts a string and breaks it into words, delimited by white
+   space (spaces, tabs, newlines). Returns an array of strings
+   which ends in a NULL string. If the string is empty or NULL,
+   returns an array containing a single NULL value. The array is
+   allocated dynamically by this function, and you must call
+   <A href="sfl433.htm#tok_free">tok free</A>() to release it when you have finished. Returns
+   NULL if there was insufficient memory to complete the split
+   operation.
+<H4>Source Code - (sfltok.c)</H4>
+<PRE>
+{
+    char
+        *buffer,
+        *bufptr,
+        **token_list,                   /*  Returned token list              */
+        last_char = '\0';               /*  Last character parsed            */
+    int
+        word_count = 0,                 /*  Number of words in string        */
+        word_nbr;
+
+    /*  Allocate space for work string, up to the size of the input string   */
+    if (string == NULL)
+        string = "";
+
+    buffer = mem_alloc (strlen (string) + 1);
+    if (buffer == NULL)
+        return (NULL);
+
+    /*  Now copy string and eliminate whitespace                             */
+    bufptr = buffer;                    /*  Move to start of target buffer   */
+    while (*string)                     /*  Copy entire string               */
+        if (isspace (*string))          /*  Collapse whitespace to           */
+          {                             /*    a single null byte             */
+            while (isspace (*string))
+                string++;
+            if (bufptr &gt; buffer)
+              {
+                word_count++;           /*  We have a new word               */
+                last_char = *bufptr++ = '\0';
+              }
+          }
+        else
+            last_char = *bufptr++ = *string++;
+
+    /*  Count last word if it was not terminated in a white space            */
+    if (last_char &gt; 0)
+        word_count++;
+    *bufptr = '\0';                     /*  End with final NULL              */
+
+    /*  The token list starts with a pointer to the buffer, then has one     */
+    /*  pointer to each string in the buffer.  It ends with a null pointer.  */
+    /*  We return the address of the first string pointer, i.e. the caller   */
+    /*  does not see the pointer to the buffer.  We can thus get away with   */
+    /*  just two allocs; one for the buffer and one for the token list.      */
+    token_list = mem_alloc (sizeof (char *) * (word_count + 2));
+    if (token_list == NULL)
+        return (NULL);
+
+    token_list [0] = buffer;            /*  Store buffer address             */
+    token_list++;                       /*    and bump starting address      */
+
+    bufptr = buffer;
+    for (word_nbr = 0; word_nbr &lt; word_count; word_nbr++)
+      {
+        token_list [word_nbr] = bufptr;
+        bufptr += strlen (bufptr) + 1;
+      }
+    token_list [word_count] = NULL;     /*  Store final null pointer         */
+    return (token_list);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl430.htm">&lt;</A>
+ | <A href="sfl432.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

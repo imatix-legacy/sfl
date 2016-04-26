@@ -1,0 +1,129 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>passive_socket</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl338.htm">&lt;</A>
+ | <A href="sfl340.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="passive_socket">&nbsp;</A>
+<H3><A NAME="TOC352"><TT>passive_socket</TT></A></H3>
+<PRE>
+#include "sflsock.h"
+sock_t
+passive_socket (
+    const char *service,                /*  Service name or port as string   */
+    const char *protocol,               /*  Protocol "tcp" or "udp"          */
+    int queue_length                    /*  Queue length for TCP sockets     */
+)
+</PRE>
+<H4>Synopsis</H4>
+<P> Creates a passive TCP or UDP socket. This function allows a
+   server program to create a master socket, so that connections
+   can be accepted. Used by the passive_TCP and passive_UDP
+   functions. Returns a socket number or INVALID_SOCKET. If it
+   returns INVALID_SOCKET, you can get the reason for the error by
+   calling <A href="sfl355.htm#connect_error">connect error</A> (). This may be one of: <TABLE BORDER
+   NOWRAP> <TR><TD ALIGN="LEFT"><B>IP NOSOCKETS</B>  <TD
+   ALIGN="LEFT">Sockets not supported on this system <TR><TD
+   ALIGN="LEFT"><B>IP BADSERVICE</B>  <TD ALIGN="LEFT">Service
+   cannot be converted to port number <TR><TD ALIGN="LEFT"><B>IP
+   BADPROTOCOL</B>  <TD ALIGN="LEFT">Cannot understand protocol
+   name <TR><TD ALIGN="LEFT"><B>IP SOCKETERROR</B>  <TD
+   ALIGN="LEFT">Cannot create the passive socket <TR><TD
+   ALIGN="LEFT"><B>IP BINDERROR</B>  <TD ALIGN="LEFT">Cannot bind
+   to the port <TR><TD ALIGN="LEFT"><B>IP LISTENERROR</B>  <TD
+   ALIGN="LEFT">Cannot listen to port </TABLE> By default, opens a
+   socket on all available IP addresses. You can open the socket
+   on a specific address, by setting the global variable
+   ip_passive to the address (in network order). This variable is
+   reset to INADDR_ANY after each call to passive_socket or one of
+   the functions that calls it.
+<H4>Source Code - (sflsock.c)</H4>
+<PRE>
+{
+#if (defined (DOES_SOCKETS))
+    struct servent
+        *pse;                           /*  Service information entry        */
+    struct sockaddr_in
+        sin;                            /*  Internet end-point address       */
+    sock_t
+        handle;                         /*  Socket from socket() call        */
+
+    ASSERT (service &amp;&amp; *service);
+    ASSERT (protocol &amp;&amp; *protocol);
+
+    connect_error_value = IP_NOERROR;   /*  Assume no errors                 */
+
+    memset ((void *) &amp;sin, 0, sizeof (sin));
+    sin.sin_family      = AF_INET;
+    sin.sin_addr.s_addr = ip_passive;
+    ip_passive = INADDR_ANY;            /*  Reset passive address            */
+
+    /*  To allow privileged operations, if possible                          */
+    <A href="sfl463.htm#set_uid_root">set uid root</A> ();
+
+    /*  Map service name to port number                                      */
+    pse = getservbyname (service, protocol);
+    if (pse)
+        sin.sin_port = htons ((dbyte) (ntohs (pse-&gt; s_port) + ip_portbase));
+    else
+      {
+        sin.sin_port = atoi (service);
+        if (sin.sin_port + ip_portbase &gt; 0)
+            sin.sin_port = htons ((dbyte) (sin.sin_port + ip_portbase));
+        else
+          {
+            connect_error_value = IP_BADSERVICE;
+            <A href="sfl462.htm#set_uid_user">set uid user</A> ();
+            return (INVALID_SOCKET);
+          }
+      }
+    handle = <A href="sfl340.htm#create_socket">create socket</A> (protocol);
+    if (handle == INVALID_SOCKET)       /*  Cannot create the socket         */
+      {
+        <A href="sfl462.htm#set_uid_user">set uid user</A> ();
+        return (INVALID_SOCKET);
+      }
+
+    /*  Bind the socket                                                      */
+    if (bind ((SOCKET) handle, (struct sockaddr *) &amp;sin,
+        sizeof (sin)) == SOCKET_ERROR)
+      {
+        connect_error_value = IP_BINDERROR;
+        <A href="sfl462.htm#set_uid_user">set uid user</A> ();
+        return (INVALID_SOCKET);        /*  Cannot bind to port              */
+      }
+    <A href="sfl462.htm#set_uid_user">set uid user</A> ();
+
+    /*  Specify incoming queue length for stream socket                      */
+    if (streq (protocol, "tcp")
+    &amp;&amp; listen ((SOCKET) handle, queue_length) == SOCKET_ERROR)
+      {
+        connect_error_value = IP_LISTENERROR;
+        return (INVALID_SOCKET);        /*  Cannot listen on port            */
+      }
+    return (handle);
+
+#elif (defined (FAKE_SOCKETS))
+    return (1);                         /*  Return dummy handle              */
+
+#else
+    connect_error_value = IP_NOSOCKETS;
+    return (INVALID_SOCKET);            /*  Sockets not supported            */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl338.htm">&lt;</A>
+ | <A href="sfl340.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,76 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>istoken</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl327.htm">&lt;</A>
+ | <A href="sfl329.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="istoken">&nbsp;</A>
+<H3><A NAME="TOC341"><TT>istoken</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+int
+istoken (
+    char **strLine,
+    const char *strtoken,
+    int *iWasToken)
+</PRE>
+<H4>Synopsis</H4>
+<P> Eats strToEat from strBuff only if it begins with contents of
+   strToEat, and returns a 0 or 1 to tell what it did.
+<H4>Examples</H4>
+<PRE>
+       char strBuff[] = { "select * from mytbl;" };
+       int iWasToken;
+       istoken (&strBuff, "SELECT", &iWasToken);
+
+    On return here iWasToken would == 1, and strBuff would be:
+    " * from mytbl;"
+    If the token is not found, then strBuff will not be affected, and
+    a 0 will be returned.
+    Submitted by Scott Beasley &lt;jscottb@infoave.com&gt;
+</PRE>
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+   int iRet;
+   char cChar;
+
+   ASSERT (strLine);
+   ASSERT (strtoken);
+   ASSERT (iWasToken);
+
+   iRet = <A href="sfl298.htm#lexncmp">lexncmp</A> (*strLine, strtoken, strlen (strtoken));
+
+   if (!iRet)
+     {
+       cChar = *(*strLine + strlen (strtoken));
+       if (!isalpha ((int)cChar)&amp;&amp; cChar != '_')
+         {
+           iRet = *iWasToken = 1;
+           strcpy (*strLine, (*strLine + strlen (strtoken)));
+         }
+       else
+           iRet = *iWasToken = 0;
+     }
+
+   else
+       iRet = *iWasToken = 0;
+
+   return iRet;
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl327.htm">&lt;</A>
+ | <A href="sfl329.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

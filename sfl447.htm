@@ -1,0 +1,56 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>tree_traverse</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl446.htm">&lt;</A>
+ | <A href="sfl448.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="tree_traverse">&nbsp;</A>
+<H3><A NAME="TOC460"><TT>tree_traverse</TT></A></H3>
+<PRE>
+#include "sfltree.h"
+void tree_traverse (void *tree, TREE_PROCESS *process, int method)
+</PRE>
+<H4>Synopsis</H4>
+<P>Traverse the tree, calling a processing function at each node.
+<H4>Source Code - (sfltree.c)</H4>
+<PRE>
+{
+    if ((!tree)
+    ||  (tree == TREE_NULL))
+        return;
+
+    if (method == 1)
+      {
+        (process) (tree);
+        <A href="sfl447.htm#tree_traverse">tree traverse</A> (((TREE *) tree)-&gt; left,  process, method);
+        <A href="sfl447.htm#tree_traverse">tree traverse</A> (((TREE *) tree)-&gt; right, process, method);
+      }
+    else if (method == 2)
+      {
+        <A href="sfl447.htm#tree_traverse">tree traverse</A> (((TREE *) tree)-&gt; left,  process, method);
+        <A href="sfl447.htm#tree_traverse">tree traverse</A> (((TREE *) tree)-&gt; right, process, method);
+        (process) (tree);
+      }
+    else
+      {
+        <A href="sfl447.htm#tree_traverse">tree traverse</A> (((TREE *) tree)-&gt; left,  process, method);
+        (process) (tree);
+        <A href="sfl447.htm#tree_traverse">tree traverse</A> (((TREE *) tree)-&gt; right, process, method);
+      }
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl446.htm">&lt;</A>
+ | <A href="sfl448.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

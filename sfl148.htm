@@ -1,0 +1,152 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>ini_dyn_load</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl147.htm">&lt;</A>
+ | <A href="sfl149.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="ini_dyn_load">&nbsp;</A>
+<H3><A NAME="TOC161"><TT>ini_dyn_load</TT></A></H3>
+<PRE>
+#include "sflini.h"
+SYMTAB *
+ini_dyn_load (
+    SYMTAB *load_symtab,
+    const char *filename)
+</PRE>
+<H4>Synopsis</H4>
+<P>Loads the contents of an .ini file into a symbol table. If no
+   symbol table is specified, creates a new symbol table. The ini
+   file data is loaded as a set of symbols and values, where the
+   symbol name is built from the section name and keyword like
+   this: "section:keyword". The symbol name is always stored in
+   lowercase, with no trailing spaces. If the same keyword occurs
+   several times in a section, earlier symbols are overwritten.
+   Ignores all comments and blank lines. Returns NULL if there is
+   not enough memory. Stores these control variables in the symbol
+   table if the table was freshly created or the file was loaded:
+   <TABLE BORDER NOWRAP> <TR><TD ALIGN="LEFT"><B>filename</B>  <TD
+   ALIGN="LEFT">Name of input file <TR><TD
+   ALIGN="LEFT"><B>filetime</B>  <TD ALIGN="LEFT">Time of input
+   file, as 8-digit string "HHMMSSCC" <TR><TD
+   ALIGN="LEFT"><B>filedate</B>  <TD ALIGN="LEFT">Date of input
+   file, as 8-digit string "YYYYMMDD" </TABLE> Also creates a
+   symbol for each section, with name equal to the section name,
+   and value equal to an empty string. Looks for the .ini file on
+   the current PATH. The table is sorted after loading.
+<H4>Source Code - (sflini.c)</H4>
+<PRE>
+{
+    FILE
+        *inifile;
+    SYMTAB
+        *symtab,                        /*  Symbol table to populate         */
+        *envtab;                        /*  Environment, as symbol table     */
+    char
+        *section = NULL,                /*  Filled as we scan through        */
+        *keyword = NULL,                /*    the ini file                   */
+        *value   = NULL,
+        *fromptr,
+        *toptr,
+        *section_end;                   /*  Null byte at end of section      */
+
+    ASSERT (filename);
+    inifile = <A href="sfl101.htm#file_locate">file locate</A> ("PATH", filename, NULL);
+
+    if (load_symtab)                    /*  Use specified symbol table       */
+        symtab = load_symtab;           /*    or create a new one            */
+    else
+      {
+        symtab = <A href="sfldoc.htm#sym_create_table">sym create table</A> ();
+        if (symtab == NULL)
+            return (NULL);              /*  Quit if insufficient memory      */
+      }
+    /*  Store control variables in symbol table                              */
+    if (inifile || load_symtab == NULL)
+      {
+        <A href="sfldoc.htm#sym_assume_symbol">sym assume symbol</A> (symtab, "filename", filename);
+        snprintf (iniline, sizeof (iniline), "%ld",
+	 	           <A href="sfl69.htm#timer_to_date">timer to date</A> (<A href="sfl132.htm#get_file_time">get file time</A> (filename)));
+        <A href="sfldoc.htm#sym_assume_symbol">sym assume symbol</A> (symtab, "filedate", iniline);
+        snprintf (iniline, sizeof (iniline), "%ld",
+		           <A href="sfl70.htm#timer_to_time">timer to time</A> (<A href="sfl132.htm#get_file_time">get file time</A> (filename)));
+        <A href="sfldoc.htm#sym_assume_symbol">sym assume symbol</A> (symtab, "filetime", iniline);
+      }
+    if (!inifile)
+        return (symtab);                /*  File not found; empty table      */
+
+    /*  Now load the ini file, starting from the beginning                   */
+    envtab = <A href="sfl427.htm#env2symb">env2symb</A> ();
+    fseek (inifile, 0, SEEK_SET);
+    FOREVER
+      {
+        if (<A href="sfl147.htm#ini_scan_section">ini scan section</A> (inifile, &amp;keyword, &amp;value))
+          {
+            if (section)
+              {
+                section_end = strchr (section, '\0');
+                ASSERT (section_end);
+                <A href="sfl295.htm#xstrcat">xstrcat</A> (section, ":", keyword, NULL);
+                value = <A href="sfl437.htm#tok_subst">tok subst</A> (value, envtab);
+
+                /*  Handle value in quotes                                   */
+                if (*value == '"')
+                  {
+                    /*  Unescape value if necessary                          */
+                    if (strchr (value, '\\'))
+                      {
+                        toptr = value;
+                        for (fromptr = value; *fromptr; fromptr++)
+                          {
+                            if (*fromptr == '\\')
+                              {
+                                fromptr++;
+                                if (*fromptr == 'n')
+                                    *toptr++ = '\n';
+                                else
+                                    *toptr++ = *fromptr;
+                              }
+                            else
+                                *toptr++ = *fromptr;
+                          }
+                        *toptr = '\0';
+                      }
+                    strlast (value) = '\0';
+                    <A href="sfldoc.htm#sym_assume_symbol">sym assume symbol</A> (symtab, section, value + 1);
+                  }
+                else
+                    <A href="sfldoc.htm#sym_assume_symbol">sym assume symbol</A> (symtab, section, value);
+
+                mem_strfree (&amp;value);
+                *section_end = '\0';
+              }
+          }
+        else
+        if (keyword)                    /*  Found new section                */
+          {
+            section = keyword;
+            <A href="sfldoc.htm#sym_assume_symbol">sym assume symbol</A> (symtab, section, "");
+          }
+        else
+            break;
+      }
+    <A href="sfl102.htm#file_close">file close</A> (inifile);
+    <A href="sfl375.htm#sym_delete_table">sym delete table</A> (envtab);
+    <A href="sfl389.htm#sym_sort_table">sym sort table</A> (symtab, NULL);      /*  Sort table by symbol name        */
+    return (symtab);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl147.htm">&lt;</A>
+ | <A href="sfl149.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

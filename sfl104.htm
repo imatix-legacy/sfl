@@ -1,0 +1,75 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>file_readn</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl103.htm">&lt;</A>
+ | <A href="sfl105.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="file_readn">&nbsp;</A>
+<H3><A NAME="TOC117"><TT>file_readn</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+Bool
+file_readn (
+    FILE *stream,
+    char *string,
+    int   line_max)
+</PRE>
+<H4>Synopsis</H4>
+<P>Works as <A href="sfl103.htm#file_read">file read</A>() but with a maximum line-length
+   specified by the caller. The supplied buffer must be at least
+   as large as the specified line_max + 1.
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+    int
+        ch,                             /*  Character read from file         */
+        cnbr;                           /*  Index into returned string       */
+
+    ASSERT (stream);
+    ASSERT (string);
+
+    cnbr = 0;                           /*  Start at the beginning...        */
+    memset (string, ' ', line_max);     /*    and prepare entire line        */
+    for (;;)
+      {
+        ch = fgetc (stream);            /*  Get next character from file     */
+        if (ch == '\t')                 /*  Jump if tab                      */
+            cnbr = ((cnbr &gt;&gt; 3) &lt;&lt; 3) + 8;
+        else
+        if (ch == '\r')                 /*  Found carriage-return            */
+            file_crlf = TRUE;           /*    Set flag and ignore CR         */
+        else
+        if ((ch == '\n')                /*  Have end of line                 */
+        ||  (ch == EOF)                 /*    or end of file                 */
+        ||  (ch == 26))                 /*    or MS-DOS Ctrl-Z               */
+          {
+            string [cnbr] = '\0';       /*  Terminate string                 */
+            return (ch == '\n' || cnbr);    /*  and return TRUE/FALSE        */
+          }
+        else
+        if (cnbr &lt; line_max)
+            string [cnbr++] = (char) ch;    /*  Else add char to string      */
+
+        if (cnbr &gt;= line_max)           /*  Return in any case if line is    */
+          {                             /*    too long - the line will be    */
+            string [line_max] = '\0';   /*    cut into pieces                */
+            return (TRUE);
+          }
+      }
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl103.htm">&lt;</A>
+ | <A href="sfl105.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

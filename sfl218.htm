@@ -1,0 +1,110 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>encode_base64</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl217.htm">&lt;</A>
+ | <A href="sfl219.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="encode_base64">&nbsp;</A>
+<H3><A NAME="TOC231"><TT>encode_base64</TT></A></H3>
+<PRE>
+#include "sflmime.h"
+size_t
+encode_base64 (const byte *source, byte *target, size_t source_size)
+</PRE>
+<H4>Synopsis</H4>
+<P>Encodes a source buffer in Base 64 and stores the result in the
+   target buffer. The target buffer must be at least 1/3rd longer
+   than the amount of data in the source buffer. The base64 data
+   consists of portable printable characters as defined in RFC
+   1521. Returns the number of bytes output into the target
+   buffer.
+<H4>Source Code - (sflmime.c)</H4>
+<PRE>
+{
+    size_t
+        target_size = 0;                /*  Length of target buffer          */
+    int
+        nb_block;                       /*  Total number of blocks           */
+    byte
+        *p_source,                      /*  Pointer to source buffer         */
+        *p_target,                      /*  Pointer to target buffer         */
+        value;                          /*  Value of Base64 byte             */
+
+    ASSERT (source);
+    ASSERT (target);
+
+    if (source_size == 0)
+        return (0);
+
+    if (!tables_initialised)
+        init_conversion_tables ();
+
+    /*    Bit positions
+                  | byte 1 | byte 2 | byte 3 |
+    source block   87654321 87654321 87654321         -&gt; 3 bytes of 8 bits
+
+                  | byte 1 | byte 2 | byte 3 | byte 4 |
+    Encoded block  876543   218765   432187   654321  -&gt; 4 bytes of 6 bits
+    */
+
+    nb_block = (int) (source_size / 3);
+
+    /*  Check if we have a partially-filled block                            */
+    if (nb_block * 3 != (int) source_size)
+        nb_block++;
+    target_size = (size_t) nb_block * 4;
+    target [target_size] = '\0';
+
+    p_source = (byte *) source;         /*  Point to start of buffers        */
+    p_target = target;
+
+    while (nb_block--)
+      {
+        /*  Byte 1                                                           */
+        value       = *p_source &gt;&gt; 2;
+        *p_target++ = base64_to_char [value];
+
+        /*  Byte 2                                                           */
+        value = (*p_source++ &amp; 0x03) &lt;&lt; 4;
+        if ((size_t) (p_source - source) &lt; source_size)
+            value |= (*p_source &amp; 0xF0) &gt;&gt; 4;
+        *p_target++ = base64_to_char [value];
+
+        /*  Byte 3 - pad the buffer with '=' if block not completed          */
+        if ((size_t) (p_source - source) &lt; source_size)
+          {
+            value = (*p_source++ &amp; 0x0F) &lt;&lt; 2;
+            if ((size_t) (p_source - source) &lt; source_size)
+                value |= (*p_source &amp; 0xC0) &gt;&gt; 6;
+            *p_target++ = base64_to_char [value];
+          }
+        else
+            *p_target++ = '=';
+
+        /*  Byte 4 - pad the buffer with '=' if block not completed          */
+        if ((size_t) (p_source - source) &lt; source_size)
+          {
+            value       = *p_source++ &amp; 0x3F;
+            *p_target++ = base64_to_char [value];
+          }
+        else
+            *p_target++ = '=';
+     }
+   return (target_size);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl217.htm">&lt;</A>
+ | <A href="sfl219.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

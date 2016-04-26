@@ -1,0 +1,48 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>next_weekday</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl56.htm">&lt;</A>
+ | <A href="sfl58.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="next_weekday">&nbsp;</A>
+<H3><A NAME="TOC70"><TT>next_weekday</TT></A></H3>
+<PRE>
+#include "sfldate.h"
+long
+next_weekday (long date)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns the date of the next weekday, skipping from Friday to
+   Monday.
+<H4>Source Code - (sfldate.c)</H4>
+<PRE>
+{
+    long
+        days = <A href="sfl66.htm#date_to_days">date to days</A> (date);
+
+    if (<A href="sfl56.htm#day_of_week">day of week</A> (date) == 5)        /*  Friday                           */
+        days += 3;
+    else
+    if (<A href="sfl56.htm#day_of_week">day of week</A> (date) == 6)        /*  Saturday                         */
+        days += 2;
+    else
+        days += 1;                      /*  Sunday to Thursday               */
+
+    return (<A href="sfl67.htm#days_to_date">days to date</A> (days));
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl56.htm">&lt;</A>
+ | <A href="sfl58.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

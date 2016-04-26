@@ -1,0 +1,102 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>create_socket</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl339.htm">&lt;</A>
+ | <A href="sfl341.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="create_socket">&nbsp;</A>
+<H3><A NAME="TOC353"><TT>create_socket</TT></A></H3>
+<PRE>
+#include "sflsock.h"
+sock_t
+create_socket (
+    const char *protocol                /*  Protocol "tcp" or "udp"          */
+)
+</PRE>
+<H4>Synopsis</H4>
+<P> Creates a TCP or UDP socket. The socket is not connected. To
+   use with TCP services you must bind or connect the socket. You
+   can use the socket with UDP services - e.g. <A href="sfl360.htm#read_UDP">read UDP</A> () -
+   immediately. Returns a socket number or INVALID_SOCKET, in
+   which case you can get the reason for the error by calling
+   <A href="sfl355.htm#connect_error">connect error</A> (). This may be one of: <TABLE BORDER NOWRAP>
+   <TR><TD ALIGN="LEFT"><B>IP NOSOCKETS</B>  <TD
+   ALIGN="LEFT">Sockets not supported on this system <TR><TD
+   ALIGN="LEFT"><B>IP BADPROTOCOL</B>  <TD ALIGN="LEFT">Cannot
+   understand protocol name <TR><TD ALIGN="LEFT"><B>IP
+   SOCKETERROR</B>  <TD ALIGN="LEFT">Cannot create the socket
+   </TABLE>
+<H4>Source Code - (sflsock.c)</H4>
+<PRE>
+{
+#if (defined (DOES_SOCKETS))
+    struct protoent
+        *ppe;                           /*  Protocol information entry       */
+    int
+#   if (!defined (__WINDOWS__))
+        true_value = 1,                 /*  Boolean value for setsockopt()   */
+#   endif
+        sock_type;                      /*  Type of socket we want           */
+    sock_t
+        handle;                         /*  Socket from socket() call        */
+
+    ASSERT (protocol &amp;&amp; *protocol);
+    connect_error_value = IP_NOERROR;   /*  Assume no errors                 */
+
+    /*  Map protocol name to protocol number                                 */
+    ppe = getprotobyname (protocol);
+    if (ppe == NULL)                    /*  Cannot get protocol entry        */
+      {
+        connect_error_value = IP_BADPROTOCOL;
+        return (INVALID_SOCKET);
+      }
+    /*  Use protocol string to choose a socket type                          */
+    if (streq (protocol, "udp"))
+        sock_type = SOCK_DGRAM;
+    else
+        sock_type = SOCK_STREAM;
+
+    /*  Allocate a socket                                                    */
+    handle = (sock_t) socket (AF_INET, sock_type, ppe-&gt; p_proto);
+    if (handle == INVALID_SOCKET)       /*  Cannot create passive socket     */
+      {
+        connect_error_value = IP_SOCKETERROR;
+        return (INVALID_SOCKET);
+      }
+#   if (!defined (__WINDOWS__))
+    /*  On BSD-socket systems we need to do this to allow the server to
+     *  restart on a previously-used socket, without an annoying timeout
+     *  of several minutes.  With winsock the reuseaddr option lets the
+     *  server work with an already-used socket (!), so we don't do it.
+     */
+    setsockopt ((SOCKET) handle, SOL_SOCKET, SO_REUSEADDR,
+                (char *) &amp;true_value, sizeof (true_value));
+#   endif
+    prepare_socket (handle);            /*  Ready socket for use             */
+    ip_sockets++;
+    return (handle);
+
+#elif (defined (FAKE_SOCKETS))
+    return (1);                         /*  Return dummy handle              */
+
+#else
+    connect_error_value = IP_NOSOCKETS;
+    return (INVALID_SOCKET);            /*  Sockets not supported            */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl339.htm">&lt;</A>
+ | <A href="sfl341.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

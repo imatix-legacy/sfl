@@ -1,0 +1,85 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>Fast string searching functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl90.htm">&lt;</A>
+ | <A href="sfl92.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC104">Fast string searching functions</A></H2>
+<P>Filename: sflfind.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1996/04/24 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 1998/05/03
+<BR>Copyright: Copyright (c) 1996-2000 iMatix Corporation
+<H3>Synopsis</H3>
+<P>Searches for a pattern within a string or block of memory using
+   a variant of the Boyer-Moore algorithm (improved by Horspool
+   and Sunday). As fast or faster than the normal Boyer-Moore
+   algorithm for most search strings, and much simpler. Includes a
+   basic function for searching blocks of memory with known sizes,
+   plus an envelope that searches null-delimited strings. Provides
+   the option of repeatedly searching for the same pattern without
+   re-parsing the pattern each time. Original algorithm published
+   by BOYER, R., and S. MOORE 1977, "A Fast String Searching
+   Algorithm." CACM, 20, 762-72. Simplifications by HORSPOOL, R.
+   N. 1980, "Practical Fast Searching in Strings." Software -
+   Practice and Experience, 10, 501-06. More improvements by HUME,
+   A., and D. M. SUNDAY 1991, "Fast String Searching." AT&amp;T
+   Bell Labs Computing Science Technical Report No. 156.
+   Implemented in C by P. Hintjens. <A href="sfl93.htm#strfind_r">strfind r</A>() and
+   <A href="sfl96.htm#memfind_r">memfind r</A>(), are reentrant versions of <A href="sfl92.htm#strfind">strfind</A>() and
+   <A href="sfl95.htm#memfind">memfind</A>() for single searches, and <A href="sfl94.htm#strfind_rb">strfind rb</A>() and
+   <A href="sfl97.htm#memfind_rb">memfind rb</A>() are reentrant versions of <A href="sfl92.htm#strfind">strfind</A>() and
+   <A href="sfl95.htm#memfind">memfind</A>() supporting repeat searches against the same
+   pattern.
+<H4>List of Functions</H4>
+<UL>
+<LI>char * <A href="sfl92.htm#strfind">strfind</A><BR>
+   (const char *string, const char *pattern, Bool repeat_find);
+</LI>
+<LI>char * <A href="sfl93.htm#strfind_r">strfind r</A><BR>
+   (const char *string, const char *pattern);
+</LI>
+<LI>char * <A href="sfl94.htm#strfind_rb">strfind rb</A><BR>
+   (const char *string, const char *pattern, size_t *shift, Bool
+   *repeat_find);
+</LI>
+<LI>void * <A href="sfl95.htm#memfind">memfind</A><BR>
+   (const void *block, size_t block_size, const void *pattern,
+   size_t pattern_size, Bool repeat_find);
+</LI>
+<LI>void * <A href="sfl96.htm#memfind_r">memfind r</A><BR>
+   (const void *block, size_t block_size, const void *pattern,
+   size_t pattern_size);
+</LI>
+<LI>void * <A href="sfl97.htm#memfind_rb">memfind rb</A><BR>
+   (const void *block, size_t block_size, const void *pattern,
+   size_t pattern_size, size_t *shift, Bool *repeat_find);
+</LI>
+<LI>char * <A href="sfl98.htm#txtfind">txtfind</A><BR>
+   (const char *string, const char *pattern);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sflfind.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>SFLFIND_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl90.htm">&lt;</A>
+ | <A href="sfl92.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

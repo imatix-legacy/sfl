@@ -1,0 +1,132 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>conv_time_str</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl45.htm">&lt;</A>
+ | <A href="sfl47.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="conv_time_str">&nbsp;</A>
+<H3><A NAME="TOC59"><TT>conv_time_str</TT></A></H3>
+<PRE>
+#include "sflconv.h"
+char *
+conv_time_str (
+    long time,
+    int  flags,
+    char timesep,
+    int  width)
+</PRE>
+<H4>Synopsis</H4>
+<P>Converts a time to a string. The flags and width control the
+   resulting string. You can use one or more of these flags added
+   together: <TABLE BORDER NOWRAP> <TR><TD ALIGN="LEFT"><B>FLAG T
+   HH AS H</B>  <TD ALIGN="LEFT">Suppress leading zeroes on the
+   hours. <TR><TD ALIGN="LEFT"><B>FLAG T MM AS M</B>  <TD
+   ALIGN="LEFT">Suppress leading zeroes on the minutes. <TR><TD
+   ALIGN="LEFT"><B>FLAG T SS AS S</B>  <TD ALIGN="LEFT">Suppress
+   leading zeroes on the seconds. <TR><TD ALIGN="LEFT"><B>FLAG T
+   CC AS C</B>  <TD ALIGN="LEFT">Suppress leading zeroes on the
+   centiseconds. <TR><TD ALIGN="LEFT"><B>FLAG T COMPACT</B>  <TD
+   ALIGN="LEFT">Show without delimiters. <TR><TD
+   ALIGN="LEFT"><B>FLAG T 12 HOUR</B>  <TD ALIGN="LEFT">Append
+   am/pm indicator. </TABLE> Returns a pointer to a static area
+   holding the string, or NULL if there was an error. If no flags
+   are used, the width argument gives these results (shown as a
+   picture, which is how conv_time_str works - see
+   conv_time_pict): <TABLE BORDER NOWRAP> <TR><TD
+   ALIGN="LEFT"><B>4 or less</B>  <TD ALIGN="LEFT">Error. <TR><TD
+   ALIGN="LEFT"><B>5 to 7</B>  <TD ALIGN="LEFT">"hh:mm" <TR><TD
+   ALIGN="LEFT"><B>8 to 10</B>  <TD ALIGN="LEFT">"hh:mm:ss"
+   <TR><TD ALIGN="LEFT"><B>11 or more</B>  <TD
+   ALIGN="LEFT">"hh:mm:ss:cc" </TABLE> If FLAG_T_COMPACT is used,
+   width gives these results: <TABLE BORDER NOWRAP> <TR><TD
+   ALIGN="LEFT"><B>3 or less</B>  <TD ALIGN="LEFT">Error. <TR><TD
+   ALIGN="LEFT"><B>4 to 5</B>  <TD ALIGN="LEFT">"hhmm" <TR><TD
+   ALIGN="LEFT"><B>6 to 7</B>  <TD ALIGN="LEFT">"hhmmss" <TR><TD
+   ALIGN="LEFT"><B>8 or more</B>  <TD ALIGN="LEFT">"hhmmsscc"
+   </TABLE> If FLAG_T_12_HOUR is used, width gives these results:
+   <TABLE BORDER NOWRAP> <TR><TD ALIGN="LEFT"><B>5 or less</B>
+   <TD ALIGN="LEFT">Error. <TR><TD ALIGN="LEFT"><B>6 to 8</B>  <TD
+   ALIGN="LEFT">"hh:mma" <TR><TD ALIGN="LEFT"><B>9 to 11</B>  <TD
+   ALIGN="LEFT">"hh:mm:ssa" <TR><TD ALIGN="LEFT"><B>12 or more</B>
+   <TD ALIGN="LEFT">"hh:mm:ss:cca" </TABLE> If FLAG_T_COMPACT and
+   FLAG_T_12_HOUR are used, width gives these results: <TABLE
+   BORDER NOWRAP> <TR><TD ALIGN="LEFT"><B>4 or less</B>  <TD
+   ALIGN="LEFT">Error. <TR><TD ALIGN="LEFT"><B>5 to 6</B>  <TD
+   ALIGN="LEFT">"hhmma" <TR><TD ALIGN="LEFT"><B>7 to 8</B>  <TD
+   ALIGN="LEFT">"hhmmssa" <TR><TD ALIGN="LEFT"><B>9 or more</B>
+   <TD ALIGN="LEFT">"hhmmsscca" </TABLE>
+<H4>Source Code - (sflcvts.c)</H4>
+<PRE>
+{
+    char
+        delim [2],                      /*  Delimiter string, ":" or ""      */
+        picture [13];                   /*  Largest picture: hh:mm:ss:cca    */
+    int
+        delim_len;
+    int
+        space_left = width;
+
+    conv_reason = 0;                    /*  No conversion errors so far      */
+    if (flags &amp; FLAG_T_COMPACT)
+      {
+        delim [0] = 0;
+        delim_len = 0;
+      }
+    else
+      {
+        delim [0] = timesep;
+        delim [1] = 0;
+        delim_len = 1;
+      }
+    if (flags &amp; FLAG_T_12_HOUR)
+        space_left--;                   /*  Subtract 1 if eventual "a"       */
+
+    /*  Build-up date picture components until we run out of space           */
+    strcpy (picture, (flags &amp; FLAG_T_HH_AS_H? "h": "hh"));
+    space_left -= 2;
+
+    if (space_left &gt;= delim_len + 2)
+      {
+        strcat (picture, delim);
+        strcat (picture, (flags &amp; FLAG_T_MM_AS_M? "m": "mm"));
+        space_left -= delim_len + 2;
+      }
+    else
+        return (NULL);                  /*  Error - space_left is too small  */
+
+    if (space_left &gt;= delim_len + 2)
+      {
+        strcat (picture, delim);
+        strcat (picture, (flags &amp; FLAG_T_SS_AS_S? "s": "ss"));
+        space_left -= delim_len + 2;
+      }
+
+    if (space_left &gt;= delim_len + 2)
+      {
+        strcat (picture, delim);
+        strcat (picture, (flags &amp; FLAG_T_CC_AS_C? "c": "cc"));
+        space_left -= delim_len + 2;
+      }
+
+    /*  Append "a" (or "aa" if space) if 12-hour clock wanted                */
+    if (flags &amp; FLAG_T_12_HOUR)
+        strcat (picture, (space_left == 0? "a": "aa"));
+
+    return (<A href="sfl45.htm#conv_time_pict">conv time pict</A> (time, picture));
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl45.htm">&lt;</A>
+ | <A href="sfl47.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

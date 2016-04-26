@@ -1,0 +1,51 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>file_locate</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl100.htm">&lt;</A>
+ | <A href="sfl102.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="file_locate">&nbsp;</A>
+<H3><A NAME="TOC114"><TT>file_locate</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+FILE *
+file_locate (
+    const char *path,
+    const char *name,
+    const char *ext)
+</PRE>
+<H4>Synopsis</H4>
+<P>Combines the functions of <A href="sfl111.htm#file_where">file where</A>() and file_open when
+   you want to read a file. Searches for a file on a specified
+   path, opens the file if found, and returns a FILE * for the
+   open file. Returns NULL if the file was not found or could not
+   be opened for reading.
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+    char
+        *filename;
+
+    ASSERT (name);
+    filename = <A href="sfl111.htm#file_where">file where</A> ('r', path, name, ext);
+    if (filename)
+        return (<A href="sfl100.htm#file_open">file open</A> (filename, 'r'));
+    else
+        return (NULL);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl100.htm">&lt;</A>
+ | <A href="sfl102.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

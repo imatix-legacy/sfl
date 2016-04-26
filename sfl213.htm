@@ -1,0 +1,68 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>Linked-list functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl212.htm">&lt;</A>
+ | <A href="sfl214.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.10
+</TABLE>
+<HR>
+<H2><A NAME="TOC226">Linked-list functions</A></H2>
+<P>Filename: sflnode.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 96/06/03 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 97/09/08
+<BR>Copyright: Copyright (c) 1991-99 iMatix Corporation
+<H3>Synopsis</H3>
+<P>Provides functions to maintain doubly-linked lists. You can use
+   these functions to work with lists of any structure. To make
+   this work, all structures must start with two pointers, "void
+   *next, *prev;". When you want to attach a linked-list to
+   another structure, declare the list head as a NODE. You can
+   then refer to this variable when you attach items to the list
+   head. The code sets the global node_unsafe to TRUE whenever it
+   is changing a list. NOTE: DEPRECATED IN FAVOUR OF SFLLIST.C.
+<H4>List of Functions</H4>
+<UL>
+<LI>void * <A href="sfl214.htm#node_create">node create</A><BR>
+   (void *after, size_t size);
+</LI>
+<LI>void <A href="sfl215.htm#node_destroy">node destroy</A><BR>
+   (void *node);
+</LI>
+<LI>void * <A href="sfl218.htm#node_unlink">node unlink</A><BR>
+   (void *node);
+</LI>
+<LI>void * <A href="sfl219.htm#node_relink">node relink</A><BR>
+   (void *left, void *node, void *right);
+</LI>
+<LI>void * <A href="sfl216.htm#node_relink_after">node relink after</A><BR>
+   (void *node, void *after);
+</LI>
+<LI>void * <A href="sfl217.htm#node_relink_before">node relink before</A><BR>
+   (void *node, void *before);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sflnode.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>SFLNODE_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>node_reset(node)</B>  </TT>
+<TD ALIGN="LEFT">(node)-&gt; prev = (node)-&gt; next = (node)
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl212.htm">&lt;</A>
+ | <A href="sfl214.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-99 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,78 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>setstrfld</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl318.htm">&lt;</A>
+ | <A href="sfl320.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="setstrfld">&nbsp;</A>
+<H3><A NAME="TOC332"><TT>setstrfld</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+char *
+setstrfld (
+    char *strbuf,
+    int fldno,
+    int ofset,
+    char *sep,
+    char *strtoins)
+</PRE>
+<H4>Synopsis</H4>
+<P>Inserts a string into a fomated string. usage: char
+   strsrray[26] = { "this is a test." }; <A href="sfl319.htm#setstrfld">setstrfld</A> (strsrray,
+   2, 0, " ", "big "); result: this is a big test. Does nothing if
+   fldno is out of range, else returns pointer to head of the
+   buffer. Returns a pointer to head of the buffer. Submitted by
+   Scott Beasley <A
+   HREF=mailto:"jscottb@infoave.com">jscottb@infoave.com</A>
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+   char *offset, *strptr, *strhead;
+   int curfld;
+
+   ASSERT (strbuf);
+   ASSERT (sep);
+   ASSERT (strtoins);
+
+   offset = strptr = (char *)NULL;
+   curfld = 0;
+
+   strhead = strbuf;
+   strbuf += ofset;
+
+   while (*strbuf)
+     {
+       strptr = !offset ? strbuf : offset;
+       offset = strpbrk ((!offset ? strbuf : offset), sep);
+
+       if (offset)
+          offset++;
+
+       if (curfld == fldno)
+          {
+            <A href="sfl310.htm#insertstring">insertstring</A> (strptr, strtoins,
+               (int)(!offset ? strlen (strptr):
+               (int)(offset - strptr)));
+            break;
+          }
+       curfld++;
+     }
+
+   return strhead;
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl318.htm">&lt;</A>
+ | <A href="sfl320.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

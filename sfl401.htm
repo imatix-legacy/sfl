@@ -1,0 +1,72 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>http_unescape</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl400.htm">&lt;</A>
+ | <A href="sfl402.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="http_unescape">&nbsp;</A>
+<H3><A NAME="TOC414"><TT>http_unescape</TT></A></H3>
+<PRE>
+#include "sflhttp.h"
+char *
+http_unescape (
+    char *string,
+    char *result)
+</PRE>
+<H4>Synopsis</H4>
+<P>Removes HTTP escaping from a string. See <A href="sfl398.htm#http_escape">http escape</A>() for
+   details of the escaping algorithm. If the result string is
+   NULL, modifies the source string in place, else fills-in the
+   result string. Returns the resulting string. End-of-line
+   sequences (%0A%0D) are stored as a single new-line character,
+   i.e. carriage-returns (%0D) are not stored.
+<H4>Source Code - (sflhttp.c)</H4>
+<PRE>
+{
+    char
+        *target;                        /*  Where we store the result        */
+
+    ASSERT (string);
+    if (!result)                        /*  If result string is null,        */
+        result = string;                /*    modify in place                */
+    target = result;
+
+    while (*string)
+      {
+        if (*string == '%'              /*  Unescape %xx sequence            */
+        &amp;&amp;   string [1] &amp;&amp; string [2])
+          {
+            string++;
+            *target = decode_hex ((const char **) &amp;string, 2);
+            if (*target != '\r')
+                target++;               /*  We do not store CRs              */
+          }
+        else
+          {
+            if (*string == '+')         /*  Spaces are escaped as '+'        */
+                *target++ = ' ';
+            else
+                *target++ = *string;    /*  Otherwise just copy              */
+
+            string++;
+          }
+      }
+    *target = '\0';                     /*  Terminate target string          */
+    return (result);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl400.htm">&lt;</A>
+ | <A href="sfl402.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

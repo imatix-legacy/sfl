@@ -1,0 +1,103 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>expand_bits</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl24.htm">&lt;</A>
+ | <A href="sfl26.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="expand_bits">&nbsp;</A>
+<H3><A NAME="TOC38"><TT>expand_bits</TT></A></H3>
+<PRE>
+#include "sflcomp.h"
+word
+expand_bits (
+    const byte *src,
+    byte *dst,
+    word src_size)
+</PRE>
+<H4>Synopsis</H4>
+<P>Expands a block of data previously compressed using the
+   <A href="sfl24.htm#compress_bits">compress bits</A>() function. The compressed block is passed in
+   src; the expanded result in dst. Dst must be large enough to
+   accomodate the largest possible decompressed block. Returns the
+   size of the expanded data.
+<H4>Source Code - (sflcomp.c)</H4>
+<PRE>
+{
+    word
+        dst_size,                       /*  Size of expanded data            */
+        src_scan,                       /*  Scan through source data         */
+        length;                         /*  Size of the run or string        */
+    byte
+        cur_byte;                       /*  Next byte to process             */
+
+    src_scan = 0;
+    dst_size = 0;
+    while (src_scan &lt; src_size)
+      {
+        cur_byte = src [src_scan++];
+
+        if (cur_byte &lt; 8)               /*  Single bit in position 0 to 7    */
+            dst [dst_size++] = 1 &lt;&lt; cur_byte;
+        else
+        if (cur_byte &lt; 128)             /*  String of 1 to 120 bytes         */
+          {
+            length = (word) cur_byte - 7;
+            memcpy (dst + dst_size, src + src_scan, length);
+            src_scan += length;
+            dst_size += length;
+          }
+        else                            /*  Run of 1 or more bytes           */
+          {
+            switch (cur_byte)
+              {
+                case 0x80:              /*  381-2^16 binary zeroes           */
+                    length   = src [src_scan++];
+                    length  += src [src_scan++] &lt;&lt; 8;
+                    cur_byte = 0;
+                    break;
+                case 0x81:
+                    length = src [src_scan++];
+                    if (length == 0xFE) /*  4-255 non-zero bytes             */
+                      {
+                        length   = src [src_scan++];
+                        cur_byte = src [src_scan++];
+                      }
+                    else
+                    if (length == 0xFF) /*  Run of 256-2^15 non-zero bytes   */
+                      {
+                        length   = src [src_scan++];
+                        length  += src [src_scan++] &lt;&lt; 8;
+                        cur_byte = src [src_scan++];
+                      }
+                    else
+                      {
+                        length  += 127;
+                        cur_byte = 0;   /*  127 to 380 zeroes                */
+                      }
+                    break;
+                default:                /*  1 to 126 zeroes                  */
+                    length   = (cur_byte - 1) &amp; 127;
+                    cur_byte = 0;
+              }
+            memset (dst + dst_size, cur_byte, length);
+            dst_size += length;
+          }
+      }
+    return (dst_size);                  /*  Return expanded data size        */
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl24.htm">&lt;</A>
+ | <A href="sfl26.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

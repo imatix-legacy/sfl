@@ -1,0 +1,76 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>sym_delete_symbol</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl380.htm">&lt;</A>
+ | <A href="sfl382.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="sym_delete_symbol">&nbsp;</A>
+<H3><A NAME="TOC394"><TT>sym_delete_symbol</TT></A></H3>
+<PRE>
+#include "sflsymb.h"
+SYMBOL *
+sym_delete_symbol (
+    SYMTAB *table,                      /*  Symbol table to search           */
+    SYMBOL *symbol)                     /*  Symbol to delete                 */
+</PRE>
+<H4>Synopsis</H4>
+<P>Removes the specified symbol from the symbol table and looks
+   through the table for another with the same name. Returns a
+   pointer to the next symbol, or NULL if no further symbols were
+   found with the same name. Deallocates the symbol value, if not
+   NULL. NOTE: The SYMBOL must be part of the symbol table that is
+   being modified.
+<H4>Source Code - (sflsymb.c)</H4>
+<PRE>
+{
+    SYMBOL
+        *next;                          /*  Next symbol with same name       */
+
+    ASSERT (table);
+    ASSERT (symbol);
+
+    /*  Find a symbol with the same name, or NULL if none found              */
+    next = symbol;
+    for (next = symbol-&gt; h_next; next; next = next-&gt; h_next)
+        if (streq (next-&gt; name, symbol-&gt; name))
+            break;
+
+    /*  Fix up the pointers and remove the original symbol                   */
+    if (symbol-&gt; prev)
+        symbol-&gt; prev-&gt; next = symbol-&gt; next;
+    else
+        table-&gt; symbols = symbol-&gt; next;
+
+    if (symbol-&gt; next)
+        symbol-&gt; next-&gt; prev = symbol-&gt; prev;
+
+    if (symbol-&gt; h_prev)
+        symbol-&gt; h_prev-&gt; h_next = symbol-&gt; h_next;
+    else
+        table-&gt; hash [symbol-&gt; hash] = symbol-&gt; h_next;
+
+    if (symbol-&gt; h_next)
+        symbol-&gt; h_next-&gt; h_prev = symbol-&gt; h_prev;
+
+    table-&gt; size--;
+    mem_free (symbol-&gt; value);
+    mem_free (symbol);
+
+    return (next);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl380.htm">&lt;</A>
+ | <A href="sfl382.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

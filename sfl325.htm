@@ -1,0 +1,80 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>wordwrapstr</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl324.htm">&lt;</A>
+ | <A href="sfl326.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="wordwrapstr">&nbsp;</A>
+<H3><A NAME="TOC338"><TT>wordwrapstr</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+char *
+wordwrapstr (
+    char *strbuff,
+    int iwid)
+</PRE>
+<H4>Synopsis</H4>
+<P> Function that does word wraping of a string at or less than
+   iwid. Breaks up a string on word boundaries by placing '\n' in
+   the string. Returns a pointer to head of the return buffer.
+   Submitted by Scott Beasley <A
+   HREF=mailto:"jscottb@infoave.com">jscottb@infoave.com</A>
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+   char *strtmp = strbuff;
+   int icnt = 0;
+
+   ASSERT (strbuff);
+
+   <A href="sfl309.htm#replacechrswith">replacechrswith</A> (strbuff, "\n", ' ');
+   while (*strtmp)
+     {
+       if ((int)strlen (strtmp) &gt; (int)iwid)
+         {
+           icnt = iwid;
+           while (*(strtmp + icnt))
+             {
+               if (strchr (" .?;!,", *(strtmp + icnt)))
+                 {
+                   <A href="sfl315.htm#ltrim">ltrim</A> ((strtmp + icnt));
+                   <A href="sfl311.htm#insertchar">insertchar</A> (strtmp, '\n', icnt);
+                   strtmp += icnt + 1;
+                   break;
+                 }
+               icnt--;
+
+               if (!icnt)
+                 {
+                   if (strchr (" .?;!,", *(strtmp + icnt)))
+                     {
+                       <A href="sfl315.htm#ltrim">ltrim</A> ((strtmp + iwid));
+                       <A href="sfl311.htm#insertchar">insertchar</A> (strtmp, '\n', iwid);
+                       strtmp += iwid + 1;
+                       break;
+                     }
+                 }
+             }
+         }
+       else
+           break;
+   }
+
+   return strbuff;
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl324.htm">&lt;</A>
+ | <A href="sfl326.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

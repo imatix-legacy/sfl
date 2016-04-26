@@ -1,0 +1,150 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>compress_rle</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl19.htm">&lt;</A>
+ | <A href="sfl21.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="compress_rle">&nbsp;</A>
+<H3><A NAME="TOC33"><TT>compress_rle</TT></A></H3>
+<PRE>
+#include "sflcomp.h"
+word
+compress_rle (
+    byte *src,
+    byte *dst,
+    word src_size)
+</PRE>
+<H4>Synopsis</H4>
+<P>Takes a block of uncompressed data in src, compresses it using
+   a RLE algorithm and places the result in dst. To decompress the
+   data, use the <A href="sfl21.htm#expand_rle">expand rle</A> () function. Returns the size of
+   the compressed data. The dst buffer should be 10% larger than
+   the src buffer. The src buffer must be at least src_size + 1
+   bytes long. It may be modified. The compressed data contains
+   these strings: <TABLE BORDER NOWRAP> <TR><TD
+   ALIGN="LEFT"><B>[01-7F][data...]</B>  <TD ALIGN="LEFT">String
+   of uncompressed data, 1 to 127 bytes. <TR><TD
+   ALIGN="LEFT"><B>[83-FF][byte]</B>  <TD ALIGN="LEFT">Run of 3 to
+   127 identical bytes. <TR><TD
+   ALIGN="LEFT"><B>[80][len][byte]</B>  <TD ALIGN="LEFT">Run of
+   128 to 255 identical bytes. <TR><TD
+   ALIGN="LEFT"><B>[81][lo][hi][byte]</B>  <TD ALIGN="LEFT">Run of
+   256 to 2^16 identical bytes. <TR><TD
+   ALIGN="LEFT"><B>[82][len]</B>  <TD ALIGN="LEFT">Run of 3 to 255
+   spaces. <TR><TD ALIGN="LEFT"><B>[00][len]</B>  <TD
+   ALIGN="LEFT">Run of 3 to 255 binary zeroes. </TABLE>
+<H4>Source Code - (sflcomp.c)</H4>
+<PRE>
+{
+    word
+        dst_size,                       /*  Size of compressed data          */
+        src_scan,                       /*  Scan through source data         */
+        run_end,                        /*  Points to end of run of bytes    */
+        length = 0;                     /*  Size of the run or string        */
+    byte
+        cur_byte,                       /*  Next byte to process             */
+        *header;                        /*  Header of unpacked string        */
+    Bool
+        have_run;                       /*  TRUE when we have a run          */
+
+    src_scan = 0;                       /*  Start at beginning of source     */
+    dst_size = 0;                       /*  No output yet                    */
+    header   = NULL;                    /*  No open unpacked string          */
+    while (src_scan &lt; src_size)
+      {
+        cur_byte = src [src_scan++];
+        have_run = FALSE;               /*  Unless we find a run             */
+
+        /*  Three identical bytes signals the start of a run                 */
+        if (cur_byte == src [src_scan]
+        &amp;&amp;  cur_byte == src [src_scan + 1]
+        &amp;&amp; (src_scan + 1 &lt; src_size))
+          {
+            /*  Stick-in a sentinel character to ensure that the run ends    */
+            src [src_size] = !cur_byte;
+            run_end = src_scan;         /*  src_scan &lt;= src_size             */
+            while (src [run_end] == cur_byte)
+                run_end++;
+
+            have_run = TRUE;
+            if (header)                 /*  If we have a previous unpacked   */
+              {                         /*    string, close it               */
+                *header = (byte) length;
+                header  = NULL;
+              }
+            length = run_end - src_scan + 1;
+            src_scan = run_end;
+          }
+        if (have_run)
+          {
+            /*  We compress short runs of spaces and nulls separately        */
+            if (length &lt; 256 &amp;&amp; cur_byte == 0)
+              {
+                dst [dst_size++] = 0x00;
+                dst [dst_size++] = (byte) length;
+              }
+            else
+            if (length &lt; 256 &amp;&amp; cur_byte == ' ')
+              {
+                dst [dst_size++] = 0x82;
+                dst [dst_size++] = (byte) length;
+              }
+            else
+            if (length &lt; 128)
+              {
+                dst [dst_size++] = (byte) length | 0x80;
+                dst [dst_size++] = cur_byte;
+              }
+            else
+            if (length &lt; 256)           /*  Short run 128-255 bytes          */
+              {
+                dst [dst_size++] = 0x80;
+                dst [dst_size++] = (byte) length;
+                dst [dst_size++] = cur_byte;
+              }
+            else                        /*  Long run 256-2^16 bytes          */
+              {
+                dst [dst_size++] = 0x81;
+                dst [dst_size++] = (byte) (length &amp; 0xff);
+                dst [dst_size++] = (byte) (length &gt;&gt; 8);
+                dst [dst_size++] = cur_byte;
+              }
+          }
+        else
+          {
+            if (!header)                /*  Start new unpacked string if     */
+              {                         /*    necessary                      */
+                header = &amp;dst [dst_size++];
+                length = 0;
+              }
+            dst [dst_size++] = cur_byte;
+            if (++length == 127)        /*  Each string can be up to 127     */
+              {                         /*    bytes long (high bit cleared)  */
+                *header = (byte) length;
+                header  = NULL;
+              }
+          }
+      }
+    if (header)                         /*  If we have a previous unpacked   */
+      {                                 /*    string, close it               */
+        *header = (byte) length;
+        header  = NULL;
+      }
+    return (dst_size);                  /*  Return compressed data size      */
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl19.htm">&lt;</A>
+ | <A href="sfl21.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

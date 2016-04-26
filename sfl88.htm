@@ -1,0 +1,194 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>exdr_write</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl87.htm">&lt;</A>
+ | <A href="sfl89.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="exdr_write">&nbsp;</A>
+<H3><A NAME="TOC101"><TT>exdr_write</TT></A></H3>
+<PRE>
+#include "sflexdr.h"
+int
+exdr_write (byte *buffer, const char *format, ...)
+</PRE>
+<H4>Synopsis</H4>
+<P>Accepts a list of data items, prepares them according to the
+   format string, and stores the result in the buffer. The buffer
+   may be transmitted to another system, then decoded using
+   exdr_read. Assumes nothing about system word sizes, etc.
+   However, does assume that both systems use ASCII. If the buffer
+   address is NULL, does not store the data items, but counts the
+   effective size and returns that. The null-terminated format
+   string can contain these sequences: <TABLE BORDER NOWRAP>
+   <TR><TD ALIGN="LEFT"><B>c</B>  <TD ALIGN="LEFT">Single
+   character value (may be multibyte) <TR><TD
+   ALIGN="LEFT"><B>b</B>  <TD ALIGN="LEFT">Single byte value
+   <TR><TD ALIGN="LEFT"><B>w,d</B>  <TD ALIGN="LEFT">Double byte
+   value (16-bit short integer) <TR><TD ALIGN="LEFT"><B>q,l</B>
+   <TD ALIGN="LEFT">Quad-byte value (32-bit long integer) <TR><TD
+   ALIGN="LEFT"><B>s</B>  <TD ALIGN="LEFT">Null-terminated string
+   (address of string), or NULL <TR><TD ALIGN="LEFT"><B>B</B>  <TD
+   ALIGN="LEFT">Bool value (16-bit short integer) <TR><TD
+   ALIGN="LEFT"><B>m</B>  <TD ALIGN="LEFT">Memory descriptor size
+   (16-bit integer), &gt;= 0 <TR><TD ALIGN="LEFT"><B>M</B>  <TD
+   ALIGN="LEFT">Memory descriptor body (pointer to block), or NULL
+   <TR><TD ALIGN="LEFT"><B>h</B>  <TD ALIGN="LEFT">Huge memory
+   descriptor size (31-bit integer), &gt;= 0 <TR><TD
+   ALIGN="LEFT"><B>H</B>  <TD ALIGN="LEFT">Huge memory descriptor
+   body (pointer), or NULL </TABLE> Each format sequence
+   corresponds to one item in the list. The buffer must be large
+   enough to hold the formatted result. Returns the size of the
+   formatted data. Ignores invalid format characters; you can
+   insert hyphens or spaces freely. Strings may be specified as
+   (void *) NULL - they are stored as empty strings. Memory blocks
+   may be specified as 0 and (void *) NULL together. Note that if
+   you do not use the (void *) typecast when calling
+   <A href="sfl88.htm#exdr_write">exdr write</A>(), your code will fail on systems where an int
+   is not the same size as a void *. Huge memory blocks cannot be
+   more than 2^31 bytes large (2Gb) or 2^16 bytes if size_t is 16
+   bits large.
+<H4>Source Code - (sflexdr.c)</H4>
+<PRE>
+{
+    va_list
+        argptr;                         /*  Argument list pointer            */
+    byte
+        byte_value,                     /*  Byte value from arguments        */
+        *target,                        /*  Pointer into target buffer       */
+        *block;                         /*  Source block for 'M' type        */
+    char
+        *string;                        /*  Source string for 's' type       */
+    dbyte
+        dbyte_value;                    /*  Network format dbyte value       */
+    qbyte
+        memory_size = 0,                /*  Memory descriptor size value     */
+        qbyte_value;                    /*  Network format qbyte value       */
+
+    ASSERT (format);
+    va_start (argptr, format);          /*  Start variable arguments list    */
+    target = buffer;
+
+    while (*format)
+      {
+        switch (*format++)
+          {
+            case 'c':                   /*  Character                        */
+            case 'b':                   /*  Single byte                      */
+                byte_value = (byte) va_arg (argptr, int);
+                if (buffer)
+                    *(byte *) target = byte_value;
+                target += 1;
+                break;
+
+            case 'd':                   /*  Signed short integer             */
+            case 'w':                   /*  Unsigned short integer           */
+            case 'B':                   /*  Bool                             */
+                dbyte_value = htons ((short) va_arg (argptr, int));
+                if (buffer)
+                  {
+                    *(byte *) target++ = *((byte *) &amp;dbyte_value);
+                    *(byte *) target++ = *((byte *) &amp;dbyte_value + 1);
+                  }
+                else
+                    target += 2;
+                break;
+
+            case 'l':                   /*  Signed long (32-bit)             */
+            case 'q':                   /*  4-byte unsigned value            */
+                qbyte_value = htonl (va_arg (argptr, qbyte));
+                if (buffer)
+                  {
+                    *(byte *) target++ = *((byte *) &amp;qbyte_value);
+                    *(byte *) target++ = *((byte *) &amp;qbyte_value + 1);
+                    *(byte *) target++ = *((byte *) &amp;qbyte_value + 2);
+                    *(byte *) target++ = *((byte *) &amp;qbyte_value + 3);
+                  }
+                else
+                    target += 4;
+                break;
+
+            case 's':                   /*  Null-terminated string           */
+                string = va_arg (argptr, char *);
+                if (string)
+                  {
+                    if (buffer)
+                        strcpy ((char *) target, string);
+                    target += strlen (string) + 1;
+                  }
+                else                    /*  Store NULL as single null byte   */
+                  {
+                    if (buffer)
+                        *(byte *) target++ = 0;
+                    else
+                        target += 1;
+                  }
+                break;
+
+            case 'm':                   /*  Memory descriptor size           */
+                memory_size = va_arg (argptr, int);
+                dbyte_value = htons ((dbyte) memory_size);
+                if (buffer)
+                  {
+                    *(byte *) target++ = *((byte *) &amp;dbyte_value);
+                    *(byte *) target++ = *((byte *) &amp;dbyte_value + 1);
+                  }
+                else
+                    target += 2;
+                break;
+            case 'M':                   /*  Memory descriptor body           */
+                block = va_arg (argptr, byte *);
+                if (block)
+                  {
+                    if (buffer)
+                        memcpy (target, block, (size_t) memory_size);
+                    target += (size_t) memory_size;
+                  }
+                else
+                    ASSERT (memory_size == 0);
+                break;
+
+            case 'h':                   /*  Huge memory descriptor size       */
+                memory_size = va_arg (argptr, qbyte);
+                qbyte_value = htonl (memory_size);
+                if (buffer)
+                  {
+                    *(byte *) target++ = *((byte *) &amp;qbyte_value);
+                    *(byte *) target++ = *((byte *) &amp;qbyte_value + 1);
+                    *(byte *) target++ = *((byte *) &amp;qbyte_value + 2);
+                    *(byte *) target++ = *((byte *) &amp;qbyte_value + 3);
+                  }
+                else
+                    target += 4;
+                break;
+            case 'H':                   /*  Huge memory descriptor body       */
+                block = va_arg (argptr, byte *);
+                if (block)
+                  {
+                    if (buffer)
+                        memcpy (target, block, (size_t) memory_size);
+                    target += (size_t) memory_size;
+                  }
+                else
+                    ASSERT (memory_size == 0);
+                break;
+          }
+      }
+    va_end (argptr);                    /*  End variable arguments list      */
+    return ((int) (target - buffer));
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl87.htm">&lt;</A>
+ | <A href="sfl89.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

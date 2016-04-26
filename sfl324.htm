@@ -1,0 +1,80 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>stringreplace</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl323.htm">&lt;</A>
+ | <A href="sfl325.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="stringreplace">&nbsp;</A>
+<H3><A NAME="TOC337"><TT>stringreplace</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+char *
+stringreplace (
+    char *strbuf,
+    char *strpattern)
+</PRE>
+<H4>Synopsis</H4>
+<P> This function searches for known strings, and replaces them
+   with another string.
+<H4>Examples</H4>
+<PRE>
+       stringreplace (strfilename, "sqv|sqr,ruv|run,h_v|h");
+
+    This example would replace all occurences of sqv, with sqr, ruv with
+    run and h_v with h. Returns pointer to head of the return buffer.
+    Submitted by Scott Beasley &lt;jscottb@infoave.com&gt;
+</PRE>
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+   int ilen, ifld = 0;
+   char *strsrch, *strrpl, *strpat;
+
+   ASSERT (strbuf);
+   ASSERT (strpattern);
+
+   if (!strpattern)
+       return strbuf;
+
+   while (1)
+     {
+       ilen = <A href="sfl320.htm#getstrfldlen">getstrfldlen</A> (strpattern, ifld, 0, ",");
+       if (!ilen)
+           break;
+       strpat = (char *)malloc (ilen + 1);
+       <A href="sfl318.htm#getstrfld">getstrfld</A> (strpattern, ifld, 0, ",", strpat);
+       ifld++;
+
+       ilen = <A href="sfl320.htm#getstrfldlen">getstrfldlen</A> (strpat, 0, 0, "|");
+       strsrch = (char *)malloc (ilen + 1);
+       <A href="sfl318.htm#getstrfld">getstrfld</A> (strpat, 0, 0, "|", strsrch);
+
+       ilen = <A href="sfl320.htm#getstrfldlen">getstrfldlen</A> (strpat, 1, 0, "|");
+       strrpl = (char *)malloc (ilen + 1);
+       <A href="sfl318.htm#getstrfld">getstrfld</A> (strpat, 1, 0, "|", strrpl);
+
+       <A href="sfl316.htm#searchreplace">searchreplace</A> (strbuf, strsrch, strrpl);
+
+       free (strsrch);
+       free (strrpl);
+       free (strpat);
+     }
+
+   return strbuf;
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl323.htm">&lt;</A>
+ | <A href="sfl325.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

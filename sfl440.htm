@@ -1,0 +1,81 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>tree_insert</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl439.htm">&lt;</A>
+ | <A href="sfl441.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="tree_insert">&nbsp;</A>
+<H3><A NAME="TOC453"><TT>tree_insert</TT></A></H3>
+<PRE>
+#include "sfltree.h"
+int tree_insert (TREE **root, void *tree, TREE_COMPARE *comp,
+                 Bool allow_duplicates)
+</PRE>
+<H4>Synopsis</H4>
+<P>Inserts a node into an existing tree. Initialises node pointers
+   and colour to correct values. The data used by the compare
+   functions must be filled in so that tree_insert can find the
+   correct place in the tree to insert the node.
+<H4>Source Code - (sfltree.c)</H4>
+<PRE>
+{
+    TREE
+       *current,
+       *parent;
+    int
+        last_comp = 0;
+
+    /* find where node belongs */
+    current = *root;
+    parent  = NULL;
+    while (current != TREE_NULL)
+      {
+        parent  = current;
+        last_comp = (comp) (tree, current);
+        switch (last_comp)
+          {
+            case -1: current = current-&gt; left;  break;
+            case  1: current = current-&gt; right; break;
+            default: if (allow_duplicates)
+                         current = current-&gt; left;
+                     else
+                         return TREE_DUPLICATE;
+
+          }
+      }
+
+    /* setup new node */
+    ((TREE *) tree)-&gt; parent = parent;
+    ((TREE *) tree)-&gt; left   = TREE_NULL;
+    ((TREE *) tree)-&gt; right  = TREE_NULL;
+    ((TREE *) tree)-&gt; colour = RED;
+
+    /* insert node in tree */
+    if (parent)
+        switch (last_comp)
+          {
+            case  1: parent-&gt; right = tree;  break;
+            default: parent-&gt; left  = tree;
+          }
+    else
+        *root = tree;
+
+    insert_fixup (root, tree);
+    return (TREE_OK);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl439.htm">&lt;</A>
+ | <A href="sfl441.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

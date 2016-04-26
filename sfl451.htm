@@ -1,0 +1,60 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>tree_prev</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl450.htm">&lt;</A>
+ | <A href="sfl452.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="tree_prev">&nbsp;</A>
+<H3><A NAME="TOC464"><TT>tree_prev</TT></A></H3>
+<PRE>
+#include "sfltree.h"
+void *tree_prev (void *tree)
+</PRE>
+<H4>Synopsis</H4>
+<P>Finds and returns the previous node in a tree.
+<H4>Source Code - (sfltree.c)</H4>
+<PRE>
+{
+    TREE
+       *current,
+       *child;
+
+    if ((!tree)
+    ||  (tree == TREE_NULL))
+        return NULL;
+
+    current = tree;
+    if (current-&gt; left != TREE_NULL)
+        return <A href="sfl449.htm#tree_last">tree last</A> (current-&gt; left);
+    else
+      {
+        current = tree;
+        child   = TREE_NULL;
+        while ((current-&gt; parent)
+           &amp;&amp;  (current-&gt; left == child))
+          {
+            child = current;
+            current = current-&gt; parent;
+          }
+        if (current-&gt; left != child)
+            return current;
+        else
+            return NULL;
+      }
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl450.htm">&lt;</A>
+ | <A href="sfl452.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

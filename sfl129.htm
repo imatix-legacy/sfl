@@ -1,0 +1,102 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>file_is_legal</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl128.htm">&lt;</A>
+ | <A href="sfl130.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="file_is_legal">&nbsp;</A>
+<H3><A NAME="TOC142"><TT>file_is_legal</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+Bool
+file_is_legal (
+    const char *arg_filename)
+</PRE>
+<H4>Synopsis</H4>
+<P>Checks whether the specified file is 'legal', which is a
+   system-dependent definition. Under 32-bit Windows, a legal file
+   is one who's name is not a shortened 8.3 version of a long
+   name. This can be used to bypass filename-based security
+   schemes. On other systems, the notion of 'illegal' is not
+   defined. Returns TRUE if the file exists and is legal. Returns
+   FALSE otherwise.
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+#if (defined (WIN32))
+    static WIN32_FIND_DATA
+        found;
+    HANDLE
+        handle;
+    char
+        *filename,                      /*  Our copy of arg_filename         */
+        *slash,                         /*  Position of '\' in filename      */
+        *component;                     /*  Component to compare             */
+    Bool
+        feedback;                       /*  Function feedback                */
+
+    /*  For each path component of the filename, check that the long form
+     *  of the name is the same as the short form.  We scan backwards
+     *  from the end of the filename, get the full pathname, and compare
+     *  the last component each time:
+     *
+     *      aaa\bbb\ccc\name.ext    name.ext
+     *      aaa\bbb\ccc             ccc
+     *      aaa\bbb                 bbb
+     *      aaa                     aaa
+     */
+
+    if (system_devicename (arg_filename))
+        return (FALSE);                 /*  Not allowed on device names      */
+
+    filename = mem_strdup (arg_filename);
+    feedback = TRUE;                    /*  Assume we match everything       */
+    <A href="sfl294.htm#strconvch">strconvch</A> (filename, '/', '\\');
+    if (strlast (filename) == '\\')
+        strlast (filename) = '\0';      /*  Drop any trailing slash          */
+
+    do
+      {
+        slash     = strrchr (filename, '\\');
+        component = slash? slash + 1: filename;
+        handle    = FindFirstFile (filename, &amp;found);
+
+        if (handle != INVALID_HANDLE_VALUE
+        &amp;&amp;  <A href="sfl297.htm#lexcmp">lexcmp</A> (component, found.cFileName))
+          {
+            feedback = FALSE;
+            break;
+          }
+        FindClose (handle);
+        if (slash)
+          {
+            *slash = '\0';              /*  Cut filename at slash            */
+            if (filename [1] == ':'
+            &amp;&amp;  filename [2] == '\0')   /*  We're at a disk specifier        */
+                break;                  /*    which is okay by now           */
+          }
+      }
+    while (slash &amp;&amp; *filename);
+    mem_free (filename);
+    return (feedback);
+
+#else
+    return (TRUE);               /*  On other OSes, all filenames are legal  */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl128.htm">&lt;</A>
+ | <A href="sfl130.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

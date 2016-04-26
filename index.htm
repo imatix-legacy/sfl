@@ -1,0 +1,661 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>The Standard Function Library</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | &lt;
+ | <A href="sfl.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+
+<H1>The Standard Function Library</H1>
+
+<P>The SFL (Standard Function Library) from iMatix is a portable function
+library for C/C++ programs. The SFL is the result of many years'
+development, and is provided as Open Source software for the benefit of the
+Internet community.
+
+<P>You may want to go straight to the <A href="index.htm#TOC">Table of Contents</A>.
+Also, this documentation is available as a single compressed
+<A href="/pub/sfl/doc/sflbig21.zip">zip file</A> or <A href="/pub/sfl/doc/sflbig21.tgz">gzipped tar file</A>, suitable for printing.
+
+<P>The SFL is written in ANSI C and has been ported to MS-DOS, Windows,
+OS/2, Linux and other UNIX systems (IBM AIX, SunOS, HP/UX, Solaris, NetBSD,
+FreeBSD, SCO OpenServer, Digital UNIX) and Digital OpenVMS. It comes with
+complete sources and documentation in HTML.
+
+<P>The SFL provides about 450 functions that cover these areas:
+<UL>
+<LI>Compression, encryption, and encoding;
+<LI>Datatype conversion and formatting;
+<LI>Dates, times, and calendars;
+<LI>Directory and environment access;
+<LI>User and process groups;
+<LI>Inverted bitmap indices;
+<LI>Symbol tables;
+<LI>Error message files;
+<LI>Configuration files;
+<LI>String manipulation and searching;
+<LI>File access;
+<LI>Internet socket access;
+<LI>Internet programming (MIME, CGI);
+<LI>SMTP (e-mail) access;
+<LI>Server (batch) programming;
+<LI>Program tracing.
+</UL>
+
+<P>The SFL is free software that you may use and distribute for
+private or commercial purposes according to the
+<A href="sfl4.htm#license">SFL License Agreement</A>.
+
+<P>Send comments about the SFL, bug reports, and submissions to
+<A HREF="mailto:sfl@imatix.com">sfl@imatix.com</A>.
+
+<A NAME="TOC">&nbsp;</A>
+<H2>Table of Contents</H2>
+<MENU>
+<LI><A HREF="sfl.htm#TOC1">What Is The SFL</A></LI>
+<MENU>
+<LI><A HREF="sfl.htm#TOC2">Origins</A></LI>
+<LI><A HREF="sfl.htm#TOC3">Objectives</A></LI>
+<LI><A HREF="sfl.htm#TOC4">Portability</A></LI>
+</MENU>
+<LI><A HREF="sfl1.htm#TOC5">Installing The SFL</A></LI>
+<MENU>
+<LI><A HREF="sfl1.htm#TOC6">Availability and Distribution</A></LI>
+<LI><A HREF="sfl1.htm#TOC7">Installation for UNIX Systems</A></LI>
+<LI><A HREF="sfl1.htm#TOC8">Installation for Digital VMS Systems</A></LI>
+<LI><A HREF="sfl1.htm#TOC9">Installation for Windows</A></LI>
+<LI><A HREF="sfl1.htm#TOC10">Installation for MS-DOS</A></LI>
+</MENU>
+<LI><A HREF="sfl2.htm#TOC11">Using The SFL</A></LI>
+<MENU>
+<LI><A HREF="sfl2.htm#TOC12">The Universal Header File - prelude.h</A></LI>
+<LI><A HREF="sfl2.htm#TOC13">The Library Header File - sfl.h</A></LI>
+<LI><A HREF="sfl2.htm#TOC14">System Notes</A></LI>
+<LI><A HREF="sfl2.htm#TOC15">To Do List</A></LI>
+</MENU>
+<LI><A HREF="sfl3.htm#TOC16">Contributors and References</A></LI>
+<LI><A HREF="sfl4.htm#TOC17">The SFL License Agreement</A></LI>
+<LI><A HREF="sfl5.htm#TOC18">Universal Header File for C programming</A></LI>
+<LI><A HREF="sfl6.htm#TOC19">Define SFL version</A></LI>
+<LI><A HREF="sfl7.htm#TOC20">Large bitstring manipulation functions</A></LI>
+<MENU>
+<LI><A HREF="sfl8.htm#TOC21"><TT>bits_init</TT></A></LI>
+<LI><A HREF="sfl9.htm#TOC22"><TT>bits_term</TT></A></LI>
+<LI><A HREF="sfl10.htm#TOC23"><TT>bits_create</TT></A></LI>
+<LI><A HREF="sfl11.htm#TOC24"><TT>bits_destroy</TT></A></LI>
+<LI><A HREF="sfl12.htm#TOC25"><TT>bits_set</TT></A></LI>
+<LI><A HREF="sfl13.htm#TOC26"><TT>bits_clear</TT></A></LI>
+<LI><A HREF="sfl14.htm#TOC27"><TT>bits_test</TT></A></LI>
+<LI><A HREF="sfl15.htm#TOC28"><TT>bits_fput</TT></A></LI>
+<LI><A HREF="sfl16.htm#TOC29"><TT>bits_fget</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl17.htm#TOC30">Compression functions</A></LI>
+<MENU>
+<LI><A HREF="sfl18.htm#TOC31"><TT>compress_block</TT></A></LI>
+<LI><A HREF="sfl19.htm#TOC32"><TT>expand_block</TT></A></LI>
+<LI><A HREF="sfl20.htm#TOC33"><TT>compress_rle</TT></A></LI>
+<LI><A HREF="sfl21.htm#TOC34"><TT>expand_rle</TT></A></LI>
+<LI><A HREF="sfl22.htm#TOC35"><TT>compress_nulls</TT></A></LI>
+<LI><A HREF="sfl23.htm#TOC36"><TT>expand_nulls</TT></A></LI>
+<LI><A HREF="sfl24.htm#TOC37"><TT>compress_bits</TT></A></LI>
+<LI><A HREF="sfl25.htm#TOC38"><TT>expand_bits</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl26.htm#TOC39">Console output functions</A></LI>
+<MENU>
+<LI><A HREF="sfl27.htm#TOC40"><TT>console_send</TT></A></LI>
+<LI><A HREF="sfl28.htm#TOC41"><TT>console_enable</TT></A></LI>
+<LI><A HREF="sfl29.htm#TOC42"><TT>console_disable</TT></A></LI>
+<LI><A HREF="sfl30.htm#TOC43"><TT>console_set_mode</TT></A></LI>
+<LI><A HREF="sfl31.htm#TOC44"><TT>console_capture</TT></A></LI>
+<LI><A HREF="sfl32.htm#TOC45"><TT>coprintf</TT></A></LI>
+<LI><A HREF="sfl33.htm#TOC46"><TT>coputs</TT></A></LI>
+<LI><A HREF="sfl34.htm#TOC47"><TT>coputc</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl35.htm#TOC48">Conversion functions</A></LI>
+<MENU>
+<LI><A HREF="sfl36.htm#TOC49"><TT>conv_bool_str</TT></A></LI>
+<LI><A HREF="sfl37.htm#TOC50"><TT>conv_date_pict</TT></A></LI>
+<LI><A HREF="sfl38.htm#TOC51"><TT>conv_date_str</TT></A></LI>
+<LI><A HREF="sfl39.htm#TOC52"><TT>conv_number_str</TT></A></LI>
+<LI><A HREF="sfl40.htm#TOC53"><TT>conv_str_bool</TT></A></LI>
+<LI><A HREF="sfl41.htm#TOC54"><TT>conv_str_date</TT></A></LI>
+<LI><A HREF="sfl42.htm#TOC55"><TT>conv_str_day</TT></A></LI>
+<LI><A HREF="sfl43.htm#TOC56"><TT>conv_str_number</TT></A></LI>
+<LI><A HREF="sfl44.htm#TOC57"><TT>conv_str_time</TT></A></LI>
+<LI><A HREF="sfl45.htm#TOC58"><TT>conv_time_pict</TT></A></LI>
+<LI><A HREF="sfl46.htm#TOC59"><TT>conv_time_str</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl47.htm#TOC60">Encryption and decryption functions</A></LI>
+<MENU>
+<LI><A HREF="sfl48.htm#TOC61"><TT>crypt_encode</TT></A></LI>
+<LI><A HREF="sfl49.htm#TOC62"><TT>crypt_decode</TT></A></LI>
+<LI><A HREF="sfl50.htm#TOC63"><TT>calculate_crc</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl51.htm#TOC64">Date and time functions</A></LI>
+<MENU>
+<LI><A HREF="sfl52.htm#TOC65"><TT>date_now</TT></A></LI>
+<LI><A HREF="sfl53.htm#TOC66"><TT>time_now</TT></A></LI>
+<LI><A HREF="sfl54.htm#TOC67"><TT>leap_year</TT></A></LI>
+<LI><A HREF="sfl55.htm#TOC68"><TT>julian_date</TT></A></LI>
+<LI><A HREF="sfl56.htm#TOC69"><TT>day_of_week</TT></A></LI>
+<LI><A HREF="sfl57.htm#TOC70"><TT>next_weekday</TT></A></LI>
+<LI><A HREF="sfl58.htm#TOC71"><TT>prev_weekday</TT></A></LI>
+<LI><A HREF="sfl59.htm#TOC72"><TT>week_of_year</TT></A></LI>
+<LI><A HREF="sfl60.htm#TOC73"><TT>year_quarter</TT></A></LI>
+<LI><A HREF="sfl61.htm#TOC74"><TT>default_century</TT></A></LI>
+<LI><A HREF="sfl62.htm#TOC75"><TT>pack_date</TT></A></LI>
+<LI><A HREF="sfl63.htm#TOC76"><TT>pack_time</TT></A></LI>
+<LI><A HREF="sfl64.htm#TOC77"><TT>unpack_date</TT></A></LI>
+<LI><A HREF="sfl65.htm#TOC78"><TT>unpack_time</TT></A></LI>
+<LI><A HREF="sfl66.htm#TOC79"><TT>date_to_days</TT></A></LI>
+<LI><A HREF="sfl67.htm#TOC80"><TT>days_to_date</TT></A></LI>
+<LI><A HREF="sfl68.htm#TOC81"><TT>date_to_timer</TT></A></LI>
+<LI><A HREF="sfl69.htm#TOC82"><TT>timer_to_date</TT></A></LI>
+<LI><A HREF="sfl70.htm#TOC83"><TT>timer_to_time</TT></A></LI>
+<LI><A HREF="sfl71.htm#TOC84"><TT>timer_to_gmdate</TT></A></LI>
+<LI><A HREF="sfl72.htm#TOC85"><TT>timer_to_gmtime</TT></A></LI>
+<LI><A HREF="sfl73.htm#TOC86"><TT>time_to_csecs</TT></A></LI>
+<LI><A HREF="sfl74.htm#TOC87"><TT>csecs_to_time</TT></A></LI>
+<LI><A HREF="sfl75.htm#TOC88"><TT>future_date</TT></A></LI>
+<LI><A HREF="sfl76.htm#TOC89"><TT>past_date</TT></A></LI>
+<LI><A HREF="sfl77.htm#TOC90"><TT>date_diff</TT></A></LI>
+<LI><A HREF="sfl78.htm#TOC91"><TT>valid_date</TT></A></LI>
+<LI><A HREF="sfl79.htm#TOC92"><TT>valid_time</TT></A></LI>
+<LI><A HREF="sfl80.htm#TOC93"><TT>date_is_future</TT></A></LI>
+<LI><A HREF="sfl81.htm#TOC94"><TT>date_is_past</TT></A></LI>
+<LI><A HREF="sfl82.htm#TOC95"><TT>timezone_string</TT></A></LI>
+<LI><A HREF="sfl83.htm#TOC96"><TT>local_to_gmt</TT></A></LI>
+<LI><A HREF="sfl84.htm#TOC97"><TT>gmt_to_local</TT></A></LI>
+<LI><A HREF="sfl85.htm#TOC98"><TT>safe_localtime</TT></A></LI>
+<LI><A HREF="sfl86.htm#TOC99"><TT>safe_gmtime</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl87.htm#TOC100">External data representation functions</A></LI>
+<MENU>
+<LI><A HREF="sfl88.htm#TOC101"><TT>exdr_write</TT></A></LI>
+<LI><A HREF="sfl89.htm#TOC102"><TT>exdr_writed</TT></A></LI>
+<LI><A HREF="sfl90.htm#TOC103"><TT>exdr_read</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl91.htm#TOC104">Fast string searching functions</A></LI>
+<MENU>
+<LI><A HREF="sfl92.htm#TOC105"><TT>strfind</TT></A></LI>
+<LI><A HREF="sfl93.htm#TOC106"><TT>strfind_r</TT></A></LI>
+<LI><A HREF="sfl94.htm#TOC107"><TT>strfind_rb</TT></A></LI>
+<LI><A HREF="sfl95.htm#TOC108"><TT>memfind</TT></A></LI>
+<LI><A HREF="sfl96.htm#TOC109"><TT>memfind_r</TT></A></LI>
+<LI><A HREF="sfl97.htm#TOC110"><TT>memfind_rb</TT></A></LI>
+<LI><A HREF="sfl98.htm#TOC111"><TT>txtfind</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl99.htm#TOC112">File-access functions</A></LI>
+<MENU>
+<LI><A HREF="sfl100.htm#TOC113"><TT>file_open</TT></A></LI>
+<LI><A HREF="sfl101.htm#TOC114"><TT>file_locate</TT></A></LI>
+<LI><A HREF="sfl102.htm#TOC115"><TT>file_close</TT></A></LI>
+<LI><A HREF="sfl103.htm#TOC116"><TT>file_read</TT></A></LI>
+<LI><A HREF="sfl104.htm#TOC117"><TT>file_readn</TT></A></LI>
+<LI><A HREF="sfl105.htm#TOC118"><TT>file_write</TT></A></LI>
+<LI><A HREF="sfl106.htm#TOC119"><TT>file_copy</TT></A></LI>
+<LI><A HREF="sfl107.htm#TOC120"><TT>file_concat</TT></A></LI>
+<LI><A HREF="sfl108.htm#TOC121"><TT>file_rename</TT></A></LI>
+<LI><A HREF="sfl109.htm#TOC122"><TT>file_delete</TT></A></LI>
+<LI><A HREF="sfl110.htm#TOC123"><TT>file_exists</TT></A></LI>
+<LI><A HREF="sfl111.htm#TOC124"><TT>file_where</TT></A></LI>
+<LI><A HREF="sfl112.htm#TOC125"><TT>file_where_ext</TT></A></LI>
+<LI><A HREF="sfl113.htm#TOC126"><TT>file_cycle</TT></A></LI>
+<LI><A HREF="sfl114.htm#TOC127"><TT>file_cycle_needed</TT></A></LI>
+<LI><A HREF="sfl115.htm#TOC128"><TT>file_has_changed</TT></A></LI>
+<LI><A HREF="sfl116.htm#TOC129"><TT>safe_to_extend</TT></A></LI>
+<LI><A HREF="sfl117.htm#TOC130"><TT>default_extension</TT></A></LI>
+<LI><A HREF="sfl118.htm#TOC131"><TT>fixed_extension</TT></A></LI>
+<LI><A HREF="sfl119.htm#TOC132"><TT>strip_extension</TT></A></LI>
+<LI><A HREF="sfl120.htm#TOC133"><TT>add_extension</TT></A></LI>
+<LI><A HREF="sfl121.htm#TOC134"><TT>strip_file_path</TT></A></LI>
+<LI><A HREF="sfl122.htm#TOC135"><TT>strip_file_name</TT></A></LI>
+<LI><A HREF="sfl123.htm#TOC136"><TT>get_new_filename</TT></A></LI>
+<LI><A HREF="sfl124.htm#TOC137"><TT>file_is_readable</TT></A></LI>
+<LI><A HREF="sfl125.htm#TOC138"><TT>file_is_writeable</TT></A></LI>
+<LI><A HREF="sfl126.htm#TOC139"><TT>file_is_executable</TT></A></LI>
+<LI><A HREF="sfl127.htm#TOC140"><TT>file_is_program</TT></A></LI>
+<LI><A HREF="sfl128.htm#TOC141"><TT>file_is_directory</TT></A></LI>
+<LI><A HREF="sfl129.htm#TOC142"><TT>file_is_legal</TT></A></LI>
+<LI><A HREF="sfl130.htm#TOC143"><TT>file_exec_name</TT></A></LI>
+<LI><A HREF="sfl131.htm#TOC144"><TT>get_file_size</TT></A></LI>
+<LI><A HREF="sfl132.htm#TOC145"><TT>get_file_time</TT></A></LI>
+<LI><A HREF="sfl133.htm#TOC146"><TT>get_file_lines</TT></A></LI>
+<LI><A HREF="sfl134.htm#TOC147"><TT>file_slurp</TT></A></LI>
+<LI><A HREF="sfl135.htm#TOC148"><TT>file_slurpl</TT></A></LI>
+<LI><A HREF="sfl136.htm#TOC149"><TT>file_set_eoln</TT></A></LI>
+<LI><A HREF="sfl137.htm#TOC150"><TT>get_tmp_file_name</TT></A></LI>
+<LI><A HREF="sfl138.htm#TOC151"><TT>file_fhredirect</TT></A></LI>
+<LI><A HREF="sfl139.htm#TOC152"><TT>file_fhrestore</TT></A></LI>
+<LI><A HREF="sfl140.htm#TOC153"><TT>ftmp_open</TT></A></LI>
+<LI><A HREF="sfl141.htm#TOC154"><TT>ftmp_close</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl142.htm#TOC155">Fortune-cookie functions</A></LI>
+<MENU>
+<LI><A HREF="sfl143.htm#TOC156"><TT>fortune_build</TT></A></LI>
+<LI><A HREF="sfl144.htm#TOC157"><TT>fortune_read</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl145.htm#TOC158">Initialisation file access functions</A></LI>
+<MENU>
+<LI><A HREF="sfl146.htm#TOC159"><TT>ini_find_section</TT></A></LI>
+<LI><A HREF="sfl147.htm#TOC160"><TT>ini_scan_section</TT></A></LI>
+<LI><A HREF="sfl148.htm#TOC161"><TT>ini_dyn_load</TT></A></LI>
+<LI><A HREF="sfl149.htm#TOC162"><TT>ini_dyn_loade</TT></A></LI>
+<LI><A HREF="sfl150.htm#TOC163"><TT>ini_dyn_save</TT></A></LI>
+<LI><A HREF="sfl151.htm#TOC164"><TT>ini_dyn_changed</TT></A></LI>
+<LI><A HREF="sfl152.htm#TOC165"><TT>ini_dyn_refresh</TT></A></LI>
+<LI><A HREF="sfl153.htm#TOC166"><TT>ini_dyn_value</TT></A></LI>
+<LI><A HREF="sfl154.htm#TOC167"><TT>ini_dyn_values</TT></A></LI>
+<LI><A HREF="sfl155.htm#TOC168"><TT>srcdoc W (sflini.c 649): function ini_dyn_default not known</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl156.htm#TOC169">Multilanguage support</A></LI>
+<MENU>
+<LI><A HREF="sfl157.htm#TOC170"><TT>set_userlang</TT></A></LI>
+<LI><A HREF="sfl158.htm#TOC171"><TT>set_userlang_str</TT></A></LI>
+<LI><A HREF="sfl159.htm#TOC172"><TT>get_userlang</TT></A></LI>
+<LI><A HREF="sfl160.htm#TOC173"><TT>get_userlang_str</TT></A></LI>
+<LI><A HREF="sfl161.htm#TOC174"><TT>set_accents</TT></A></LI>
+<LI><A HREF="sfl162.htm#TOC175"><TT>get_accents</TT></A></LI>
+<LI><A HREF="sfl163.htm#TOC176"><TT>get_units_name</TT></A></LI>
+<LI><A HREF="sfl164.htm#TOC177"><TT>get_tens_name</TT></A></LI>
+<LI><A HREF="sfl165.htm#TOC178"><TT>get_day_name</TT></A></LI>
+<LI><A HREF="sfl166.htm#TOC179"><TT>get_day_abbrev</TT></A></LI>
+<LI><A HREF="sfl167.htm#TOC180"><TT>get_month_name</TT></A></LI>
+<LI><A HREF="sfl168.htm#TOC181"><TT>get_month_abbrev</TT></A></LI>
+<LI><A HREF="sfl169.htm#TOC182"><TT>timestamp_string</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl170.htm#TOC183">Line buffering functions</A></LI>
+<MENU>
+<LI><A HREF="sfl171.htm#TOC184"><TT>linebuf_create</TT></A></LI>
+<LI><A HREF="sfl172.htm#TOC185"><TT>linebuf_destroy</TT></A></LI>
+<LI><A HREF="sfl173.htm#TOC186"><TT>linebuf_reset</TT></A></LI>
+<LI><A HREF="sfl174.htm#TOC187"><TT>linebuf_append</TT></A></LI>
+<LI><A HREF="sfl175.htm#TOC188"><TT>linebuf_first</TT></A></LI>
+<LI><A HREF="sfl176.htm#TOC189"><TT>linebuf_next</TT></A></LI>
+<LI><A HREF="sfl177.htm#TOC190"><TT>linebuf_last</TT></A></LI>
+<LI><A HREF="sfl178.htm#TOC191"><TT>linebuf_prev</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl179.htm#TOC192">Linked-list functions</A></LI>
+<MENU>
+<LI><A HREF="sfl180.htm#TOC193"><TT>list_unlink</TT></A></LI>
+<LI><A HREF="sfl181.htm#TOC194"><TT>list_relink</TT></A></LI>
+<LI><A HREF="sfl182.htm#TOC195"><TT>list_add</TT></A></LI>
+<LI><A HREF="sfl183.htm#TOC196"><TT>list_remove</TT></A></LI>
+<LI><A HREF="sfl184.htm#TOC197"><TT>list_sort</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl185.htm#TOC198">SMTP mailer function</A></LI>
+<MENU>
+<LI><A HREF="sfl186.htm#TOC199"><TT>smtp_send_mail_ex</TT></A></LI>
+<LI><A HREF="sfl187.htm#TOC200"><TT>smtp_send_mail</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl188.htm#TOC201">Mathematic functions</A></LI>
+<MENU>
+<LI><A HREF="sfl189.htm#TOC202"><TT>point_in_rect</TT></A></LI>
+<LI><A HREF="sfl190.htm#TOC203"><TT>point_in_circle</TT></A></LI>
+<LI><A HREF="sfl191.htm#TOC204"><TT>point_in_poly</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl192.htm#TOC205">Message-file access functions</A></LI>
+<MENU>
+<LI><A HREF="sfl193.htm#TOC206"><TT>open_message_file</TT></A></LI>
+<LI><A HREF="sfl194.htm#TOC207"><TT>close_message_file</TT></A></LI>
+<LI><A HREF="sfl195.htm#TOC208"><TT>print_message</TT></A></LI>
+<LI><A HREF="sfl196.htm#TOC209"><TT>message_text</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl197.htm#TOC210">Memory allocation functions</A></LI>
+<MENU>
+<LI><A HREF="sfl198.htm#TOC211"><TT>mem_alloc_</TT></A></LI>
+<LI><A HREF="sfl199.htm#TOC212"><TT>mem_realloc_</TT></A></LI>
+<LI><A HREF="sfl200.htm#TOC213"><TT>mem_strdup_</TT></A></LI>
+<LI><A HREF="sfl201.htm#TOC214"><TT>mem_strfree_</TT></A></LI>
+<LI><A HREF="sfl202.htm#TOC215"><TT>mem_free_</TT></A></LI>
+<LI><A HREF="sfl203.htm#TOC216"><TT>mem_assert_</TT></A></LI>
+<LI><A HREF="sfl204.htm#TOC217"><TT>mem_checkall_</TT></A></LI>
+<LI><A HREF="sfl205.htm#TOC218"><TT>mem_check_</TT></A></LI>
+<LI><A HREF="sfl206.htm#TOC219"><TT>mem_descr_</TT></A></LI>
+<LI><A HREF="sfl207.htm#TOC220"><TT>mem_new_trans_</TT></A></LI>
+<LI><A HREF="sfl208.htm#TOC221"><TT>mem_commit_</TT></A></LI>
+<LI><A HREF="sfl209.htm#TOC222"><TT>mem_rollback_</TT></A></LI>
+<LI><A HREF="sfl210.htm#TOC223"><TT>mem_size_</TT></A></LI>
+<LI><A HREF="sfl211.htm#TOC224"><TT>mem_used</TT></A></LI>
+<LI><A HREF="sfl212.htm#TOC225"><TT>mem_allocs</TT></A></LI>
+<LI><A HREF="sfl213.htm#TOC226"><TT>mem_frees</TT></A></LI>
+<LI><A HREF="sfl214.htm#TOC227"><TT>mem_display</TT></A></LI>
+<LI><A HREF="sfl215.htm#TOC228"><TT>mem_scavenger</TT></A></LI>
+<LI><A HREF="sfl216.htm#TOC229"><TT>mem_freeall</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl217.htm#TOC230">MIME support functions</A></LI>
+<MENU>
+<LI><A HREF="sfl218.htm#TOC231"><TT>encode_base64</TT></A></LI>
+<LI><A HREF="sfl219.htm#TOC232"><TT>decode_base64</TT></A></LI>
+<LI><A HREF="sfl220.htm#TOC233"><TT>decode_mime_time</TT></A></LI>
+<LI><A HREF="sfl221.htm#TOC234"><TT>encode_mime_time</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl222.htm#TOC235">Linked-list functions</A></LI>
+<MENU>
+<LI><A HREF="sfl223.htm#TOC236"><TT>node_create</TT></A></LI>
+<LI><A HREF="sfl224.htm#TOC237"><TT>node_destroy</TT></A></LI>
+<LI><A HREF="sfl225.htm#TOC238"><TT>node_relink_after</TT></A></LI>
+<LI><A HREF="sfl226.htm#TOC239"><TT>node_relink_before</TT></A></LI>
+<LI><A HREF="sfl227.htm#TOC240"><TT>node_unlink</TT></A></LI>
+<LI><A HREF="sfl228.htm#TOC241"><TT>node_relink</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl229.htm#TOC242">Directory access functions</A></LI>
+<MENU>
+<LI><A HREF="sfl230.htm#TOC243"><TT>open_dir</TT></A></LI>
+<LI><A HREF="sfl231.htm#TOC244"><TT>read_dir</TT></A></LI>
+<LI><A HREF="sfl232.htm#TOC245"><TT>close_dir</TT></A></LI>
+<LI><A HREF="sfl233.htm#TOC246"><TT>format_dir</TT></A></LI>
+<LI><A HREF="sfl234.htm#TOC247"><TT>fix_dir</TT></A></LI>
+<LI><A HREF="sfl235.htm#TOC248"><TT>free_dir</TT></A></LI>
+<LI><A HREF="sfl236.htm#TOC249"><TT>load_dir_list</TT></A></LI>
+<LI><A HREF="sfl237.htm#TOC250"><TT>free_dir_list</TT></A></LI>
+<LI><A HREF="sfl238.htm#TOC251"><TT>sort_dir_list</TT></A></LI>
+<LI><A HREF="sfl239.htm#TOC252"><TT>add_dir_list</TT></A></LI>
+<LI><A HREF="sfl240.htm#TOC253"><TT>resolve_path</TT></A></LI>
+<LI><A HREF="sfl241.htm#TOC254"><TT>locate_path</TT></A></LI>
+<LI><A HREF="sfl242.htm#TOC255"><TT>clean_path</TT></A></LI>
+<LI><A HREF="sfl243.htm#TOC256"><TT>get_curdir</TT></A></LI>
+<LI><A HREF="sfl244.htm#TOC257"><TT>set_curdir</TT></A></LI>
+<LI><A HREF="sfl245.htm#TOC258"><TT>file_matches</TT></A></LI>
+<LI><A HREF="sfl246.htm#TOC259"><TT>make_dir</TT></A></LI>
+<LI><A HREF="sfl247.htm#TOC260"><TT>remove_dir</TT></A></LI>
+<LI><A HREF="sfl248.htm#TOC261"><TT>dir_usage</TT></A></LI>
+<LI><A HREF="sfl249.htm#TOC262"><TT>dir_files</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl250.htm#TOC263">Process control functions</A></LI>
+<MENU>
+<LI><A HREF="sfl251.htm#TOC264"><TT>process_create_full</TT></A></LI>
+<LI><A HREF="sfl252.htm#TOC265"><TT>process_create</TT></A></LI>
+<LI><A HREF="sfl253.htm#TOC266"><TT>process_setinfo</TT></A></LI>
+<LI><A HREF="sfl254.htm#TOC267"><TT>process_open_io</TT></A></LI>
+<LI><A HREF="sfl255.htm#TOC268"><TT>process_close_io</TT></A></LI>
+<LI><A HREF="sfl256.htm#TOC269"><TT>process_status</TT></A></LI>
+<LI><A HREF="sfl257.htm#TOC270"><TT>process_kill</TT></A></LI>
+<LI><A HREF="sfl258.htm#TOC271"><TT>process_close</TT></A></LI>
+<LI><A HREF="sfl259.htm#TOC272"><TT>process_server</TT></A></LI>
+<LI><A HREF="sfl260.htm#TOC273"><TT>process_alarm</TT></A></LI>
+<LI><A HREF="sfl261.htm#TOC274"><TT>process_esc</TT></A></LI>
+<LI><A HREF="sfl262.htm#TOC275"><TT>process_unesc</TT></A></LI>
+<LI><A HREF="sfl263.htm#TOC276"><TT>process_priority</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl264.htm#TOC277">Time-slot functions</A></LI>
+<MENU>
+<LI><A HREF="sfl265.htm#TOC278"><TT>year_range_empty</TT></A></LI>
+<LI><A HREF="sfl266.htm#TOC279"><TT>year_range_fill</TT></A></LI>
+<LI><A HREF="sfl267.htm#TOC280"><TT>year_slot_clear</TT></A></LI>
+<LI><A HREF="sfl268.htm#TOC281"><TT>year_slot_set</TT></A></LI>
+<LI><A HREF="sfl269.htm#TOC282"><TT>year_slot_filled</TT></A></LI>
+<LI><A HREF="sfl270.htm#TOC283"><TT>day_range_empty</TT></A></LI>
+<LI><A HREF="sfl271.htm#TOC284"><TT>day_range_fill</TT></A></LI>
+<LI><A HREF="sfl272.htm#TOC285"><TT>day_slot_clear</TT></A></LI>
+<LI><A HREF="sfl273.htm#TOC286"><TT>day_slot_set</TT></A></LI>
+<LI><A HREF="sfl274.htm#TOC287"><TT>day_slot_filled</TT></A></LI>
+<LI><A HREF="sfl275.htm#TOC288"><TT>date_to_day</TT></A></LI>
+<LI><A HREF="sfl276.htm#TOC289"><TT>time_to_min</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl277.htm#TOC290">String-handling functions</A></LI>
+<MENU>
+<LI><A HREF="sfl278.htm#TOC291"><TT>strdupl</TT></A></LI>
+<LI><A HREF="sfl279.htm#TOC292"><TT>strfree</TT></A></LI>
+<LI><A HREF="sfl280.htm#TOC293"><TT>strskp</TT></A></LI>
+<LI><A HREF="sfl281.htm#TOC294"><TT>strcset</TT></A></LI>
+<LI><A HREF="sfl282.htm#TOC295"><TT>strpad</TT></A></LI>
+<LI><A HREF="sfl283.htm#TOC296"><TT>strlwc</TT></A></LI>
+<LI><A HREF="sfl284.htm#TOC297"><TT>strupc</TT></A></LI>
+<LI><A HREF="sfl285.htm#TOC298"><TT>strcrop</TT></A></LI>
+<LI><A HREF="sfl286.htm#TOC299"><TT>stropen</TT></A></LI>
+<LI><A HREF="sfl287.htm#TOC300"><TT>strclose</TT></A></LI>
+<LI><A HREF="sfl288.htm#TOC301"><TT>strunique</TT></A></LI>
+<LI><A HREF="sfl289.htm#TOC302"><TT>strmatch</TT></A></LI>
+<LI><A HREF="sfl290.htm#TOC303"><TT>strprefixed</TT></A></LI>
+<LI><A HREF="sfl291.htm#TOC304"><TT>strprefix</TT></A></LI>
+<LI><A HREF="sfl292.htm#TOC305"><TT>strdefix</TT></A></LI>
+<LI><A HREF="sfl293.htm#TOC306"><TT>strhash</TT></A></LI>
+<LI><A HREF="sfl294.htm#TOC307"><TT>strconvch</TT></A></LI>
+<LI><A HREF="sfl295.htm#TOC308"><TT>xstrcat</TT></A></LI>
+<LI><A HREF="sfl296.htm#TOC309"><TT>xstrcpy</TT></A></LI>
+<LI><A HREF="sfl297.htm#TOC310"><TT>lexcmp</TT></A></LI>
+<LI><A HREF="sfl298.htm#TOC311"><TT>lexncmp</TT></A></LI>
+<LI><A HREF="sfl299.htm#TOC312"><TT>lexwcmp</TT></A></LI>
+<LI><A HREF="sfl300.htm#TOC313"><TT>soundex</TT></A></LI>
+<LI><A HREF="sfl301.htm#TOC314"><TT>soundexn</TT></A></LI>
+<LI><A HREF="sfl302.htm#TOC315"><TT>strt2descr</TT></A></LI>
+<LI><A HREF="sfl303.htm#TOC316"><TT>descr2strt</TT></A></LI>
+<LI><A HREF="sfl304.htm#TOC317"><TT>strtfree</TT></A></LI>
+<LI><A HREF="sfl305.htm#TOC318"><TT>strcntch</TT></A></LI>
+<LI><A HREF="sfl306.htm#TOC319"><TT>strlookup</TT></A></LI>
+<LI><A HREF="sfl307.htm#TOC320"><TT>strreformat</TT></A></LI>
+<LI><A HREF="sfl308.htm#TOC321"><TT>removechars</TT></A></LI>
+<LI><A HREF="sfl309.htm#TOC322"><TT>replacechrswith</TT></A></LI>
+<LI><A HREF="sfl310.htm#TOC323"><TT>insertstring</TT></A></LI>
+<LI><A HREF="sfl311.htm#TOC324"><TT>insertchar</TT></A></LI>
+<LI><A HREF="sfl312.htm#TOC325"><TT>leftfill</TT></A></LI>
+<LI><A HREF="sfl313.htm#TOC326"><TT>rightfill</TT></A></LI>
+<LI><A HREF="sfl314.htm#TOC327"><TT>trim</TT></A></LI>
+<LI><A HREF="sfl315.htm#TOC328"><TT>ltrim</TT></A></LI>
+<LI><A HREF="sfl316.htm#TOC329"><TT>searchreplace</TT></A></LI>
+<LI><A HREF="sfl317.htm#TOC330"><TT>deletestring</TT></A></LI>
+<LI><A HREF="sfl318.htm#TOC331"><TT>getstrfld</TT></A></LI>
+<LI><A HREF="sfl319.htm#TOC332"><TT>setstrfld</TT></A></LI>
+<LI><A HREF="sfl320.htm#TOC333"><TT>getstrfldlen</TT></A></LI>
+<LI><A HREF="sfl321.htm#TOC334"><TT>findstrinfile</TT></A></LI>
+<LI><A HREF="sfl322.htm#TOC335"><TT>getequval</TT></A></LI>
+<LI><A HREF="sfl323.htm#TOC336"><TT>matchtable</TT></A></LI>
+<LI><A HREF="sfl324.htm#TOC337"><TT>stringreplace</TT></A></LI>
+<LI><A HREF="sfl325.htm#TOC338"><TT>wordwrapstr</TT></A></LI>
+<LI><A HREF="sfl326.htm#TOC339"><TT>stricstr</TT></A></LI>
+<LI><A HREF="sfl327.htm#TOC340"><TT>strtempcmp</TT></A></LI>
+<LI><A HREF="sfl328.htm#TOC341"><TT>istoken</TT></A></LI>
+<LI><A HREF="sfl329.htm#TOC342"><TT>eatstr</TT></A></LI>
+<LI><A HREF="sfl330.htm#TOC343"><TT>eatstrpast</TT></A></LI>
+<LI><A HREF="sfl331.htm#TOC344"><TT>movestrpast</TT></A></LI>
+<LI><A HREF="sfl332.htm#TOC345"><TT>eatchar</TT></A></LI>
+<LI><A HREF="sfl333.htm#TOC346"><TT>isoneoftokens</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl334.htm#TOC347">TCP/IP, UDP/IP socket functions</A></LI>
+<MENU>
+<LI><A HREF="sfl335.htm#TOC348"><TT>sock_init</TT></A></LI>
+<LI><A HREF="sfl336.htm#TOC349"><TT>sock_term</TT></A></LI>
+<LI><A HREF="sfl337.htm#TOC350"><TT>passive_TCP</TT></A></LI>
+<LI><A HREF="sfl338.htm#TOC351"><TT>passive_UDP</TT></A></LI>
+<LI><A HREF="sfl339.htm#TOC352"><TT>passive_socket</TT></A></LI>
+<LI><A HREF="sfl340.htm#TOC353"><TT>create_socket</TT></A></LI>
+<LI><A HREF="sfl341.htm#TOC354"><TT>connect_TCP</TT></A></LI>
+<LI><A HREF="sfl342.htm#TOC355"><TT>connect_UDP</TT></A></LI>
+<LI><A HREF="sfl343.htm#TOC356"><TT>connect_TCP_fast</TT></A></LI>
+<LI><A HREF="sfl344.htm#TOC357"><TT>connect_UDP_fast</TT></A></LI>
+<LI><A HREF="sfl345.htm#TOC358"><TT>connect_socket</TT></A></LI>
+<LI><A HREF="sfl346.htm#TOC359"><TT>connect_to_peer</TT></A></LI>
+<LI><A HREF="sfl347.htm#TOC360"><TT>address_end_point</TT></A></LI>
+<LI><A HREF="sfl348.htm#TOC361"><TT>build_sockaddr</TT></A></LI>
+<LI><A HREF="sfl349.htm#TOC362"><TT>socket_localaddr</TT></A></LI>
+<LI><A HREF="sfl350.htm#TOC363"><TT>socket_peeraddr</TT></A></LI>
+<LI><A HREF="sfl351.htm#TOC364"><TT>socket_nodelay</TT></A></LI>
+<LI><A HREF="sfl352.htm#TOC365"><TT>socket_is_alive</TT></A></LI>
+<LI><A HREF="sfl353.htm#TOC366"><TT>socket_error</TT></A></LI>
+<LI><A HREF="sfl354.htm#TOC367"><TT>accept_socket</TT></A></LI>
+<LI><A HREF="sfl355.htm#TOC368"><TT>connect_error</TT></A></LI>
+<LI><A HREF="sfl356.htm#TOC369"><TT>get_sock_addr</TT></A></LI>
+<LI><A HREF="sfl357.htm#TOC370"><TT>get_peer_addr</TT></A></LI>
+<LI><A HREF="sfl358.htm#TOC371"><TT>read_TCP</TT></A></LI>
+<LI><A HREF="sfl359.htm#TOC372"><TT>write_TCP</TT></A></LI>
+<LI><A HREF="sfl360.htm#TOC373"><TT>read_UDP</TT></A></LI>
+<LI><A HREF="sfl361.htm#TOC374"><TT>write_UDP</TT></A></LI>
+<LI><A HREF="sfl362.htm#TOC375"><TT>close_socket</TT></A></LI>
+<LI><A HREF="sfl363.htm#TOC376"><TT>sock_select</TT></A></LI>
+<LI><A HREF="sfl364.htm#TOC377"><TT>get_hostname</TT></A></LI>
+<LI><A HREF="sfl365.htm#TOC378"><TT>get_hostaddr</TT></A></LI>
+<LI><A HREF="sfl366.htm#TOC379"><TT>get_hostaddrs</TT></A></LI>
+<LI><A HREF="sfl367.htm#TOC380"><TT>sock_ntoa</TT></A></LI>
+<LI><A HREF="sfl368.htm#TOC381"><TT>sockmsg</TT></A></LI>
+<LI><A HREF="sfl369.htm#TOC382"><TT>winsock_last_error</TT></A></LI>
+<LI><A HREF="sfl370.htm#TOC383"><TT>socket_is_permitted</TT></A></LI>
+<LI><A HREF="sfl371.htm#TOC384"><TT>get_host_file</TT></A></LI>
+<LI><A HREF="sfl372.htm#TOC385"><TT>get_name_server</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl373.htm#TOC386">Symbol-table functions</A></LI>
+<MENU>
+<LI><A HREF="sfl374.htm#TOC387"><TT>sym_create_table_</TT></A></LI>
+<LI><A HREF="sfl375.htm#TOC388"><TT>sym_delete_table</TT></A></LI>
+<LI><A HREF="sfl376.htm#TOC389"><TT>sym_empty_table</TT></A></LI>
+<LI><A HREF="sfl377.htm#TOC390"><TT>sym_merge_tables</TT></A></LI>
+<LI><A HREF="sfl378.htm#TOC391"><TT>sym_lookup_symbol</TT></A></LI>
+<LI><A HREF="sfl379.htm#TOC392"><TT>sym_create_symbol_</TT></A></LI>
+<LI><A HREF="sfl380.htm#TOC393"><TT>sym_assume_symbol_</TT></A></LI>
+<LI><A HREF="sfl381.htm#TOC394"><TT>sym_delete_symbol</TT></A></LI>
+<LI><A HREF="sfl382.htm#TOC395"><TT>sym_exec_all</TT></A></LI>
+<LI><A HREF="sfl383.htm#TOC396"><TT>sym_hash</TT></A></LI>
+<LI><A HREF="sfl384.htm#TOC397"><TT>sym_get_name</TT></A></LI>
+<LI><A HREF="sfl385.htm#TOC398"><TT>sym_get_value</TT></A></LI>
+<LI><A HREF="sfl386.htm#TOC399"><TT>sym_get_number</TT></A></LI>
+<LI><A HREF="sfl387.htm#TOC400"><TT>sym_get_boolean</TT></A></LI>
+<LI><A HREF="sfl388.htm#TOC401"><TT>sym_set_value</TT></A></LI>
+<LI><A HREF="sfl389.htm#TOC402"><TT>sym_sort_table</TT></A></LI>
+<LI><A HREF="sfl390.htm#TOC403"><TT>symb2strt_</TT></A></LI>
+<LI><A HREF="sfl391.htm#TOC404"><TT>strt2symb_</TT></A></LI>
+<LI><A HREF="sfl392.htm#TOC405"><TT>symb2descr_</TT></A></LI>
+<LI><A HREF="sfl393.htm#TOC406"><TT>descr2symb_</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl394.htm#TOC407">System-level functions (assertions,...)</A></LI>
+<MENU>
+<LI><A HREF="sfl395.htm#TOC408"><TT>sys_assert</TT></A></LI>
+<LI><A HREF="sfl396.htm#TOC409"><TT>sys_name</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl397.htm#TOC410">HTTP and CGI Support functions</A></LI>
+<MENU>
+<LI><A HREF="sfl398.htm#TOC411"><TT>http_escape</TT></A></LI>
+<LI><A HREF="sfl399.htm#TOC412"><TT>http_escape_size</TT></A></LI>
+<LI><A HREF="sfl400.htm#TOC413"><TT>http_escape_hex</TT></A></LI>
+<LI><A HREF="sfl401.htm#TOC414"><TT>http_unescape</TT></A></LI>
+<LI><A HREF="sfl402.htm#TOC415"><TT>http_unescape_hex</TT></A></LI>
+<LI><A HREF="sfl403.htm#TOC416"><TT>http_query2strt</TT></A></LI>
+<LI><A HREF="sfl404.htm#TOC417"><TT>http_query2symb</TT></A></LI>
+<LI><A HREF="sfl405.htm#TOC418"><TT>http_query2descr</TT></A></LI>
+<LI><A HREF="sfl406.htm#TOC419"><TT>http_encode_meta</TT></A></LI>
+<LI><A HREF="sfl407.htm#TOC420"><TT>encode_meta_char</TT></A></LI>
+<LI><A HREF="sfl408.htm#TOC421"><TT>http_decode_meta</TT></A></LI>
+<LI><A HREF="sfl409.htm#TOC422"><TT>decode_meta_charn</TT></A></LI>
+<LI><A HREF="sfl410.htm#TOC423"><TT>cgi_parse_query_vars</TT></A></LI>
+<LI><A HREF="sfl411.htm#TOC424"><TT>cgi_parse_file_vars</TT></A></LI>
+<LI><A HREF="sfl412.htm#TOC425"><TT>http_multipart_decode</TT></A></LI>
+<LI><A HREF="sfl413.htm#TOC426"><TT>is_full_url</TT></A></LI>
+<LI><A HREF="sfl414.htm#TOC427"><TT>build_full_url</TT></A></LI>
+<LI><A HREF="sfl415.htm#TOC428"><TT>http_time_str</TT></A></LI>
+<LI><A HREF="sfl416.htm#TOC429"><TT>cgi_get_input</TT></A></LI>
+<LI><A HREF="sfl417.htm#TOC430"><TT>cgi_fld_by_name</TT></A></LI>
+<LI><A HREF="sfl418.htm#TOC431"><TT>cgi_fld_by_index</TT></A></LI>
+<LI><A HREF="sfl419.htm#TOC432"><TT>cgi_fld_len_by_index</TT></A></LI>
+<LI><A HREF="sfl420.htm#TOC433"><TT>displayform</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl421.htm#TOC434">Environment variable functions</A></LI>
+<MENU>
+<LI><A HREF="sfl422.htm#TOC435"><TT>env_get_string</TT></A></LI>
+<LI><A HREF="sfl423.htm#TOC436"><TT>env_get_number</TT></A></LI>
+<LI><A HREF="sfl424.htm#TOC437"><TT>env_get_boolean</TT></A></LI>
+<LI><A HREF="sfl425.htm#TOC438"><TT>env2descr</TT></A></LI>
+<LI><A HREF="sfl426.htm#TOC439"><TT>descr2env</TT></A></LI>
+<LI><A HREF="sfl427.htm#TOC440"><TT>env2symb</TT></A></LI>
+<LI><A HREF="sfl428.htm#TOC441"><TT>symb2env</TT></A></LI>
+<LI><A HREF="sfl429.htm#TOC442"><TT>env_copy</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl430.htm#TOC443">String token manipulation functions.</A></LI>
+<MENU>
+<LI><A HREF="sfl431.htm#TOC444"><TT>tok_split</TT></A></LI>
+<LI><A HREF="sfl432.htm#TOC445"><TT>tok_split_rich</TT></A></LI>
+<LI><A HREF="sfl433.htm#TOC446"><TT>tok_free</TT></A></LI>
+<LI><A HREF="sfl434.htm#TOC447"><TT>tok_push</TT></A></LI>
+<LI><A HREF="sfl435.htm#TOC448"><TT>tok_size</TT></A></LI>
+<LI><A HREF="sfl436.htm#TOC449"><TT>tok_text_size</TT></A></LI>
+<LI><A HREF="sfl437.htm#TOC450"><TT>tok_subst</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl438.htm#TOC451">Linked-list functions</A></LI>
+<MENU>
+<LI><A HREF="sfl439.htm#TOC452"><TT>tree_init</TT></A></LI>
+<LI><A HREF="sfl440.htm#TOC453"><TT>tree_insert</TT></A></LI>
+<LI><A HREF="sfl441.htm#TOC454"><TT>tree_delete</TT></A></LI>
+<LI><A HREF="sfl442.htm#TOC455"><TT>tree_find_eq</TT></A></LI>
+<LI><A HREF="sfl443.htm#TOC456"><TT>tree_find_lt</TT></A></LI>
+<LI><A HREF="sfl444.htm#TOC457"><TT>tree_find_le</TT></A></LI>
+<LI><A HREF="sfl445.htm#TOC458"><TT>tree_find_gt</TT></A></LI>
+<LI><A HREF="sfl446.htm#TOC459"><TT>tree_find_ge</TT></A></LI>
+<LI><A HREF="sfl447.htm#TOC460"><TT>tree_traverse</TT></A></LI>
+<LI><A HREF="sfl448.htm#TOC461"><TT>tree_first</TT></A></LI>
+<LI><A HREF="sfl449.htm#TOC462"><TT>tree_last</TT></A></LI>
+<LI><A HREF="sfl450.htm#TOC463"><TT>tree_next</TT></A></LI>
+<LI><A HREF="sfl451.htm#TOC464"><TT>tree_prev</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl452.htm#TOC465">Tracing functions</A></LI>
+<MENU>
+<LI><A HREF="sfl453.htm#TOC466"><TT>enable_trace</TT></A></LI>
+<LI><A HREF="sfl454.htm#TOC467"><TT>disable_trace</TT></A></LI>
+<LI><A HREF="sfl455.htm#TOC468"><TT>push_trace</TT></A></LI>
+<LI><A HREF="sfl456.htm#TOC469"><TT>pop_trace</TT></A></LI>
+<LI><A HREF="sfl457.htm#TOC470"><TT>set_trace_file</TT></A></LI>
+<LI><A HREF="sfl458.htm#TOC471"><TT>trace</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl459.htm#TOC472">Process user id (uid) and group id (gid) functions</A></LI>
+<MENU>
+<LI><A HREF="sfl460.htm#TOC473"><TT>get_uid_name</TT></A></LI>
+<LI><A HREF="sfl461.htm#TOC474"><TT>get_gid_name</TT></A></LI>
+<LI><A HREF="sfl462.htm#TOC475"><TT>set_uid_user</TT></A></LI>
+<LI><A HREF="sfl463.htm#TOC476"><TT>set_uid_root</TT></A></LI>
+<LI><A HREF="sfl464.htm#TOC477"><TT>set_gid_user</TT></A></LI>
+<LI><A HREF="sfl465.htm#TOC478"><TT>set_gid_root</TT></A></LI>
+<LI><A HREF="sfl466.htm#TOC479"><TT>set_uid_gid</TT></A></LI>
+<LI><A HREF="sfl467.htm#TOC480"><TT>get_login</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl468.htm#TOC481">XML (Extensible Markup Language) access functions</A></LI>
+<MENU>
+<LI><A HREF="sfl469.htm#TOC482"><TT>xml_create</TT></A></LI>
+<LI><A HREF="sfl470.htm#TOC483"><TT>xml_new</TT></A></LI>
+<LI><A HREF="sfl471.htm#TOC484"><TT>xml_modify_value</TT></A></LI>
+<LI><A HREF="sfl472.htm#TOC485"><TT>xml_rename</TT></A></LI>
+<LI><A HREF="sfl473.htm#TOC486"><TT>xml_item_name</TT></A></LI>
+<LI><A HREF="sfl474.htm#TOC487"><TT>xml_item_value</TT></A></LI>
+<LI><A HREF="sfl475.htm#TOC488"><TT>xml_free</TT></A></LI>
+<LI><A HREF="sfl476.htm#TOC489"><TT>xml_attach_child</TT></A></LI>
+<LI><A HREF="sfl477.htm#TOC490"><TT>xml_attach_sibling</TT></A></LI>
+<LI><A HREF="sfl478.htm#TOC491"><TT>xml_detach</TT></A></LI>
+<LI><A HREF="sfl479.htm#TOC492"><TT>xml_first_child</TT></A></LI>
+<LI><A HREF="sfl480.htm#TOC493"><TT>xml_last_child</TT></A></LI>
+<LI><A HREF="sfl481.htm#TOC494"><TT>xml_next_sibling</TT></A></LI>
+<LI><A HREF="sfl482.htm#TOC495"><TT>xml_prev_sibling</TT></A></LI>
+<LI><A HREF="sfl483.htm#TOC496"><TT>xml_parent</TT></A></LI>
+<LI><A HREF="sfl484.htm#TOC497"><TT>xml_put_attr_ic</TT></A></LI>
+<LI><A HREF="sfl485.htm#TOC498"><TT>xml_attr_ic</TT></A></LI>
+<LI><A HREF="sfl486.htm#TOC499"><TT>xml_attr_name</TT></A></LI>
+<LI><A HREF="sfl487.htm#TOC500"><TT>xml_attr_value</TT></A></LI>
+<LI><A HREF="sfl488.htm#TOC501"><TT>xml_get_attr_ic</TT></A></LI>
+<LI><A HREF="sfl489.htm#TOC502"><TT>xml_free_attr</TT></A></LI>
+<LI><A HREF="sfl490.htm#TOC503"><TT>xml_first_attr</TT></A></LI>
+<LI><A HREF="sfl491.htm#TOC504"><TT>xml_last_attr</TT></A></LI>
+<LI><A HREF="sfl492.htm#TOC505"><TT>xml_next_attr</TT></A></LI>
+<LI><A HREF="sfl493.htm#TOC506"><TT>xml_prev_attr</TT></A></LI>
+<LI><A HREF="sfl494.htm#TOC507"><TT>xml_changed</TT></A></LI>
+<LI><A HREF="sfl495.htm#TOC508"><TT>xml_refresh</TT></A></LI>
+</MENU>
+<LI><A HREF="sfl496.htm#TOC509">XML serialisation functions</A></LI>
+<MENU>
+<LI><A HREF="sfl497.htm#TOC510"><TT>xml_save_file</TT></A></LI>
+<LI><A HREF="sfl498.htm#TOC511"><TT>xml_save_string</TT></A></LI>
+<LI><A HREF="sfl499.htm#TOC512"><TT>xml_error</TT></A></LI>
+<LI><A HREF="sfl500.htm#TOC513"><TT>xml_seems_to_be</TT></A></LI>
+<LI><A HREF="sfl501.htm#TOC514"><TT>xml_load_file</TT></A></LI>
+<LI><A HREF="sfl502.htm#TOC515"><TT>xml_load_string</TT></A></LI>
+</MENU>
+</MENU>
+
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | &lt;
+ | <A href="sfl.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

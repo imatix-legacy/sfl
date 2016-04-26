@@ -1,0 +1,87 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>Time-slot functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl263.htm">&lt;</A>
+ | <A href="sfl265.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC277">Time-slot functions</A></H2>
+<P>Filename: sflslot.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1996/01/01 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 1997/09/08
+<BR>Copyright: Copyright (c) 1996-2000 iMatix Corporation
+<H3>Synopsis</H3>
+<P>The time-slot functions provide long-running programs with a
+   means to 'switch-on' and 'switch-off' depending on the time of
+   day, and day of year. The intention is that the user can
+   configure such programs to be active only between certain
+   hours, on certain days, etc. The time-slot functions work with
+   'range' bitmaps for a day (in seconds) and a year (in days),
+   and provide functions to set, clear, and test these ranges.
+<H4>List of Functions</H4>
+<UL>
+<LI>void <A href="sfl265.htm#year_range_empty">year range empty</A><BR>
+   (byte *range);
+</LI>
+<LI>void <A href="sfl266.htm#year_range_fill">year range fill</A><BR>
+   (byte *range);
+</LI>
+<LI>int <A href="sfl268.htm#year_slot_set">year slot set</A><BR>
+   (byte *range, int day_from, int day_to);
+</LI>
+<LI>int <A href="sfl267.htm#year_slot_clear">year slot clear</A><BR>
+   (byte *range, int day_from, int day_to);
+</LI>
+<LI>Bool <A href="sfl269.htm#year_slot_filled">year slot filled</A><BR>
+   (const byte *range, int day);
+</LI>
+<LI>void <A href="sfl270.htm#day_range_empty">day range empty</A><BR>
+   (byte *range);
+</LI>
+<LI>void <A href="sfl271.htm#day_range_fill">day range fill</A><BR>
+   (byte *range);
+</LI>
+<LI>int <A href="sfl273.htm#day_slot_set">day slot set</A><BR>
+   (byte *range, int min_from, int min_to);
+</LI>
+<LI>int <A href="sfl272.htm#day_slot_clear">day slot clear</A><BR>
+   (byte *range, int min_from, int min_to);
+</LI>
+<LI>Bool <A href="sfl274.htm#day_slot_filled">day slot filled</A><BR>
+   (const byte *range, int minute);
+</LI>
+<LI>int <A href="sfl275.htm#date_to_day">date to day</A><BR>
+   (long date);
+</LI>
+<LI>int <A href="sfl276.htm#time_to_min">time to min</A><BR>
+   (long time);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sflslot.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>MAX_DAY</B>  </TT>
+<TD ALIGN="LEFT">366 /* Max. days in a normal year */
+<TR><TD ALIGN="LEFT"><TT><B>MAX_MIN</B>  </TT>
+<TD ALIGN="LEFT">1440 /* Max. minutes in a normal day */
+<TR><TD ALIGN="LEFT"><TT><B>SFLSLOT_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl263.htm">&lt;</A>
+ | <A href="sfl265.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

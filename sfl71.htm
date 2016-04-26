@@ -1,0 +1,55 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>timer_to_gmdate</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl70.htm">&lt;</A>
+ | <A href="sfl72.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="timer_to_gmdate">&nbsp;</A>
+<H3><A NAME="TOC84"><TT>timer_to_gmdate</TT></A></H3>
+<PRE>
+#include "sfldate.h"
+long
+timer_to_gmdate (time_t time_secs)
+</PRE>
+<H4>Synopsis</H4>
+<P>Converts the supplied timer value into a long date value in
+   Greenwich Mean Time (GMT). Dates are stored as long values:
+   CCYYMMDD. If the supplied value is zero, returns zero.
+<H4>Source Code - (sfldate.c)</H4>
+<PRE>
+{
+    struct tm
+        *time_struct;
+
+    if (time_secs == 0)
+        return (0);
+    else
+      {
+        /*  Convert into a long value CCYYMMDD                               */
+        time_struct = <A href="sfl86.htm#safe_gmtime">safe gmtime</A> (&amp;time_secs);
+        if (time_struct == NULL)        /*  If gmtime is not implemented     */
+            time_struct = <A href="sfl85.htm#safe_localtime">safe localtime</A> (&amp;time_secs);
+
+        time_struct-&gt; tm_year += 1900;
+        return (MAKE_DATE (time_struct-&gt; tm_year / 100,
+                           time_struct-&gt; tm_year % 100,
+                           time_struct-&gt; tm_mon + 1,
+                           time_struct-&gt; tm_mday));
+      }
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl70.htm">&lt;</A>
+ | <A href="sfl72.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

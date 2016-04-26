@@ -1,0 +1,95 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>What Is The SFL</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="index.htm">&lt;</A>
+ | <A href="sfl1.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC1">What Is The SFL</A></H2>
+
+<H3><A NAME="TOC2">Origins</A></H3>
+
+<P>At iMatix we develop portable free and commercial software. We work in
+ANSI C to cover the widest range possible. A major part of our toolkit has
+always been our subroutine library. This was initially written for MS-DOS in
+1991 but has developed into a more ambitious project since then.
+
+<P>From the outset, we ignored commercial libraries. Our software is usually
+Open Source and using a commercial library would have been a problem. We
+looked for free libraries, but found only specialised and mostly
+non-portable collections of functions. So, we built our own. We hope you
+like it. We certainly use it all the time.
+
+<H3><A NAME="TOC3">Objectives</A></H3>
+
+<P>When we designed the SFL, we had certain things in mind:
+
+<UL>
+<LI>Portability: we are lazy, and don't have much time. So, we want to do
+our editing and testing on the fastest PC possible, then move the results to
+a 'real' system (UNIX, VMS, whatever) recompile, and test. Obviously, some
+code cannot be tested fully on all systems - we don't have sockets under
+MS-DOS - but this approach works for most projects. The SFL
+<EM>encapsulates</EM> non-portable aspects so that application programs do
+not need to know about specific systems.
+
+<LI>Building servers, i.e. programs that run in the background, for a long
+time, without intervention from a user or operator. Servers have specific
+needs, and must be extremely robust, since they must run for long periods.
+The SFL provides many functions that are specifically meant for this type of
+program.
+
+<LI>Functionality: the classic purpose of any library. If a problem has a
+clean, tested, documented, and portable solution, we will use that instead
+of re-inventing it. The SFL provides a stable home for code that might
+otherwise float around in various projects.
+
+<LI>Discipline: we make our code public, and expect people to read it. We
+actually include the code for each function as part of its documentation.
+This forces us to be crystal clear.
+
+<LI>Hubris: we think our code is so great that it should live for ever. So,
+we take great pains to make it useful, clean, efficient, and well-packaged,
+so you'll think so too.
+</UL>
+
+<H3><A NAME="TOC4">Portability</A></H3>
+
+<P>The SFL is in use on at least these systems:
+<UL>
+<LI>MS-Windows (MSVC, Borland, Watcom, gcc)
+<LI>MS-DOS (MSVC, Borland Turbo-C)
+<LI>OS/2 (EMX)
+<LI>Linux
+<LI>IBM RS/6000 AIX
+<LI>Sun SunOS
+<LI>Sun Solaris
+<LI>HP HP/UX
+<LI>Digital UNIX
+<LI>FreeBSD
+<LI>NetBSD
+<LI>SCO OpenServer
+<LI>SCO UnixWare
+<LI>Digital OpenVMS
+</UL>
+
+<P>Some recent functions may not have been tested or implemented across all
+platforms. Some functions are empty on some platforms. Since the SFL is
+continually improving and enlarging, there are always newer functions that
+are less tested, and possibly less than 100% portable. Our intention is that
+the transparency of the SFL makes these functions easy to test and improve.
+
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="index.htm">&lt;</A>
+ | <A href="sfl1.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,88 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>ini_find_section</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl145.htm">&lt;</A>
+ | <A href="sfl147.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="ini_find_section">&nbsp;</A>
+<H3><A NAME="TOC159"><TT>ini_find_section</TT></A></H3>
+<PRE>
+#include "sflini.h"
+Bool
+ini_find_section (
+    FILE *inifile,
+    char *section,
+    Bool top)
+</PRE>
+<H4>Synopsis</H4>
+<P> Finds a specific section in the ini file. An ini file contains
+   lines as shown below. The section name can be any mix of upper
+   or lowercase. You should open the ini file using file_open
+   before you call this function. If the 'top' argument is TRUE,
+   repositions to the start of the file before reading, else reads
+   from the current file offset. Returns TRUE if the section was
+   found, and positions on the line that follows the section.
+   Returns FALSE if the section was not found, and positions at
+   the end of the file.
+<H4>Examples</H4>
+<PRE>
+    ;   comments like this, or
+    #   comments like this if you prefer
+    !   Text is echoed to console using trace()
+    [Section]
+        keyword = key_value; comments
+        keyword = "key_value"; comments
+        keyword = 'key_value'; comments
+        ...
+    [Section]
+        keyword = key_value; comments
+        ...
+</PRE>
+<H4>Source Code - (sflini.c)</H4>
+<PRE>
+{
+    char
+        *first;
+
+    ASSERT (inifile != NULL);
+    ASSERT (section != NULL);
+
+    if (top)                            /*  Reposition at top if wanted      */
+        fseek (inifile, 0, SEEK_SET);
+
+    /*  Read through file until we find what we are looking for              */
+    while (<A href="sfl103.htm#file_read">file read</A> (inifile, iniline))
+      {
+        first = <A href="sfl280.htm#strskp">strskp</A> (iniline);       /*  Skip leading spaces              */
+
+        if (*first == ';' || *first == '#' || *first == 0)
+            continue;                   /*  Comment line                     */
+        else
+        if (*first == '!')
+          {
+            first = <A href="sfl280.htm#strskp">strskp</A> (first + 1);
+            <A href="sfl458.htm#trace">trace</A> (first);
+          }
+        else
+        if (sscanf (first, "[%[^]]", ini_section) == 1
+        &amp;&amp;  <A href="sfl297.htm#lexcmp">lexcmp</A> (ini_section, section) == 0)
+            return (TRUE);
+      }
+    return (FALSE);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl145.htm">&lt;</A>
+ | <A href="sfl147.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

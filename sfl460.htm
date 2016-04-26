@@ -1,0 +1,85 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>get_uid_name</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl459.htm">&lt;</A>
+ | <A href="sfl461.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="get_uid_name">&nbsp;</A>
+<H3><A NAME="TOC473"><TT>get_uid_name</TT></A></H3>
+<PRE>
+#include "sfluid.h"
+char *
+get_uid_name (uid_t uid)
+</PRE>
+<H4>Synopsis</H4>
+<P> Get user name from passwd file. We optimise by keeping a table
+   of uids and names in memory. Note that this will cause problems
+   if the program stays running when the passwd file has been
+   changed. Returns a string containing the translated user name,
+   or "&lt;none&gt;" if the uid could not be translated. Under MS-
+   DOS the uid must be zero. The returned string is in a static
+   area that is _not_ overwritten with each call, but which should
+   be treated as read-only, and unstable: i.e. the value returned
+   by one call to get_uid_name may change as a result of a later
+   call. If you need persistent strings, use <A href="sfl278.htm#strdupl">strdupl</A>() after
+   each call.
+<H4>Source Code - (sfluid.c)</H4>
+<PRE>
+{
+#   if (defined (DOES_UID))
+    static struct uids {                /*  Table of cached uids             */
+        uid_t id;
+        char  *name;
+    } cache [UID_CACHE_MAX];
+    static int
+        cache_size = 0,                 /*  Number of uid's in cache         */
+        cache_oldest = 0;               /*  Oldest entry in cache            */
+    int
+        cache_scan;                     /*  Scan through cache               */
+    struct passwd
+        *passwd_entry;
+
+    /*  First, look for uid in cache                                         */
+    for (cache_scan = 0; cache_scan &lt; cache_size; cache_scan++)
+        if (cache [cache_scan].id == uid)
+            return (cache [cache_scan].name);
+
+    /*  Add new name to cache: if cache was full, kick-out oldest entry      */
+    if (cache_size == UID_CACHE_MAX)
+      {
+        cache_scan = cache_oldest++;
+        cache_oldest %= UID_CACHE_MAX;
+        free (cache [cache_scan].name);
+      }
+    else
+        cache_scan = cache_size++;
+
+    cache [cache_scan].id = uid;
+    if ((passwd_entry = getpwuid (uid)) == NULL)
+        cache [cache_scan].name = "&lt;none&gt;";
+    else
+        cache [cache_scan].name = <A href="sfl278.htm#strdupl">strdupl</A> (passwd_entry-&gt; pw_name);
+
+    return (cache [cache_scan].name);
+
+#   elif (defined (__MSDOS__))
+    return (uid == 0? "user": "&lt;none&gt;");
+
+#   endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl459.htm">&lt;</A>
+ | <A href="sfl461.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

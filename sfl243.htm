@@ -1,0 +1,71 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>get_curdir</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl242.htm">&lt;</A>
+ | <A href="sfl244.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="get_curdir">&nbsp;</A>
+<H3><A NAME="TOC256"><TT>get_curdir</TT></A></H3>
+<PRE>
+#include "sfldir.h"
+char *
+get_curdir (void)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns a buffer containing the current working directory. This
+   buffer is allocated using the mem_alloc() function and should
+   be freed using mem_free() when no longer needed. Returns NULL
+   if there was insufficient memory to allocate the buffer, or if
+   the system does not provide the current working directory
+   information. Under Windows, replaces backslash characters by
+   the UNIX-like slash. Under OpenVMS, returns directory name in
+   POSIX format. Note that the directory name always ends in a
+   slash (e.g. 'C:/' or 'C:/subdir/').
+<H4>Source Code - (sfldir.c)</H4>
+<PRE>
+{
+    char
+        *curdir;                        /*  String we get from the OS        */
+
+    curdir = mem_alloc (PATH_MAX + 1);
+
+#if (defined (__UNIX__) || defined (__OS2__))
+    getcwd (curdir, PATH_MAX);
+
+#elif (defined (__VMS__))
+    getcwd (curdir, PATH_MAX, 0);
+
+#elif (defined (WIN32))
+    GetCurrentDirectory (PATH_MAX, curdir);
+    <A href="sfl294.htm#strconvch">strconvch</A> (curdir, '\\', '/');
+
+#elif (defined (MSDOS_FILESYSTEM))
+    getcwd (curdir, PATH_MAX);
+    <A href="sfl294.htm#strconvch">strconvch</A> (curdir, '\\', '/');
+
+#else
+    strclr (curdir);
+#endif
+
+    /*  The directory must always end in a slash                             */
+    if (strlast (curdir) != '/')
+        strcat (curdir, "/");
+
+    return (curdir);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl242.htm">&lt;</A>
+ | <A href="sfl244.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

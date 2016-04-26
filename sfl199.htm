@@ -1,0 +1,96 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>mem_realloc_</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl198.htm">&lt;</A>
+ | <A href="sfl200.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="mem_realloc_">&nbsp;</A>
+<H3><A NAME="TOC212"><TT>mem_realloc_</TT></A></H3>
+<PRE>
+#include "sflmem.h"
+void *
+mem_realloc_ (
+    void       *client_ptr,             /*  Block of memory to reallocate    */
+    size_t      size,                   /*  Desired size of memory block     */
+    const char *filename,               /*  Name of source file making call  */
+    size_t      lineno                  /*  Line number in calling source    */
+)
+</PRE>
+<H4>Synopsis</H4>
+<P>Reallocates a memory block, which remains part of the same
+   transaction. Use the mem_realloc() macro to call this function!
+   Accepts a pointer to a memory block and the desired size of the
+   new memory block. Returns the address of the new memory block,
+   or NULL if there was not enough memory available. If the
+   specified block was not correctly allocated, dumps the memory
+   allocation list and exits. The desired size must be greater
+   than zero.
+<H4>Source Code - (sflmem.c)</H4>
+<PRE>
+{
+    MEMHDR
+        *ptr,
+        *next;
+
+    ASSERT (client_ptr);
+    ASSERT (size &gt; 0);
+
+    /*  Check that block is valid                                            */
+    ptr = CLIENT_2_HDR (client_ptr);
+    if (ptr-&gt; tag != MEMTAG)
+        mem_tag_err (ptr, filename, lineno);
+
+    /*  Invalidate header                                                    */
+    ptr-&gt; tag = MEMUNTAG;
+
+    mem_total -= ptr-&gt; size;
+    mem_free_count += 1;
+
+    next = ptr-&gt; next;                  /*  Save where we were linked        */
+    <A href="sfl180.htm#list_unlink">list unlink</A> (ptr);                  /*     and unlink                    */
+
+    /*  Reallocate memory block                                              */
+    ptr = (MEMHDR *) realloc (ptr, RESERVE_SIZE + size);
+    if (ptr == NULL)                    /*  If nothing free, do a hunt       */
+      {                                 /*    and try again...               */
+        mem_scavenge ();
+        ptr = (MEMHDR *) realloc (ptr, RESERVE_SIZE + size);
+        if (ptr == NULL)
+            return (NULL);              /*  Really in trouble now!           */
+      }
+
+#   if (defined (MEM_TRACE))
+    <A href="sfl458.htm#trace">trace</A> ("%s (%ld): realloc %d bytes -&gt;%p",
+            filename? filename: "-", (long) lineno, size, ptr);
+#   endif
+
+    /*  Update header                                                        */
+    ptr-&gt; tag  = MEMTAG;
+    ptr-&gt; size = size;
+    ptr-&gt; file = filename;
+    ptr-&gt; line = lineno;
+
+    list_reset (ptr);                   /*  Set up block as list             */
+    list_relink_before (ptr, next);     /*  And link where old block was     */
+
+    mem_total += size;                  /*  Keep count of space used         */
+    mem_alloc_count += 1;               /*    and number of allocations      */
+
+    return (HDR_2_CLIENT (ptr));
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl198.htm">&lt;</A>
+ | <A href="sfl200.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

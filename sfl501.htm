@@ -1,0 +1,75 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>xml_load_file</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl500.htm">&lt;</A>
+ | <A href="sfl502.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="xml_load_file">&nbsp;</A>
+<H3><A NAME="TOC514"><TT>xml_load_file</TT></A></H3>
+<PRE>
+#include "sflxmll.h"
+int
+xml_load_file (XML_ITEM  **item,
+               const char *path,
+               const char *filename,
+               Bool allow_extended)
+</PRE>
+<H4>Synopsis</H4>
+<P>Loads the contents of an XML file into a given XML tree, or a
+   new XML tree if none was specified. The XML data is not checked
+   against a DTD. Returns one of XML_NOERROR, XML_FILEERROR,
+   XML_LOADERROR. If the parameter `allow_extended' is TRUE then
+   the file may contain more than one XML item. The following
+   attributes are defined in the root item of the XML tree. <TABLE
+   BORDER NOWRAP> <TR><TD ALIGN="LEFT"><B>filename</B>  <TD
+   ALIGN="LEFT">Name of the XML input file <TR><TD
+   ALIGN="LEFT"><B>filetime</B>  <TD ALIGN="LEFT">Modification
+   time of the file, "HHMMSSCC" <TR><TD
+   ALIGN="LEFT"><B>filedate</B>  <TD ALIGN="LEFT">Modification
+   date of input file, "YYYYMMDD" </TABLE> Looks for the XML file
+   on the specified path symbol, or in the current directory if
+   the path argument is null. Adds the extension ".xml" to the
+   file name if there is none already included.
+<H4>Source Code - (sflxmll.c)</H4>
+<PRE>
+{
+    ASSERT (filename);
+    pname = filename;
+    ppath = path;
+
+    extended = allow_extended;
+
+    if (! *item)
+      {
+        *item = <A href="sfl470.htm#xml_new">xml new</A> (NULL, "root", "");
+        ASSERT (*item);
+      }
+    root = *item;
+
+    /*  Current line w/space for EOL                                         */
+    xmlline = mem_alloc (LINE_MAX + 2);
+
+    line_nbr = 0;
+
+    the_next_event = file_event;
+
+    xml_start_dialog ();
+    mem_free (xmlline);
+    return (feedback);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl500.htm">&lt;</A>
+ | <A href="sfl502.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

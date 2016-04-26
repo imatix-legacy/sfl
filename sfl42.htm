@@ -1,0 +1,58 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>conv_str_day</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl41.htm">&lt;</A>
+ | <A href="sfl43.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="conv_str_day">&nbsp;</A>
+<H3><A NAME="TOC55"><TT>conv_str_day</TT></A></H3>
+<PRE>
+#include "sflconv.h"
+int
+conv_str_day (
+    const char *string)
+</PRE>
+<H4>Synopsis</H4>
+<P>Converts a string to a day. The string contains a day name in
+   English. Only the first three letters of the name are
+   significant. Returns a value 0..6 for Sunday to Saturday, or -1
+   if the name is not a valid day.
+<H4>Source Code - (sflcvsd.c)</H4>
+<PRE>
+{
+    static
+        char *day_name [] =
+          { "sun", "mon", "tue", "wed", "thu", "fri", "sat" };
+    int
+        day;
+    char
+        day_comp [4];
+
+    /*  Get up to three letters of day name and convert to lower case        */
+    strncpy (day_comp, string, 3);
+    day_comp [3] = '\0';
+    <A href="sfl283.htm#strlwc">strlwc</A> (day_comp);
+
+    /*  I don't like magic constants, but "7" is pretty safe for now         */
+    for (day = 0; day &lt; 7; day++)
+        if (streq (day_name [day], day_comp))
+            break;
+
+    return (day &gt;= 7? -1: day);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl41.htm">&lt;</A>
+ | <A href="sfl43.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

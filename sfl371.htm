@@ -1,0 +1,93 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>get_host_file</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl370.htm">&lt;</A>
+ | <A href="sfl372.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="get_host_file">&nbsp;</A>
+<H3><A NAME="TOC384"><TT>get_host_file</TT></A></H3>
+<PRE>
+#include "sflsock.h"
+char *
+get_host_file (void)
+</PRE>
+<H4>Synopsis</H4>
+<P>returns the full path name of the host lookup file, if provided
+   by the OS, and found. If not found, returns "hosts". The
+   returned string is held in a static area of memory that may be
+   overwritten by each call.
+<H4>Source Code - (sflsock.c)</H4>
+<PRE>
+{
+#if (defined (WIN32))
+    static OSVERSIONINFO
+        version_info;
+    static char
+        name [LINE_MAX + 1];
+
+    strclr (name);
+    GetWindowsDirectory (name, LINE_MAX);
+    version_info.dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
+    if (GetVersionEx (&amp;version_info))
+        /*  On Windows NT the hosts file is well-hidden; on Win95 it's
+         *  more visible                                                     */
+        if (version_info.dwPlatformId == VER_PLATFORM_WIN32_NT)
+            strcat (name, "\\system32\\drivers\\etc\\hosts");
+        else
+            strcat (name, "\\hosts");
+    return (name);
+
+#elif (defined (__UNIX__))
+    return ("/etc/hosts");
+
+#elif (defined (__VMS__))
+    return ("/etc/hosts");              /*  Not correct -- needs more work   */
+
+#elif (defined (__OS2__))
+    /*  Under OS/2 the hosts information is stored in the "hosts" file which
+     *  is in the directory pointed at by the %ETC% environment variable.
+     *  If that environment variable is not set, then TCP/IP support is not
+     *  properly installed.  In that instance we return "/mptn/etc/hosts"
+     *  (the likely value on OS/2 Warp 3 Connect and OS/2 Warp 4) and hope
+     *  for the best.
+     */
+
+    /*  A static array is used only because the other versions use a static
+     *  array.  If the resulting file name will not fit in the space allowed
+     *  then "/mtpn/etc/hosts" is used as before.
+     */
+    static char
+        name [LINE_MAX + 1];
+    char
+        *etcenv = NULL;
+
+    etcenv = getenv ("ETC");
+    if (etcenv != NULL &amp;&amp; strlen (etcenv) &lt; (LINE_MAX - 6))
+      { /*  We've already checked it will all fit.                           */
+        strcpy (name, etcenv);
+        strcat (name, "/hosts");
+        return (name);
+      }
+    else
+        return ("/mptn/etc/hosts");
+
+#else
+    return ("hosts");
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl370.htm">&lt;</A>
+ | <A href="sfl372.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

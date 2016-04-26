@@ -1,0 +1,58 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>http_time_str</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl414.htm">&lt;</A>
+ | <A href="sfl416.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="http_time_str">&nbsp;</A>
+<H3><A NAME="TOC428"><TT>http_time_str</TT></A></H3>
+<PRE>
+#include "sflhttp.h"
+char *
+http_time_str (void)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns the current date and time formatted using the HTTP
+   standard format for log files: "DD/Mon/YYYY:hh:mm:ss". The
+   formatted time is in a static string that each call overwrites.
+<H4>Source Code - (sflhttp.c)</H4>
+<PRE>
+{
+    static char
+        formatted_time [30],
+        *months = "Jan\0Feb\0Mar\0Apr\0May\0Jun\0Jul\0Aug\0Sep\0Oct\0Nov\0Dec";
+    time_t
+        time_secs;
+    struct tm
+        *time_struct;
+
+    time_secs   = time (NULL);
+    time_struct = <A href="sfl85.htm#safe_localtime">safe localtime</A> (&amp;time_secs);
+
+    snprintf (formatted_time, sizeof (formatted_time),
+	                      "%02d/%s/%04d:%02d:%02d:%02d %s",
+                              time_struct-&gt; tm_mday,
+                              months + time_struct-&gt; tm_mon * 4,
+                              time_struct-&gt; tm_year + 1900,
+                              time_struct-&gt; tm_hour,
+                              time_struct-&gt; tm_min,
+                              time_struct-&gt; tm_sec,
+                              <A href="sfl82.htm#timezone_string">timezone string</A> ());
+    return (formatted_time);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl414.htm">&lt;</A>
+ | <A href="sfl416.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

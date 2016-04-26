@@ -1,0 +1,60 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>valid_date</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl77.htm">&lt;</A>
+ | <A href="sfl79.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="valid_date">&nbsp;</A>
+<H3><A NAME="TOC91"><TT>valid_date</TT></A></H3>
+<PRE>
+#include "sfldate.h"
+Bool
+valid_date (long date)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns TRUE if the date is valid or zero; returns FALSE if the
+   date is not valid.
+<H4>Source Code - (sfldate.c)</H4>
+<PRE>
+{
+    int
+        month,
+        day;
+    Bool
+        feedback;
+    static byte
+        month_days [] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+
+    month = GET_MONTH (date);
+    day   = GET_DAY   (date);
+
+    if (date == 0)
+        feedback = TRUE;                /*  Zero date is okay                */
+    else
+    if (month &lt; 1 || month &gt; 12)
+        feedback = FALSE;               /*  Month out of range               */
+    else
+    if ((day &lt; 1 || day &gt; month_days [month - 1])
+    ||  (month == 2 &amp;&amp; day == 29 &amp;&amp; !<A href="sfl54.htm#leap_year">leap year</A> (GET_YEAR (date))))
+        feedback = FALSE;               /*  Day out of range                 */
+    else
+        feedback = TRUE;                /*  Zero date is okay                */
+
+    return (feedback);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl77.htm">&lt;</A>
+ | <A href="sfl79.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

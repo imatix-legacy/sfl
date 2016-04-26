@@ -1,0 +1,63 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>bits_fput</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl14.htm">&lt;</A>
+ | <A href="sfl16.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="bits_fput">&nbsp;</A>
+<H3><A NAME="TOC28"><TT>bits_fput</TT></A></H3>
+<PRE>
+#include "sflbits.h"
+int
+bits_fput (FILE *file,
+    const BITS *bits)
+</PRE>
+<H4>Synopsis</H4>
+<P>Writes the bitstring to the specified file stream. To read the
+   bitstring, use the <A href="sfl16.htm#bits_fget">bits fget</A>() function. The structure of
+   the bitstring is:
+<H4>Source Code - (sflbits.c)</H4>
+<PRE>
+{
+    int
+        block_nbr;                      /*  Bitstring block number           */
+    word
+        comp_size;                      /*  Size of compressed block         */
+    BITBLOCK
+        *block_ptr;                     /*  Points to bitstring block        */
+
+    ASSERT (bits);
+    ASSERT (file);
+
+    /*  Write bitstring header to file                                       */
+    fwrite (&amp;bits-&gt; block_count, sizeof (bits-&gt; block_count), 1, file);
+    fwrite (&amp;bits-&gt; free_list,   sizeof (bits-&gt; free_list),   1, file);
+
+    /*  Write bitstring blocks to file                                       */
+    for (block_nbr = 0; block_nbr &lt; bits-&gt; block_count; block_nbr++)
+      {
+        block_ptr = bits-&gt; block [block_nbr];
+        comp_size = <A href="sfl18.htm#compress_block">compress block</A> ((byte *) block_ptr,
+                                    compressed, (word) block_ptr-&gt; size);
+
+        fwrite (&amp;comp_size, sizeof (comp_size), 1, file);
+        fwrite (compressed, comp_size,          1, file);
+      }
+    return 0;
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl14.htm">&lt;</A>
+ | <A href="sfl16.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

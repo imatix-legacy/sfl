@@ -1,0 +1,72 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>Process user id (uid) and group id (gid) functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl458.htm">&lt;</A>
+ | <A href="sfl460.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC472">Process user id (uid) and group id (gid) functions</A></H2>
+<P>Filename: sfluid.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1996/05/03 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 1998/09/04
+<BR>Copyright: Copyright (c) 1996-2000 iMatix Corporation
+<H3>Synopsis</H3>
+<P>Provides functions to access user and group id names and manage
+   the current real/effective uid's and gid's for a process. These
+   functions are only meaningful on UNIX systems, and partially on
+   VMS systems, but may be used by portable programs that must
+   operate under UNIX as well as other environments. Some uid
+   functions are non-portable between UNIX systems; this package
+   provides a single API. Changes for OS/2 were done by Ewen
+   McNeill <A HREF=mailto:"ewen@naos.co.nz">ewen@naos.co.nz</A>.
+<H4>List of Functions</H4>
+<UL>
+<LI>char * <A href="sfl460.htm#get_uid_name">get uid name</A><BR>
+   (uid_t uid);
+</LI>
+<LI>char * <A href="sfl461.htm#get_gid_name">get gid name</A><BR>
+   (gid_t gid);
+</LI>
+<LI>int <A href="sfl462.htm#set_uid_user">set uid user</A><BR>
+   (void);
+</LI>
+<LI>int <A href="sfl463.htm#set_uid_root">set uid root</A><BR>
+   (void);
+</LI>
+<LI>int <A href="sfl464.htm#set_gid_user">set gid user</A><BR>
+   (void);
+</LI>
+<LI>int <A href="sfl465.htm#set_gid_root">set gid root</A><BR>
+   (void);
+</LI>
+<LI>int <A href="sfl466.htm#set_uid_gid">set uid gid</A><BR>
+   (char *new_uid, char *new_gid);
+</LI>
+<LI>char * <A href="sfl467.htm#get_login">get login</A><BR>
+   (void);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sfluid.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>SFLUID_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl458.htm">&lt;</A>
+ | <A href="sfl460.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,85 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>soundexn</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl300.htm">&lt;</A>
+ | <A href="sfl302.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="soundexn">&nbsp;</A>
+<H3><A NAME="TOC314"><TT>soundexn</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+char *
+soundexn (
+    const char *string, int size, Bool fold)
+</PRE>
+<H4>Synopsis</H4>
+<P>Calculates the SOUNDEX code for the string. Returns the address
+   of a static area that holds the code. This area is overwritten
+   by each call to the soundex function. The SOUNDEX encoding
+   converts letters to uppercase, and translates each letter
+   according to this table: A0 B1 C2 D3 E0 F1 G2 H0 I0 J2 K2 L4 M5
+   N5 O0 P1 Q2 R6 S2 T3 U0 V1 W0 X2 Y0 Z2. Non-letters are
+   ignored, letters that translate to zero, and multiple
+   occurences of the same value are also ignored. This function
+   returns a N-letter encoding: the first letter of the string
+   followed by the first N-1 significant digits. N may not be
+   greater than SOUNDEX_MAX (100). If the fold argument is true,
+   includes the first letter in the calculated digits, else starts
+   with the second letter.
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+#   define SOUNDEX_MAX  100
+#   define SOUNDEX_TABLE                           "00000000000000000000000000000000"         "00000000000000000000000000000000"         "00123012002245501262301020200000"         "00123012002245501262301020200000"         "00000000000000000000000000000000"         "00000000000000000000000000000000"         "00000000000000000000000000000000"         "00000000000000000000000000000000"
+
+    static char
+       *soundex_table = SOUNDEX_TABLE,  /*  ASCII-SOUNDEX conversion         */
+        soundex_code [SOUNDEX_MAX + 1]; /*  Letter + 3 digits                */
+    int
+        index;
+    char
+        last_value = 0,
+        this_value;
+
+    ASSERT (string);
+    ASSERT (size &gt; 0 &amp;&amp; size &lt;= SOUNDEX_MAX);
+
+    /*  Initialise the soundex code to a string of zeroes                    */
+    memset (soundex_code, '0', size);
+    soundex_code [size] = '\0';
+
+    soundex_code [0] = toupper (*string);
+    last_value = fold? 0: soundex_table [(byte) *string];
+    index = 1;                          /*  Store results at [index]         */
+    while (*string)
+      {
+        this_value = soundex_table [(byte) *string++];
+        if (this_value == last_value    /*  Ignore doubles                   */
+        ||  this_value == '0')          /*    and 'quiet' letters            */
+          {
+            last_value = this_value;
+            continue;
+          }
+        last_value = this_value;
+        soundex_code [index++] = this_value;
+        if (index == size)              /*  Up to size result characters     */
+            break;
+      }
+    return (soundex_code);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl300.htm">&lt;</A>
+ | <A href="sfl302.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

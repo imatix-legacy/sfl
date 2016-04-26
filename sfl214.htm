@@ -1,0 +1,54 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>mem_display</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl213.htm">&lt;</A>
+ | <A href="sfl215.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="mem_display">&nbsp;</A>
+<H3><A NAME="TOC227"><TT>mem_display</TT></A></H3>
+<PRE>
+#include "sflmem.h"
+void
+mem_display (
+    FILE *fp                            /*  File to dump display to          */
+)
+</PRE>
+<H4>Synopsis</H4>
+<P>Displays the contents of the memory allocation list.
+<H4>Source Code - (sflmem.c)</H4>
+<PRE>
+{
+    MEMTRN
+        *trn;
+
+    fprintf (fp, "Index   Size  File(Line) - total size %lu\n", mem_total);
+    mem_display_list ((MEMHDR *) &amp;mem_list.memhdr, fp);
+
+    trn = tr_list.next;
+    while (trn != (MEMTRN *) &amp;tr_list)
+      {
+        fprintf (fp, "* Transaction %s (%ld)",
+                 trn-&gt; file? trn-&gt; file: "&lt;Unknown&gt;", (long) trn-&gt; line);
+        fprintf (fp, "\n");
+        mem_display_list ((MEMHDR *) &amp;trn-&gt; memhdr, fp);
+
+        trn = trn-&gt; next;
+      }
+    fflush (fp);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl213.htm">&lt;</A>
+ | <A href="sfl215.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,153 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>connect_socket</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl335.htm">&lt;</A>
+ | <A href="sfl337.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.10
+</TABLE>
+<HR>
+<A NAME="connect_socket">&nbsp;</A>
+<H3><A NAME="TOC349"><TT>connect_socket</TT></A></H3>
+<PRE>
+#include "sflsock.h"
+sock_t
+connect_socket (
+    const char *host,                   /*  Name of host, "" = localhost     */
+    const char *service,                /*  Service name or port as string   */
+    const char *protocol,               /*  Protocol "tcp" or "udp"          */
+    const struct sockaddr_in *host_addr, /* Socket address structure         */
+    int retries_left,                   /*  Max. number of retries           */
+    int retry_delay                     /*  Delay between retries            */
+)
+</PRE>
+<H4>Synopsis</H4>
+<P> Makes a connection to a remote TCP or UDP port. This allows a
+   client program to start sending information to a server. Used
+   by the connect_TCP and connect_UDP functions. Returns a socket
+   number or INVALID_SOCKET. If it returns INVALID_SOCKET, you can
+   get the reason for the error by calling <A href="sfl346.htm#connect_error">connect error</A> ().
+   This may be one of: <TABLE BORDER NOWRAP> <TR><TD
+   ALIGN="LEFT"><B>IP NOSOCKETS</B>  <TD ALIGN="LEFT">Sockets not
+   supported on this system <TR><TD ALIGN="LEFT"><B>IP BADHOST</B>
+   <TD ALIGN="LEFT">Host is not known <TR><TD ALIGN="LEFT"><B>IP
+   BADPROTOCOL</B>  <TD ALIGN="LEFT">Cannot understand protocol
+   name <TR><TD ALIGN="LEFT"><B>IP SOCKETERROR</B>  <TD
+   ALIGN="LEFT">Cannot open a socket <TR><TD ALIGN="LEFT"><B>IP
+   CONNECTERROR</B>  <TD ALIGN="LEFT">Cannot connect socket
+   </TABLE> Always blocks until the connection has been made; i.e.
+   when this function returns you can start to read and write on
+   the socket. The host name may be a full name, NULL or ""
+   meaning the current host, or a dotted-decimal number. The
+   service may be a defined service, e.g. "echo", or a port
+   number, specified as an ASCII string. Alternatively, both these
+   values may be NULL or "", in which case the function uses the
+   host_addr argument to supply an address. If you want to build
+   the host_addr structure yourself, use <A href="sfl339.htm#build_sockaddr">build sockaddr</A>().
+   Single-threaded clients may set ip_nonblock to FALSE and block
+   on all read and write operations. They may use select() if they
+   need to be able to time-out during reading/writing. Multi-
+   threaded servers should set ip_nonblock to TRUE, and use
+   select() to multiplex socket access. When ip_nonblock is TRUE,
+   connect calls will return immediately, and the server should
+   use select() to wait until the socket is ready for writing. On
+   some systems (early Linux?), the select() call will fail in
+   this situation. If you compile with -DBLOCKING_CONNECT,
+   connects are done synchronously in all cases.
+<H4>Examples</H4>
+<PRE>
+    struct sockaddr_in
+        host_addr;
+    sock_t
+        handle;
+    build_sockaddr (&host_addr, 32_bit_host, 16_bit_port);
+    handle = connect_socket (NULL, NULL, "tcp", &host_addr, 3, 0);
+</PRE>
+<H4>Source Code - (sflsock.c)</H4>
+<PRE>
+{
+#if (defined (DOES_SOCKETS))
+    struct sockaddr_in
+        sin;                            /*  Internet end-point address       */
+    sock_t
+        handle = 0;                     /*  Created socket                   */
+    int
+        rc;                             /*  Return code from call            */
+    Bool
+        old_nonblock;                   /*  Create non-blocking sockets      */
+
+    connect_error_value = IP_NOERROR;   /*  Assume no errors                 */
+
+    /*  Format sockaddr_in port and hostname, and quit if that failed        */
+    if (service &amp;&amp; strused (service))
+      {
+        ASSERT (protocol &amp;&amp; *protocol);
+        if (<A href="sfl338.htm#address_end_point">address end point</A> (host, service, protocol, &amp;sin))
+            return (INVALID_SOCKET);
+      }
+    else
+      {
+        ASSERT (host_addr);
+        sin = *host_addr;               /*  Fast connect requested           */
+      }
+    /*  Connect socket and maybe retry a few times...                        */
+    old_nonblock = ip_nonblock;
+#   if (defined (BLOCKING_CONNECT))
+    ip_nonblock = FALSE;                /*  Block on this socket             */
+#   endif
+
+    while (retries_left)
+      {
+        handle = <A href="sfl331.htm#create_socket">create socket</A> (protocol);
+        if (handle == INVALID_SOCKET)   /*  Unable to open a socket          */
+          {
+            ip_nonblock = old_nonblock;
+            return (INVALID_SOCKET);
+          }
+        rc = connect ((SOCKET) handle, (struct sockaddr *) &amp;sin, sizeof (sin));
+        if (rc == 0)
+            break;                      /*  Connected okay                   */
+        else
+          {
+#           if (defined (__WINDOWS__))
+            if (WSAGetLastError () == WSAEWOULDBLOCK)
+#           else
+            if (errno == EINPROGRESS)
+#           endif
+                break;                  /*  Still connecting, but okay       */
+          }
+        /*  Retry if we have any attempts left                               */
+        <A href="sfl353.htm#close_socket">close socket</A> (handle);
+        if (--retries_left == 0)      /*  Connection failed                */
+          {
+            connect_error_value = IP_CONNECTERROR;
+            ip_nonblock = old_nonblock;
+            return (INVALID_SOCKET);
+          }
+        sleep (retry_delay);
+      }
+    ip_nonblock = old_nonblock;
+    prepare_socket (handle);            /*  Set final blocking mode          */
+    return (handle);
+
+#elif (defined (FAKE_SOCKETS))
+    return (1);                         /*  Return dummy handle              */
+
+#else
+    connect_error_value = IP_NOSOCKETS;
+    return (INVALID_SOCKET);            /*  Sockets not supported            */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl335.htm">&lt;</A>
+ | <A href="sfl337.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-99 iMatix Corporation</TABLE>
+</BODY></HTML>

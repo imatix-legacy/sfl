@@ -1,0 +1,57 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>sym_create_table_</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl373.htm">&lt;</A>
+ | <A href="sfl375.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="sym_create_table_">&nbsp;</A>
+<H3><A NAME="TOC387"><TT>sym_create_table_</TT></A></H3>
+<PRE>
+#include "sflsymb.h"
+SYMTAB *
+sym_create_table_ (
+    const char *filename,               /*  Name of source file making call  */
+    size_t      lineno)                 /*  Line number in calling source    */
+</PRE>
+<H4>Synopsis</H4>
+<P>Creates a new symbol table. Use the sym_create_table macro to
+   call this function! Returns a SYMTAB pointer which you must use
+   in all future references to the symbol table. The symbol table
+   is maintained in memory until the program ends or you use
+   <A href="sfl375.htm#sym_delete_table">sym delete table</A>() to delete it. Returns null if there was
+   not enough memory to create the symbol table.
+<H4>Source Code - (sflsymb.c)</H4>
+<PRE>
+{
+    SYMTAB
+        *table;                         /*  Pointer to created table         */
+    int
+        hash_index;                     /*  Index into hash bucket           */
+
+    /*  Allocate by going directly to mem_alloc_ function                    */
+    table = <A href="sfl198.htm#mem_alloc_">mem alloc </A> (NULL, sizeof (SYMTAB), filename, lineno);
+    if (table)
+      {
+        table-&gt; symbols = NULL;         /*  No symbols attached yet          */
+        table-&gt; size    = 0;
+        for (hash_index = 0; hash_index &lt; SYM_HASH_SIZE; hash_index++)
+            table-&gt; hash [hash_index] = NULL;
+      }
+    return (table);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl373.htm">&lt;</A>
+ | <A href="sfl375.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

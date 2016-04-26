@@ -1,0 +1,58 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>get_file_lines</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl132.htm">&lt;</A>
+ | <A href="sfl134.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="get_file_lines">&nbsp;</A>
+<H3><A NAME="TOC146"><TT>get_file_lines</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+long
+get_file_lines (
+    const char *filename)
+</PRE>
+<H4>Synopsis</H4>
+<P>Reads an entire file, and returns the number of lines in the
+   file. The file should be normal text. Returns 0 if the file
+   cannot be opened for reading. May be a bit slow on large files.
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+    long
+        file_size;
+    FILE
+        *file_stream;
+    int
+        ch;
+
+    ASSERT (filename);
+
+    file_stream = <A href="sfl100.htm#file_open">file open</A> (filename, 'r');
+    if (file_stream == NULL)
+        return (0);
+
+    file_size = 0;
+    while ((ch = fgetc (file_stream)) != EOF)
+        if (ch == '\n')
+            file_size++;
+
+    fclose (file_stream);
+    return (file_size);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl132.htm">&lt;</A>
+ | <A href="sfl134.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,60 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>http_escape_size</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl398.htm">&lt;</A>
+ | <A href="sfl400.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="http_escape_size">&nbsp;</A>
+<H3><A NAME="TOC412"><TT>http_escape_size</TT></A></H3>
+<PRE>
+#include "sflhttp.h"
+size_t
+http_escape_size (
+    const char *string)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns the size of a string after HTTP escaping. See the
+   <A href="sfl398.htm#http_escape">http escape</A>() function for details of the escaping
+   algorithm. Includes the null terminator in the returned size.
+<H4>Source Code - (sflhttp.c)</H4>
+<PRE>
+{
+    size_t
+        result_size = 1;                /*  Allow for null terminator        */
+
+    ASSERT (string);
+    while (*string)
+      {
+        if (isalnum (*string))          /*  Don't escape letters or digits   */
+            result_size++;
+        else
+        if (*string == '\n' || *string == '\r')
+          {
+            if ((string [1] == '\n' || string [1] == '\r')
+            &amp;&amp;  (string [1] != *string))
+                string++;
+            result_size += 6;           /*  Line ending becomes %0D%0A       */
+          }
+        else
+            result_size += 3;           /*  Some other escaped character     */
+
+        string++;
+      }
+    return (result_size);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl398.htm">&lt;</A>
+ | <A href="sfl400.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

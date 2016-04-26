@@ -1,0 +1,266 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>Universal Header File for C programming</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl4.htm">&lt;</A>
+ | <A href="sfl6.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC18">Universal Header File for C programming</A></H2>
+<P>Filename: prelude.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1993/03/29 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 2000/02/11
+<BR>Copyright: Copyright (c) 1991-99 iMatix Corporation
+<BR>Version: 2.04 <TABLE BORDER NOWRAP> <TR><TD
+   ALIGN="LEFT"><B>2.04 PH</B>  <TD ALIGN="LEFT">Added BeOS
+   support <TR><TD ALIGN="LEFT"><B>2.02 PH</B>  <TD
+   ALIGN="LEFT">Released with SFL 2.02 </TABLE>
+<H3>Synopsis</H3>
+<P>This header file encapsulates many generally-useful include
+   files and defines lots of good stuff. The intention of this
+   header file is to hide the messy #ifdef's that you typically
+   need to make real programs compile &amp; run. To use, specify
+   as the first include file in your program. The main
+   contributors to this file were: <TABLE BORDER NOWRAP> <TR><TD
+   ALIGN="LEFT"><B>PH</B>  <TD ALIGN="LEFT">Pieter Hintjens
+   &lt;ph@imatix.com&gt; <TR><TD ALIGN="LEFT"><B>EDM</B>  <TD
+   ALIGN="LEFT">Ewen McNeill &lt;ewen@imatix.com&gt; <TR><TD
+   ALIGN="LEFT"><B>PA</B>  <TD ALIGN="LEFT">Pascal Antonnaux
+   &lt;pascal@imatix.com&gt; <TR><TD ALIGN="LEFT"><B>BW</B>  <TD
+   ALIGN="LEFT">Bruce Walter &lt;walter@fortean.com&gt; <TR><TD
+   ALIGN="LEFT"><B>RJ</B>  <TD ALIGN="LEFT">Rob Judd
+   &lt;judd@alphalink.com.au&gt; </TABLE>
+<H4>List of Functions</H4>
+<UL>
+<LI>void <A href="sfl395.htm#sys_assert">sys assert</A><BR>
+   (const char *filename, unsigned line_number);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>prelude.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>ASSERT(f)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>DEBUG</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>DOES_BSDSIGNALS</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>DOES_SNPRINTF</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>DOES_SOCKETS</B>  </TT>
+<TD ALIGN="LEFT">/* System supports BSD sockets */
+<TR><TD ALIGN="LEFT"><TT><B>DOES_UID</B>  </TT>
+<TD ALIGN="LEFT">/* System supports uid functions */
+<TR><TD ALIGN="LEFT"><TT><B>EXIT_FAILURE</B>  </TT>
+<TD ALIGN="LEFT">1 /* GCC, sometimes. */
+<TR><TD ALIGN="LEFT"><TT><B>EXIT_SUCCESS</B>  </TT>
+<TD ALIGN="LEFT">0 /* but not defined on SunOs with */
+<TR><TD ALIGN="LEFT"><TT><B>FALSE</B>  </TT>
+<TD ALIGN="LEFT">0
+<TR><TD ALIGN="LEFT"><TT><B>FD_SETSIZE</B>  </TT>
+<TD ALIGN="LEFT">1024 /* Max. filehandles/sockets */
+<TR><TD ALIGN="LEFT"><TT><B>FOREVER</B>  </TT>
+<TD ALIGN="LEFT">for (;;) /* FOREVER { ... } */
+<TR><TD ALIGN="LEFT"><TT><B>FORK_CHILD</B>  </TT>
+<TD ALIGN="LEFT">0
+<TR><TD ALIGN="LEFT"><TT><B>FORK_ERROR</B>  </TT>
+<TD ALIGN="LEFT">-1 /* Return codes from fork() */
+<TR><TD ALIGN="LEFT"><TT><B>LINE_MAX</B>  </TT>
+<TD ALIGN="LEFT">1024 /* Length of line from text file */
+<TR><TD ALIGN="LEFT"><TT><B>MSDOS_FILESYSTEM</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>NAMEFOLD</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>O_BINARY</B>  </TT>
+<TD ALIGN="LEFT">0
+<TR><TD ALIGN="LEFT"><TT><B>O_NDELAY</B>  </TT>
+<TD ALIGN="LEFT">0
+<TR><TD ALIGN="LEFT"><TT><B>O_NONBLOCK</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>PATHEND</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>PATHFOLD</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>PATHSEP</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>PATH_MAX</B>  </TT>
+<TD ALIGN="LEFT">2048 /* if not previously #define'd */
+<TR><TD ALIGN="LEFT"><TT><B>PRELUDE_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>SIGABRT</B>  </TT>
+<TD ALIGN="LEFT">22 /* Termination by abort() */
+<TR><TD ALIGN="LEFT"><TT><B>SIGALRM</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>SIGILL</B>  </TT>
+<TD ALIGN="LEFT">4 /* Illegal instruction */
+<TR><TD ALIGN="LEFT"><TT><B>SIGINT</B>  </TT>
+<TD ALIGN="LEFT">2 /* Ctrl-C sequence */
+<TR><TD ALIGN="LEFT"><TT><B>SIGSEGV</B>  </TT>
+<TD ALIGN="LEFT">11 /* Segment violation */
+<TR><TD ALIGN="LEFT"><TT><B>SIGTERM</B>  </TT>
+<TD ALIGN="LEFT">15 /* Kill signal */
+<TR><TD ALIGN="LEFT"><TT><B>STDERR_FILENO</B>  </TT>
+<TD ALIGN="LEFT">_fileno (stderr)
+<TR><TD ALIGN="LEFT"><TT><B>STDIN_FILENO</B>  </TT>
+<TD ALIGN="LEFT">_fileno (stdin)
+<TR><TD ALIGN="LEFT"><TT><B>STDOUT_FILENO</B>  </TT>
+<TD ALIGN="LEFT">_fileno (stdout)
+<TR><TD ALIGN="LEFT"><TT><B>TIMEZONE</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>TRUE</B>  </TT>
+<TD ALIGN="LEFT">1 /* ANSI standard */
+<TR><TD ALIGN="LEFT"><TT><B>_INCLUDE_HPUX_SOURCE</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>_INCLUDE_POSIX_SOURCE</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>_INCLUDE_XOPEN_SOURCE</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__IS_32BIT__</B>  </TT>
+<TD ALIGN="LEFT">/* Else assume 32-bit OS/compiler */
+<TR><TD ALIGN="LEFT"><TT><B>__IS_64BIT__</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>__MSDOS__</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>__NO_CTYPE</B>  </TT>
+<TD ALIGN="LEFT">/* Suppress warnings on tolower() */
+<TR><TD ALIGN="LEFT"><TT><B>__OS2__</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__STRICT_ANSI__</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__UNIX__</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>__UTYPE_AUX</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__UTYPE_BEOS</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__UTYPE_BSDOS</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__UTYPE_DECALPHA</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__UTYPE_FREEBSD</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__UTYPE_GENERIC</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__UTYPE_HPUX</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__UTYPE_IBMAIX</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__UTYPE_IRIX</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__UTYPE_LINUX</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__UTYPE_MIPS</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__UTYPE_NETBSD</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__UTYPE_NEXT</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__UTYPE_QNX</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__UTYPE_SCO</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__UTYPE_SINIX</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__UTYPE_SUNOS</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__UTYPE_SUNSOLARIS</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__UTYPE_UNIXWARE</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__VMS_XOPEN</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__VMS__</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>__WINDOWS__</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>bit_clr(x,bit)</B>  </TT>
+<TD ALIGN="LEFT">((x) &= ~bit_msk (bit))
+<TR><TD ALIGN="LEFT"><TT><B>bit_msk(bit)</B>  </TT>
+<TD ALIGN="LEFT">(1 &lt;&lt; (bit))
+<TR><TD ALIGN="LEFT"><TT><B>bit_set(x,bit)</B>  </TT>
+<TD ALIGN="LEFT">((x) |= bit_msk (bit))
+<TR><TD ALIGN="LEFT"><TT><B>bit_tst(x,bit)</B>  </TT>
+<TD ALIGN="LEFT">((x) & bit_msk (bit))
+<TR><TD ALIGN="LEFT"><TT><B>environ</B>  </TT>
+<TD ALIGN="LEFT">_environ
+<TR><TD ALIGN="LEFT"><TT><B>local</B>  </TT>
+<TD ALIGN="LEFT">static void /* Shorthand for local functions */
+<TR><TD ALIGN="LEFT"><TT><B>max(a,b)</B>  </TT>
+<TD ALIGN="LEFT">(((a) &gt; (b))? (a): (b))
+<TR><TD ALIGN="LEFT"><TT><B>memmove(d,s,l)</B>  </TT>
+<TD ALIGN="LEFT">bcopy (s,d,l)
+<TR><TD ALIGN="LEFT"><TT><B>min(a,b)</B>  </TT>
+<TD ALIGN="LEFT">(((a) &lt; (b))? (a): (b))
+<TR><TD ALIGN="LEFT"><TT><B>random(num)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>randomize()</B>  </TT>
+<TD ALIGN="LEFT">srand ((unsigned) time (NULL))
+<TR><TD ALIGN="LEFT"><TT><B>sleep(a)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>snprintf</B>  </TT>
+<TD ALIGN="LEFT">_snprintf
+<TR><TD ALIGN="LEFT"><TT><B>strclr(s)</B>  </TT>
+<TD ALIGN="LEFT">(*(s) = 0)
+<TR><TD ALIGN="LEFT"><TT><B>streq(s1,s2)</B>  </TT>
+<TD ALIGN="LEFT">(!strcmp ((s1), (s2)))
+<TR><TD ALIGN="LEFT"><TT><B>strerror(n)</B>  </TT>
+<TD ALIGN="LEFT">sys_errlist [n]
+<TR><TD ALIGN="LEFT"><TT><B>strlast(s)</B>  </TT>
+<TD ALIGN="LEFT">((s) [strlen (s) - 1])
+<TR><TD ALIGN="LEFT"><TT><B>strneq(s1,s2)</B>  </TT>
+<TD ALIGN="LEFT">(strcmp ((s1), (s2)))
+<TR><TD ALIGN="LEFT"><TT><B>strnull(s)</B>  </TT>
+<TD ALIGN="LEFT">(*(s) == 0)
+<TR><TD ALIGN="LEFT"><TT><B>strterm(s)</B>  </TT>
+<TD ALIGN="LEFT">((s) [strlen (s)])
+<TR><TD ALIGN="LEFT"><TT><B>strused(s)</B>  </TT>
+<TD ALIGN="LEFT">(*(s) != 0)
+<TR><TD ALIGN="LEFT"><TT><B>tbllast(x)</B>  </TT>
+<TD ALIGN="LEFT">(x [tblsize (x) - 1])
+<TR><TD ALIGN="LEFT"><TT><B>tblsize(x)</B>  </TT>
+<TD ALIGN="LEFT">(sizeof (x) / sizeof ((x) [0]))
+<TR><TD ALIGN="LEFT"><TT><B>until(expr)</B>  </TT>
+<TD ALIGN="LEFT">while (!(expr)) /* do { ... } until (expr) */
+<TR><TD ALIGN="LEFT"><TT><B>vsnprintf</B>  </TT>
+<TD ALIGN="LEFT">_vsnprintf
+</TABLE>
+<H4>List of Type Definitions</H4>
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Type name:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>Bool</B>  </TT>
+<TD ALIGN="LEFT">unsigned short
+<TR><TD ALIGN="LEFT"><TT><B>byte</B>  </TT>
+<TD ALIGN="LEFT">unsigned char
+<TR><TD ALIGN="LEFT"><TT><B>dbyte</B>  </TT>
+<TD ALIGN="LEFT">unsigned short
+<TR><TD ALIGN="LEFT"><TT><B>dword</B>  </TT>
+<TD ALIGN="LEFT">unsigned long
+<TR><TD ALIGN="LEFT"><TT><B>function</B>  </TT>
+<TD ALIGN="LEFT">void (*) (void)
+<TR><TD ALIGN="LEFT"><TT><B>gid_t</B>  </TT>
+<TD ALIGN="LEFT">int
+<TR><TD ALIGN="LEFT"><TT><B>qbyte</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>uid_t</B>  </TT>
+<TD ALIGN="LEFT">int
+<TR><TD ALIGN="LEFT"><TT><B>word</B>  </TT>
+<TD ALIGN="LEFT">unsigned short
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl4.htm">&lt;</A>
+ | <A href="sfl6.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

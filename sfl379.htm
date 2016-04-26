@@ -1,0 +1,100 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>sym_create_symbol_</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl378.htm">&lt;</A>
+ | <A href="sfl380.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="sym_create_symbol_">&nbsp;</A>
+<H3><A NAME="TOC392"><TT>sym_create_symbol_</TT></A></H3>
+<PRE>
+#include "sflsymb.h"
+SYMBOL *
+sym_create_symbol_ (
+    SYMTAB *table,                      /*  Symbol table to insert into      */
+    const char *name,                   /*  Name of symbol to create         */
+    const char *value,                  /*  Value of symbol to create        */
+    const char *filename,               /*  Name of source file making call  */
+    size_t      lineno)                 /*  Line number in calling source    */
+</PRE>
+<H4>Synopsis</H4>
+<P>Creates a new symbol in the specified table. Use the
+   sym_create_symbol macro to call this function! Returns a SYMBOL
+   pointer to the created symbol, or NULL if there was not enough
+   memory to create the symbol. Initialises the symbol name and
+   value to the values supplied. Sets symbol data to NULL. You can
+   set this yourself if you need to, after calling this function.
+   Use mem_alloc() or mem_strdup() to assign values to the data
+   block, otherwise you may cause problems when you delete the
+   symbol or symbol table, since these functions free these
+   fields. You can create several symbols with the same name; the
+   last-defined is always placed before older instances and will
+   be found first by <A href="sfl378.htm#sym_lookup_symbol">sym lookup symbol</A>().
+<H4>Examples</H4>
+<PRE>
+    SYMTAB
+        *symbol_table;
+    SYMBOL
+        *new_symbol;
+
+    symbol_table = sym_create_table ();
+    ASSERT (symbol_table);
+    new_symbol = sym_create_symbol (symbol_table, "This name", "This value");
+    if (new_symbol)
+      {
+        new_symbol-&gt; data = mem_alloc (sizeof (my_block));
+        memcpy (new_symbol-&gt; data, my_block);
+      }
+</PRE>
+<H4>Source Code - (sflsymb.c)</H4>
+<PRE>
+{
+    SYMBOL
+        *symbol;                        /*  Allocated symbol                 */
+    int
+        hash;                           /*  Hash bucket no. for symbol       */
+
+    ASSERT (table);
+
+    symbol = <A href="sfl198.htm#mem_alloc_">mem alloc </A> (NULL, sizeof (*symbol) + strlen (name) + 1,
+                         filename, lineno);
+    if (symbol)
+      {
+        /*  Set the symbol pointers and fields                               */
+        hash = <A href="sfl383.htm#sym_hash">sym hash</A> (name);
+        symbol-&gt; next   = table-&gt; symbols;
+        symbol-&gt; prev   = NULL;
+        symbol-&gt; h_next = table-&gt; hash [hash];
+        symbol-&gt; h_prev = NULL;
+        symbol-&gt; name   = (char *) symbol + sizeof (*symbol);
+        symbol-&gt; value  = mem_strdup (value);
+        symbol-&gt; data   = NULL;
+        symbol-&gt; hash   = (byte) hash;
+        strcpy (symbol-&gt; name, name);
+
+        if (table-&gt; symbols)
+            table-&gt; symbols-&gt; prev = symbol;
+        table-&gt; symbols = symbol;
+
+        if (table-&gt; hash [hash])
+            table-&gt; hash [hash]-&gt; h_prev = symbol;
+        table-&gt; hash [hash] = symbol;
+        table-&gt; size++;
+      }
+    return (symbol);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl378.htm">&lt;</A>
+ | <A href="sfl380.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

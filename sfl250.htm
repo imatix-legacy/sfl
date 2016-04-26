@@ -1,0 +1,117 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>Process control functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl249.htm">&lt;</A>
+ | <A href="sfl251.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC263">Process control functions</A></H2>
+<P>Filename: sflproc.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1996/09/09 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 1999/10/17
+<BR>Copyright: Copyright (c) 1996-2000 iMatix Corporation
+<H3>Synopsis</H3>
+<P>Provides functions to create and manage processes. The main set
+   of functions lets you create, monitor, and end processes. A
+   secondary function lets you run the current process as a
+   background process.
+<H4>List of Functions</H4>
+<UL>
+<LI>PROCESS <A href="sfl251.htm#process_create_full">process create full</A><BR>
+   (PROCESS_DATA *procinfo);
+</LI>
+<LI>PROCESS <A href="sfl252.htm#process_create">process create</A><BR>
+   (const char *file, char *argv [], const char *dir, const char
+   *in, const char *out, const char *err, char *envv [], Bool
+   wait);
+</LI>
+<LI>int <A href="sfl253.htm#process_setinfo">process setinfo</A><BR>
+   (PROCESS_DATA *procinfo, const char *in, const char *out, Bool
+   scratch_out, const char *err, Bool scratch_err);
+</LI>
+<LI>int <A href="sfl254.htm#process_open_io">process open io</A><BR>
+   (const char *filename, char access_type);
+</LI>
+<LI>void <A href="sfl255.htm#process_close_io">process close io</A><BR>
+   (PROCESS_DATA *procinfo);
+</LI>
+<LI>int <A href="sfl256.htm#process_status">process status</A><BR>
+   (PROCESS process_id);
+</LI>
+<LI>int <A href="sfl257.htm#process_kill">process kill</A><BR>
+   (PROCESS process_id);
+</LI>
+<LI>void <A href="sfl258.htm#process_close">process close</A><BR>
+   (PROCESS process_id);
+</LI>
+<LI>int <A href="sfl259.htm#process_server">process server</A><BR>
+   (const char *workdir, const char *lockfile, int argc, char
+   *argv [], const char *sswitch []);
+</LI>
+<LI>Bool <A href="sfl260.htm#process_alarm">process alarm</A><BR>
+   (long delay);
+</LI>
+<LI>char * <A href="sfl261.htm#process_esc">process esc</A><BR>
+   (char *dest, const char *src);
+</LI>
+<LI>char * <A href="sfl262.htm#process_unesc">process unesc</A><BR>
+   (char *dest, const char *src);
+</LI>
+<LI>int <A href="sfl263.htm#process_priority">process priority</A><BR>
+   (int priority);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sflproc.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>DOES_FULL_PROCESS</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>FILEHANDLE_MAX</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>NULL_HANDLE</B>  </TT>
+<TD ALIGN="LEFT">-2 /* File handle set to nothing */
+<TR><TD ALIGN="LEFT"><TT><B>NULL_PROCESS</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>PRIORITY_HIGH</B>  </TT>
+<TD ALIGN="LEFT">2
+<TR><TD ALIGN="LEFT"><TT><B>PRIORITY_LOW</B>  </TT>
+<TD ALIGN="LEFT">0
+<TR><TD ALIGN="LEFT"><TT><B>PRIORITY_NORMAL</B>  </TT>
+<TD ALIGN="LEFT">1
+<TR><TD ALIGN="LEFT"><TT><B>PROCESS_DATA_INIT</B>  </TT>
+<TD ALIGN="LEFT">{<TR><TD ALIGN="LEFT"><TT><B>PROCESS_ENDED_ERROR</B>  </TT>
+<TD ALIGN="LEFT">2
+<TR><TD ALIGN="LEFT"><TT><B>PROCESS_ENDED_OK</B>  </TT>
+<TD ALIGN="LEFT">1
+<TR><TD ALIGN="LEFT"><TT><B>PROCESS_INTERRUPTED</B>  </TT>
+<TD ALIGN="LEFT">3
+<TR><TD ALIGN="LEFT"><TT><B>PROCESS_RUNNING</B>  </TT>
+<TD ALIGN="LEFT">0
+<TR><TD ALIGN="LEFT"><TT><B>SFLPROC_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+</TABLE>
+<H4>List of Type Definitions</H4>
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Type name:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>PROCESS</B>  </TT>
+<TD ALIGN="LEFT">pid_t
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl249.htm">&lt;</A>
+ | <A href="sfl251.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

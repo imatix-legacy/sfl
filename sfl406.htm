@@ -1,0 +1,78 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>http_encode_meta</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl405.htm">&lt;</A>
+ | <A href="sfl407.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="http_encode_meta">&nbsp;</A>
+<H3><A NAME="TOC419"><TT>http_encode_meta</TT></A></H3>
+<PRE>
+#include "sflhttp.h"
+size_t
+http_encode_meta (
+    char    *output,
+    char    **input,
+    size_t  outmax,
+    Bool    html)
+</PRE>
+<H4>Synopsis</H4>
+<P>Translates special characters into HTML/SGML metacharacters.
+   The input buffer is not modified; you supply an output buffer
+   and specify the maximum size of this buffer. The input buffer
+   must end in a null. Aftern calling, the input pointer is set to
+   the character after the last encoded character. Returns the
+   final size of the translated data excluding the final null
+   byte. If the resulting output data would be too long,
+   translations stops. If html is TRUE then the metacharacters
+   amp, lt, gt and quot are not translated - this allows you to
+   encode markup characters within HTML; otherwise they are
+   translated and the output doesn't look like HTML.
+<H4>Source Code - (sflhttp.c)</H4>
+<PRE>
+{
+    size_t
+        space_left,                     /*  Space left in destination        */
+        length;
+    char
+        *dest;                          /*  Pointer to result string         */
+
+    ASSERT (input);
+    ASSERT (*input);
+    ASSERT (output);
+
+    if (outmax == 0)                    /*  Special case for zero space      */
+        return (0);
+
+    space_left = outmax - 1;            /*  Allow for final null byte        */
+    dest = output;
+    while (**input &amp;&amp; space_left &gt; 0)
+      {
+        length = <A href="sfl407.htm#encode_meta_char">encode meta char</A> (dest, **input, space_left, html);
+        if (length)
+          {
+            space_left -= length;
+            dest += length;
+            (*input) ++;
+          }
+        else
+            break;
+      }
+    *dest = '\0';
+    return ((size_t) (dest - output));
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl405.htm">&lt;</A>
+ | <A href="sfl407.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

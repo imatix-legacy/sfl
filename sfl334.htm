@@ -1,0 +1,273 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>TCP/IP, UDP/IP socket functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl333.htm">&lt;</A>
+ | <A href="sfl335.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC347">TCP/IP, UDP/IP socket functions</A></H2>
+<P>Filename: sflsock.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1996/02/03 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 1999/09/20
+<BR>Copyright: Copyright (c) 1996-2000 iMatix Corporation
+<H3>Synopsis</H3>
+<P>Provides functions to create, read, and write TCP and UDP
+   sockets. Encapsulates system dependencies. Tested under MS
+   Winsock, UNIX (Linux, AIX, SunOs), OpenVMS. Some of the code in
+   this module was based on the book "Internetworking With TCP/IP
+   Volume III: Client-Server Programming And Applications BSD
+   Socket Version" by Douglas E. Comer and David L. Stevens,
+   published 1993 by Prentice-Hall Inc. ISBN 0-13-020272-X.
+   Defines sock_t which you should use for all sockets. If you
+   need to call a native socket function, use a (SOCKET) cast on
+   the sock_t handle.
+<H4>List of Functions</H4>
+<UL>
+<LI>struct protoent * <A href="UNDEF">getprotobynumber</A><BR>
+   (int);
+</LI>
+<LI>struct protoent * <A href="UNDEF">getprotobyname</A><BR>
+   (const char *);
+</LI>
+<LI>struct servent * <A href="UNDEF">getservbyport</A><BR>
+   (int, const char *);
+</LI>
+<LI>int <A href="sfl335.htm#sock_init">sock init</A><BR>
+   (void);
+</LI>
+<LI>int <A href="sfl336.htm#sock_term">sock term</A><BR>
+   (void);
+</LI>
+<LI>sock_t <A href="sfl337.htm#passive_TCP">passive TCP</A><BR>
+   (const char *service, int queue);
+</LI>
+<LI>sock_t <A href="sfl338.htm#passive_UDP">passive UDP</A><BR>
+   (const char *service);
+</LI>
+<LI>sock_t <A href="sfl339.htm#passive_socket">passive socket</A><BR>
+   (const char *service, const char *protocol, int queue);
+</LI>
+<LI>sock_t <A href="sfl341.htm#connect_TCP">connect TCP</A><BR>
+   (const char *host, const char *service);
+</LI>
+<LI>sock_t <A href="sfl342.htm#connect_UDP">connect UDP</A><BR>
+   (const char *host, const char *service);
+</LI>
+<LI>sock_t <A href="sfl343.htm#connect_TCP_fast">connect TCP fast</A><BR>
+   (const struct sockaddr_in *sin);
+</LI>
+<LI>sock_t <A href="sfl344.htm#connect_UDP_fast">connect UDP fast</A><BR>
+   (const struct sockaddr_in *sin);
+</LI>
+<LI>sock_t <A href="sfl345.htm#connect_socket">connect socket</A><BR>
+   (const char *host, const char *service, const char *protocol,
+   const struct sockaddr_in *sin, int retry_max, int retry_delay);
+</LI>
+<LI>int <A href="sfl346.htm#connect_to_peer">connect to peer</A><BR>
+   (sock_t handle, const struct sockaddr_in *sin);
+</LI>
+<LI>int <A href="sfl355.htm#connect_error">connect error</A><BR>
+   (void);
+</LI>
+<LI>sock_t <A href="sfl354.htm#accept_socket">accept socket</A><BR>
+   (sock_t master);
+</LI>
+<LI>sock_t <A href="sfl340.htm#create_socket">create socket</A><BR>
+   (const char *protocol);
+</LI>
+<LI>int <A href="sfl347.htm#address_end_point">address end point</A><BR>
+   (const char *host, const char *service, const char *protocol,
+   struct sockaddr_in *sin);
+</LI>
+<LI>int <A href="sfl356.htm#get_sock_addr">get sock addr</A><BR>
+   (sock_t handle, struct sockaddr_in *sin, char *name, int
+   namesize);
+</LI>
+<LI>int <A href="sfl357.htm#get_peer_addr">get peer addr</A><BR>
+   (sock_t handle, struct sockaddr_in *sin, char *name, int
+   namesize);
+</LI>
+<LI>void <A href="sfl348.htm#build_sockaddr">build sockaddr</A><BR>
+   (struct sockaddr_in *sin, qbyte host, dbyte port);
+</LI>
+<LI>char * <A href="sfl349.htm#socket_localaddr">socket localaddr</A><BR>
+   (sock_t handle);
+</LI>
+<LI>char * <A href="sfl350.htm#socket_peeraddr">socket peeraddr</A><BR>
+   (sock_t handle);
+</LI>
+<LI>Bool <A href="sfl352.htm#socket_is_alive">socket is alive</A><BR>
+   (sock_t handle);
+</LI>
+<LI>int <A href="sfl353.htm#socket_error">socket error</A><BR>
+   (sock_t handle);
+</LI>
+<LI>int <A href="sfl351.htm#socket_nodelay">socket nodelay</A><BR>
+   (sock_t handle);
+</LI>
+<LI>int <A href="sfl358.htm#read_TCP">read TCP</A><BR>
+   (sock_t handle, void *buffer, size_t length);
+</LI>
+<LI>int <A href="sfl359.htm#write_TCP">write TCP</A><BR>
+   (sock_t handle, const void *buffer, size_t length);
+</LI>
+<LI>int <A href="sfl360.htm#read_UDP">read UDP</A><BR>
+   (sock_t handle, void *buffer, size_t length, const struct
+   sockaddr_in *sin);
+</LI>
+<LI>int <A href="sfl361.htm#write_UDP">write UDP</A><BR>
+   (sock_t handle, const void *buffer, size_t length, const struct
+   sockaddr_in *sin);
+</LI>
+<LI>int <A href="sfl362.htm#close_socket">close socket</A><BR>
+   (sock_t handle);
+</LI>
+<LI>int <A href="sfl363.htm#sock_select">sock select</A><BR>
+   (int nfds, fd_set *readfds, fd_set *writefds, fd_set *errorfds,
+   struct timeval *timeout);
+</LI>
+<LI>char * <A href="sfl364.htm#get_hostname">get hostname</A><BR>
+   (void);
+</LI>
+<LI>qbyte <A href="sfl365.htm#get_hostaddr">get hostaddr</A><BR>
+   (void);
+</LI>
+<LI>qbyte * <A href="sfl366.htm#get_hostaddrs">get hostaddrs</A><BR>
+   (void);
+</LI>
+<LI>const char * <A href="sfl368.htm#sockmsg">sockmsg</A><BR>
+   (void);
+</LI>
+<LI>Bool <A href="sfl370.htm#socket_is_permitted">socket is permitted</A><BR>
+   (const char *address, const char *mask);
+</LI>
+<LI>char * <A href="sfl367.htm#sock_ntoa">sock ntoa</A><BR>
+   (qbyte address);
+</LI>
+<LI>char * <A href="sfl371.htm#get_host_file">get host file</A><BR>
+   (void);
+</LI>
+<LI>int <A href="sfl372.htm#get_name_server">get name server</A><BR>
+   (struct sockaddr_in *ns_address, int ns_max);
+</LI>
+<LI>int <A href="sfl369.htm#winsock_last_error">winsock last error</A><BR>
+   (void);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sflsock.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>AF_INET</B>  </TT>
+<TD ALIGN="LEFT">0
+<TR><TD ALIGN="LEFT"><TT><B>DNS_PORT</B>  </TT>
+<TD ALIGN="LEFT">53 /* Domain Name server port */
+<TR><TD ALIGN="LEFT"><TT><B>EAGAIN</B>  </TT>
+<TD ALIGN="LEFT">EWOULDBLOCK
+<TR><TD ALIGN="LEFT"><TT><B>ECONNRESET</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>EINPROGRESS</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>EPIPE</B>  </TT>
+<TD ALIGN="LEFT">-1
+<TR><TD ALIGN="LEFT"><TT><B>EWOULDBLOCK</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>FAKE_SOCKETS</B>  </TT>
+<TD ALIGN="LEFT">1
+<TR><TD ALIGN="LEFT"><TT><B>FD_CLR(d,set)</B>  </TT>
+<TD ALIGN="LEFT">((set)-&gt;__bits[__FDELT(d)] &= ~__FDMASK(d))
+<TR><TD ALIGN="LEFT"><TT><B>FD_ISSET(d,set)</B>  </TT>
+<TD ALIGN="LEFT">((set)-&gt;__bits[__FDELT(d)] & __FDMASK(d))
+<TR><TD ALIGN="LEFT"><TT><B>FD_SET(d,set)</B>  </TT>
+<TD ALIGN="LEFT">((set)-&gt;__bits[__FDELT(d)] |= __FDMASK(d))
+<TR><TD ALIGN="LEFT"><TT><B>FD_SETSIZE</B>  </TT>
+<TD ALIGN="LEFT">256
+<TR><TD ALIGN="LEFT"><TT><B>FD_SETTYPE</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>FD_ZERO(set)</B>  </TT>
+<TD ALIGN="LEFT">((void) memset((void *) (set), 0, sizeof(fd_set)))
+<TR><TD ALIGN="LEFT"><TT><B>INADDR_ANY</B>  </TT>
+<TD ALIGN="LEFT">0
+<TR><TD ALIGN="LEFT"><TT><B>INADDR_NONE</B>  </TT>
+<TD ALIGN="LEFT">-1 /* constant */
+<TR><TD ALIGN="LEFT"><TT><B>INVALID_SOCKET</B>  </TT>
+<TD ALIGN="LEFT">(sock_t) -1 /* Invalid socket handle */
+<TR><TD ALIGN="LEFT"><TT><B>IP_BADHOST</B>  </TT>
+<TD ALIGN="LEFT">2 /* Host not known */
+<TR><TD ALIGN="LEFT"><TT><B>IP_BADPROTOCOL</B>  </TT>
+<TD ALIGN="LEFT">4 /* Invalid protocol specified */
+<TR><TD ALIGN="LEFT"><TT><B>IP_BADSERVICE</B>  </TT>
+<TD ALIGN="LEFT">3 /* Service or port not known */
+<TR><TD ALIGN="LEFT"><TT><B>IP_BINDERROR</B>  </TT>
+<TD ALIGN="LEFT">7 /* Error binding socket */
+<TR><TD ALIGN="LEFT"><TT><B>IP_CONNECTERROR</B>  </TT>
+<TD ALIGN="LEFT">6 /* Error making connection */
+<TR><TD ALIGN="LEFT"><TT><B>IP_LISTENERROR</B>  </TT>
+<TD ALIGN="LEFT">8 /* Error preparing to listen */
+<TR><TD ALIGN="LEFT"><TT><B>IP_NOERROR</B>  </TT>
+<TD ALIGN="LEFT">0 /* No errors */
+<TR><TD ALIGN="LEFT"><TT><B>IP_NOSOCKETS</B>  </TT>
+<TD ALIGN="LEFT">1 /* Sockets not supported */
+<TR><TD ALIGN="LEFT"><TT><B>IP_SOCKETERROR</B>  </TT>
+<TD ALIGN="LEFT">5 /* Error creating socket */
+<TR><TD ALIGN="LEFT"><TT><B>MAXHOSTNAMELEN</B>  </TT>
+<TD ALIGN="LEFT">256 /* constant */
+<TR><TD ALIGN="LEFT"><TT><B>NFDBITS</B>  </TT>
+<TD ALIGN="LEFT">(sizeof (unsigned long int) * 8)
+<TR><TD ALIGN="LEFT"><TT><B>SFLSOCK_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>SOCKET_ERROR</B>  </TT>
+<TD ALIGN="LEFT">-1 /* Error on socket function */
+<TR><TD ALIGN="LEFT"><TT><B>SOCKET_LOOPBACK</B>  </TT>
+<TD ALIGN="LEFT">0x7f000001L /* Loopback address 127.0.0.1 */
+<TR><TD ALIGN="LEFT"><TT><B>__FDELT(d)</B>  </TT>
+<TD ALIGN="LEFT">((d) / NFDBITS)
+<TR><TD ALIGN="LEFT"><TT><B>__FDMASK(d)</B>  </TT>
+<TD ALIGN="LEFT">(1 &lt;&lt; ((d) % NFDBITS))
+<TR><TD ALIGN="LEFT"><TT><B>htonl(x)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>htons(x)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>inet_addr(x)</B>  </TT>
+<TD ALIGN="LEFT">1
+<TR><TD ALIGN="LEFT"><TT><B>inet_ntoa(x)</B>  </TT>
+<TD ALIGN="LEFT">"127.0.0.1"
+<TR><TD ALIGN="LEFT"><TT><B>ntohl(x)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>ntohs(x)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>select(n,rf,wf,xf,t)</B>  </TT>
+<TD ALIGN="LEFT">1
+<TR><TD ALIGN="LEFT"><TT><B>sockerrno</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>socket_hostaddr(handle)</B>  </TT>
+<TD ALIGN="LEFT">socket_peeraddr (handle)
+</TABLE>
+<H4>List of Type Definitions</H4>
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Type name:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>SOCKET</B>  </TT>
+<TD ALIGN="LEFT">int
+<TR><TD ALIGN="LEFT"><TT><B>argsize_t</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>sock_t</B>  </TT>
+<TD ALIGN="LEFT">qbyte
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl333.htm">&lt;</A>
+ | <A href="sfl335.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

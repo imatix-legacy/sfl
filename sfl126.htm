@@ -1,0 +1,162 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>file_is_executable</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl125.htm">&lt;</A>
+ | <A href="sfl127.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="file_is_executable">&nbsp;</A>
+<H3><A NAME="TOC139"><TT>file_is_executable</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+Bool
+file_is_executable (
+    const char *filename)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns TRUE if the current process can execute the specified
+   file. Directories are _not_ considered to be executable. Under
+   DOS, Windows, appends ".com", ".exe", and ".bat" to the
+   filename, in that order, to build a possible executable
+   filename. If this fails, opens the file (if it exists) and
+   examines the first few bytes of the file: if these are "#!", or
+   '/'*! or "MZ" then the file is assumed to be executable. #! is
+   a standard mechanism under Unix for indicating executable
+   files. Note that <A href="sfl252.htm#process_create">process create</A>() uses a compatible
+   mechanism to launch the correct interpreter for such
+   'executable' scripts. NOTE: '/'*! is provided for REXX. [XXX]
+   Under OS/2 appends ".exe" and ".cmd" to the filename, in that
+   order, to be a possible executable filename. If this fails, it
+   opens the file (if it exists) and examines the first few bytes
+   of the file: if these are "#!" then the file is assumed to be
+   executable. NOTE: REXX scripts MUST be in files named
+   script.cmd in order to be found. BAT files are not considered,
+   nor are COM files, since at present process_create does not
+   support launching DOS processes. Under VMS, appends .exe and
+   .com, in that order to build a possible executable filename.
+   Does not search the PATH symbol; the filename must be specified
+   with a path if necessary.
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+#if (defined (__UNIX__))
+    ASSERT (filename);
+
+    return ((file_mode (filename) &amp; S_IEXEC) != 0
+         &amp;&amp; (file_mode (filename) &amp; S_IFDIR) == 0);
+
+#elif (defined (MSDOS_FILESYSTEM))
+    Bool
+        executable;                     /*  Return code                      */
+    FILE
+        *stream;                        /*  Opened file stream               */
+    char
+        input_char = 0,                 /*  First and second bytes of file   */
+        *extension;                     /*  File extension, if any           */
+
+    ASSERT (filename);
+
+    /*  Find file extension; if not found, set extension to empty string     */
+    extension = strrchr (filename, '.');
+    if (extension == NULL
+    ||  strchr (extension, '/')         /*  If last '.' is part of the path  */
+    ||  strchr (extension, '\\'))       /*  then the filename has no ext.    */
+        extension = "";
+
+    /*  Windows: If extension is .exe/.com/.bat, the file is an executable   */
+    /*  OS/2:    If the extension is .exe/.cmd, the file is an executable    */
+#if (defined ( __OS2__))
+    if (<A href="sfl297.htm#lexcmp">lexcmp</A> (extension, ".exe") == 0
+    ||  <A href="sfl297.htm#lexcmp">lexcmp</A> (extension, ".cmd") == 0)
+#else /* DOS, WINDOWS */
+    if (<A href="sfl297.htm#lexcmp">lexcmp</A> (extension, ".com") == 0
+    ||  <A href="sfl297.htm#lexcmp">lexcmp</A> (extension, ".exe") == 0
+    ||  <A href="sfl297.htm#lexcmp">lexcmp</A> (extension, ".bat") == 0)
+#endif
+        executable = <A href="sfl110.htm#file_exists">file exists</A> (filename);
+    else
+    /*  Windows: If the extension is empty, try .com, .exe, .bat             */
+    /*  OS/2:    If the extension is empty, try .exe, .cmd                   */
+    if (strnull (extension)
+#if (defined( __OS2__))
+    &amp;&amp; (<A href="sfl110.htm#file_exists">file exists</A> (<A href="sfl117.htm#default_extension">default extension</A> (work_name, filename, "exe"))
+    ||  <A href="sfl110.htm#file_exists">file exists</A> (<A href="sfl117.htm#default_extension">default extension</A> (work_name, filename, "cmd"))))
+#else /* DOS, WINDOWS */
+    &amp;&amp; (<A href="sfl110.htm#file_exists">file exists</A> (<A href="sfl117.htm#default_extension">default extension</A> (work_name, filename, "com"))
+    ||  <A href="sfl110.htm#file_exists">file exists</A> (<A href="sfl117.htm#default_extension">default extension</A> (work_name, filename, "exe"))
+    ||  <A href="sfl110.htm#file_exists">file exists</A> (<A href="sfl117.htm#default_extension">default extension</A> (work_name, filename, "bat"))))
+#endif
+        executable = TRUE;              /*  Executable file found            */
+    else
+      {
+        /*  Look for magic header at start of file                           */
+        stream = <A href="sfl100.htm#file_open">file open</A> (filename, 'r');
+        if (stream)
+          {
+            input_char = fgetc (stream);
+            executable = ((input_char == '#' &amp;&amp; fgetc (stream) == '!')
+#   if (defined (__WINDOWS__))
+                       || (input_char == '/' &amp;&amp; fgetc (stream) == '*'
+                                             &amp;&amp; fgetc (stream) == '!')
+                       || (input_char == 'M' &amp;&amp; fgetc (stream) == 'Z')
+#   endif
+                       );
+            <A href="sfl102.htm#file_close">file close</A> (stream);
+          }
+        else
+            executable = FALSE;
+      }
+    return (executable);
+
+#elif (defined (__VMS__))
+    Bool
+        executable;                     /*  Return code                      */
+    char
+        *extension;                     /*  File extension, if any           */
+
+    ASSERT (filename);
+
+    /*  Find file extension, if any                                          */
+    extension = strrchr (filename, '.');
+    if ((file_mode (filename) &amp; S_IEXEC) != 0)
+        executable = TRUE;
+    else
+    /*  If the extension is empty, try .exe and .com                         */
+    if (!extension)
+      {
+        <A href="sfl117.htm#default_extension">default extension</A> (work_name, filename, "exe");
+        if ((file_mode (work_name) &amp; S_IEXEC) != 0)
+            executable = TRUE;
+        else
+          {
+            <A href="sfl117.htm#default_extension">default extension</A> (work_name, filename, "com");
+            if ((file_mode (work_name) &amp; S_IEXEC) != 0)
+                executable = TRUE;
+            else
+                executable = FALSE;
+          }
+      }
+    else
+        executable = FALSE;
+
+    return (executable);
+
+#else
+    return (FALSE);                     /*  Not supported on this system     */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl125.htm">&lt;</A>
+ | <A href="sfl127.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

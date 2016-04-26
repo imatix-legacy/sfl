@@ -1,0 +1,62 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>socket_is_alive</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl351.htm">&lt;</A>
+ | <A href="sfl353.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="socket_is_alive">&nbsp;</A>
+<H3><A NAME="TOC365"><TT>socket_is_alive</TT></A></H3>
+<PRE>
+#include "sflsock.h"
+Bool
+socket_is_alive (
+    sock_t handle)
+</PRE>
+<H4>Synopsis</H4>
+<P> Returns TRUE if the socket is open. Returns FALSE if the
+   socket is no longer accessible. You can use this function to
+   check that a socket has not been closed by the other party,
+   before doing reading or writing.
+<H4>Source Code - (sflsock.c)</H4>
+<PRE>
+{
+#if (defined (__UTYPE_BEOS))
+    /*  BeOS 4.5 does not support the getsockopt() function                  */
+    int
+        rc;
+
+    rc = setsockopt ((SOCKET) handle, SOL_SOCKET, SO_NONBLOCK,
+                     (void *) &amp;ip_nonblock, sizeof (ip_nonblock));
+    return (rc == 0);
+
+#elif (defined (DOES_SOCKETS))
+    int
+        socket_type,
+        rc;
+    argsize_t
+        socket_type_size = sizeof (SOCKET);
+
+    rc = getsockopt ((SOCKET) handle, SOL_SOCKET, SO_TYPE,
+                    (char *) &amp;socket_type, &amp;socket_type_size);
+    return (rc == 0);
+
+#else
+    return (FALSE);
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl351.htm">&lt;</A>
+ | <A href="sfl353.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

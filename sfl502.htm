@@ -1,0 +1,61 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>xml_load_string</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl501.htm">&lt;</A>
+ | &gt; | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="xml_load_string">&nbsp;</A>
+<H3><A NAME="TOC515"><TT>xml_load_string</TT></A></H3>
+<PRE>
+#include "sflxmll.h"
+int
+xml_load_string (XML_ITEM  **item,
+                 const char *xmlstring,
+                 Bool allow_extended)
+</PRE>
+<H4>Synopsis</H4>
+<P>Loads an XML string into a new XML tree. The XML data is not
+   checked against a DTD. See <A href="sfldoc.htm#xml_load">xml load</A>() for details.
+<H4>Source Code - (sflxmll.c)</H4>
+<PRE>
+{
+    ASSERT (xmlstring);
+    pname = NULL;
+    ppath = NULL;
+
+    xmltext  = (char *) xmlstring;
+    xmlline  = xmltext;
+
+    extended = allow_extended;
+
+    if (! *item)
+      {
+        *item = <A href="sfl470.htm#xml_new">xml new</A> (NULL, "root", "");
+        ASSERT (*item);
+      }
+    root = *item;
+
+    char_nbr = 0;                       /*  Use string as input line         */
+    line_nbr = 1;
+
+    the_next_event = string_event;
+
+    xml_start_dialog ();
+    return (feedback);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl501.htm">&lt;</A>
+ | &gt; | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

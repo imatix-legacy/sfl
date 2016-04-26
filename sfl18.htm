@@ -1,0 +1,112 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>compress_block</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl17.htm">&lt;</A>
+ | <A href="sfl19.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="compress_block">&nbsp;</A>
+<H3><A NAME="TOC31"><TT>compress_block</TT></A></H3>
+<PRE>
+#include "sflcomp.h"
+word
+compress_block (
+    const byte *src,
+    byte *dst,
+    word src_size)
+</PRE>
+<H4>Synopsis</H4>
+<P>Takes up to 64Kb of uncompressed data in Source, compresses it
+   using a fast LZ/RLE algorithm and places the result in Dest.
+   The compression technique is comparable to that used by Zip and
+   such tools, but less agressive. It is, however, fast enough to
+   use in realtime. Returns the size of the compressed data. To
+   decompress the data, use the <A href="sfl19.htm#expand_block">expand block</A>() function.
+<H4>Source Code - (sflcomp.c)</H4>
+<PRE>
+{
+    static short
+          Hash [4096];
+    short SymbolAddress;
+    word  Key;
+    word  Size;
+    byte  Bit = 0;
+    word  Command = 0;
+    word  src_index = 0;
+    word  dst_size = 3;
+    word  HeaderIndex = 1;
+
+    dst [0] = FLAG_COMPRESS;
+    for (Key = 0; Key &lt; 4096; Key++)
+        Hash [Key] = -1;
+
+    while ((src_index &lt; src_size) &amp;&amp; (dst_size &lt;= src_size))
+      {
+        if (Bit &gt; 15)
+          {
+            dst [HeaderIndex]     = (byte) ((Command &gt;&gt; 8) &amp; 0x00ff);
+            dst [HeaderIndex + 1] = (byte) ( Command       &amp; 0x00ff);
+            HeaderIndex = dst_size;
+            dst_size += 2;
+            Bit = 0;
+          }
+        for (Size = 1;; Size++)
+            if ((word) (src_index + Size) &gt;= src_size
+            || (src [src_index] != src [src_index + Size])
+            || (Size &gt;= 0x0fff))
+                break;
+
+        if (Size &gt;= 16)
+          {
+            dst [dst_size++] = 0;
+            dst [dst_size++] = (byte) (((word) (Size - 16) &gt;&gt; 8) &amp; 0x00ff);
+            dst [dst_size++] = (byte) ((Size - 16) &amp; 0x00ff);
+            dst [dst_size++] = src [src_index];
+            src_index += Size;
+            Command = (Command &lt;&lt; 1) + 1;
+          }
+        else
+        if (get_match (src, src_index, src_size,
+                       Hash, &amp;Size, &amp;SymbolAddress) != 0)
+          {
+            Key = ((src_index - SymbolAddress) &lt;&lt; 4) + (Size - 3);
+            dst [dst_size++] = (byte) ((Key &gt;&gt; 8) &amp; 0x00ff);
+            dst [dst_size++] = (byte) (Key &amp; 0x00ff);
+            src_index += Size;
+            Command = (Command &lt;&lt; 1) + 1;
+          }
+        else
+          {
+            dst [dst_size++] = src [src_index++];
+            Command = (Command &lt;&lt; 1);
+          }
+        Bit++;
+      }
+    Command &lt;&lt;= (16 - Bit);
+    dst [HeaderIndex]     = (byte) ((Command &gt;&gt; 8) &amp; 0x00ff);
+    dst [HeaderIndex + 1] = (byte) ( Command       &amp; 0x00ff);
+
+     if (dst_size &gt; src_size)
+      {
+         for (dst_size = 0; dst_size &lt; src_size; dst_size++)
+             dst [dst_size + 1] = src [dst_size];
+         dst [0] = FLAG_COPY;
+         return (src_size + 1);
+       }
+     return (dst_size);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl17.htm">&lt;</A>
+ | <A href="sfl19.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

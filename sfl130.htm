@@ -1,0 +1,105 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>file_exec_name</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl129.htm">&lt;</A>
+ | <A href="sfl131.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="file_exec_name">&nbsp;</A>
+<H3><A NAME="TOC143"><TT>file_exec_name</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+char *
+file_exec_name (
+    const char *filename)
+</PRE>
+<H4>Synopsis</H4>
+<P>If the specified filename is an executable program, formats a
+   filename including any required extension and returns a static
+   string with that value. If the specified filename is not an
+   executable program, returns NULL. Under DOS, and Windows,
+   appends ".com", ".exe", and ".bat" to the filename, in that
+   order, to build a possible executable filename. Under OS/2,
+   appends ".exe", and ".cmd" to the filename, in that order, to
+   build a possible executable filename. If this fails, returns
+   NULL. Does not search the PATH symbol; the filename must be
+   specified with a path if necessary. The returned filename (if
+   not NULL) points to a static string.
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+#if (defined (__UNIX__) || defined (__VMS__))
+    ASSERT (filename);
+
+    strcpy (exec_name, filename);
+
+    if (file_mode (exec_name) &amp; S_IEXEC)
+        return (exec_name);
+    else
+        return (NULL);
+
+#elif (defined (MSDOS_FILESYSTEM))
+    char
+        *extension;                     /*  File extension, if any           */
+
+    ASSERT (filename);
+
+    /*  Find file extension; if not found, set extension to empty string     */
+    extension = strrchr (filename, '.');
+    if (extension == NULL
+    ||  strchr (extension, '/')         /*  If last '.' is part of the path  */
+    ||  strchr (extension, '\\'))       /*  then the filename has no ext.    */
+        extension = "";
+
+    /*  Windows: If extension is .exe/.com/.bat, the file is an executable   */
+    /*  OS/2:    If extension is .exe/.cmd, the file is executable           */
+#   if (defined (__OS2__))
+    if (<A href="sfl297.htm#lexcmp">lexcmp</A> (extension, ".exe") == 0
+    ||  <A href="sfl297.htm#lexcmp">lexcmp</A> (extension, ".cmd") == 0
+#   else /* DOS, WINDOWS */
+    if (<A href="sfl297.htm#lexcmp">lexcmp</A> (extension, ".com") == 0
+    ||  <A href="sfl297.htm#lexcmp">lexcmp</A> (extension, ".exe") == 0
+    ||  <A href="sfl297.htm#lexcmp">lexcmp</A> (extension, ".bat") == 0
+#     if (defined (__WINDOWS__))
+    ||  is_exe_file (filename)
+#     endif
+#   endif
+    )
+      {
+        strcpy (exec_name, filename);
+        return (exec_name);
+      }
+    else
+    /*  Windows: If the extension is empty, try .com, .exe, .bat             */
+    /*  OS/2:    If the extension is empty, try .exe, .cmd                   */
+    if (strnull (extension)
+#   if (defined (__OS2__))
+    &amp;&amp; (<A href="sfl110.htm#file_exists">file exists</A> (<A href="sfl117.htm#default_extension">default extension</A> (exec_name, filename, "exe"))
+    ||  <A href="sfl110.htm#file_exists">file exists</A> (<A href="sfl117.htm#default_extension">default extension</A> (exec_name, filename, "cmd"))))
+#   else /* DOS, WINDOWS */
+    &amp;&amp; (<A href="sfl110.htm#file_exists">file exists</A> (<A href="sfl117.htm#default_extension">default extension</A> (exec_name, filename, "com"))
+    ||  <A href="sfl110.htm#file_exists">file exists</A> (<A href="sfl117.htm#default_extension">default extension</A> (exec_name, filename, "exe"))
+    ||  <A href="sfl110.htm#file_exists">file exists</A> (<A href="sfl117.htm#default_extension">default extension</A> (exec_name, filename, "bat"))))
+#   endif
+        return (exec_name);             /*  Executable file found            */
+    else
+        return (NULL);
+#else
+    return (NULL);                      /*  Not supported on this system     */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl129.htm">&lt;</A>
+ | <A href="sfl131.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

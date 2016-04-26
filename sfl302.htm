@@ -1,0 +1,81 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>strt2descr</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl301.htm">&lt;</A>
+ | <A href="sfl303.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="strt2descr">&nbsp;</A>
+<H3><A NAME="TOC315"><TT>strt2descr</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+DESCR *
+strt2descr (
+    char **table)
+</PRE>
+<H4>Synopsis</H4>
+<P>Converts a table of strings into a single block of memory. The
+   input table consists of an array of null-terminated strings,
+   terminated in a null pointer. Returns the address of a DESCR
+   block defined as: "typedef struct {size_t size; byte *data}
+   DESCR;". Allocates the descriptor block using the mem_alloc()
+   function; you must free it using mem_free() when you are
+   finished with it. The strings are packed into the descriptor
+   data field, each terminated by a null byte. The final string is
+   terminated by two nulls. The total size of the descriptor is
+   descr-&gt; size + sizeof (DESCR). Note that if you omit the
+   last null pointer in the input table, you will probably get an
+   addressing error. Returns NULL if there was insufficient memory
+   to allocate the descriptor block.
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+    DESCR
+        *descr;                         /*  Allocated descriptor             */
+    char
+        *descr_ptr;                     /*  Pointer into block               */
+    size_t
+        descr_size;                     /*  Size of table                    */
+    int
+        string_nbr;                     /*  Index into string table          */
+
+    ASSERT (table);
+
+    /*  Calculate the size of the descriptor                                 */
+    descr_size = 1;                     /*  Allow for final null byte        */
+    for (string_nbr = 0; table [string_nbr]; string_nbr++)
+        descr_size += strlen (table [string_nbr]) + 1;
+
+    /*  Allocate a descriptor and fill it with the strings                   */
+    descr = mem_alloc (descr_size + sizeof (DESCR));
+    if (descr)
+      {
+        descr-&gt; size = descr_size;
+        descr-&gt; data = (byte *) descr + sizeof (DESCR);
+        descr_ptr    = (char *) descr-&gt; data;
+
+        for (string_nbr = 0; table [string_nbr]; string_nbr++)
+          {
+            size_t descr_len = strlen (table [string_nbr]) + 1;
+            strncpy (descr_ptr, table [string_nbr], descr_len);
+            descr_ptr += descr_len;
+          }
+        *descr_ptr = '\0';              /*  Add a null string                */
+      }
+    return (descr);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl301.htm">&lt;</A>
+ | <A href="sfl303.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

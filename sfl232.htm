@@ -1,0 +1,63 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>close_dir</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl231.htm">&lt;</A>
+ | <A href="sfl233.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="close_dir">&nbsp;</A>
+<H3><A NAME="TOC245"><TT>close_dir</TT></A></H3>
+<PRE>
+#include "sfldir.h"
+Bool
+close_dir (
+    DIRST *dir)
+</PRE>
+<H4>Synopsis</H4>
+<P> Close the directory stream, and free any allocated memory. You
+   should call this function when you are done reading a
+   directory, or you will get memory leaks. Returns TRUE if okay,
+   FALSE if there was an error.
+<H4>Source Code - (sfldir.c)</H4>
+<PRE>
+{
+    Bool
+        rc;
+
+    ASSERT (dir != NULL);
+
+    mem_free (dir-&gt; dir_name);          /*  Free dynamically-allocated name  */
+#if (defined (__UNIX__) || defined (__VMS_XOPEN) || defined (__OS2__))
+    ASSERT (dir-&gt; _dir_handle);
+    rc = (closedir (dir-&gt; _dir_handle) == 0);
+
+#elif (defined (WIN32))
+    rc = FindClose (dir-&gt; _dir_handle);
+
+#elif (defined (_MSC_VER))
+    rc = TRUE;                          /*  No function to close a dir       */
+
+#elif (defined (__TURBOC__) || defined (__DJGPP__))
+    rc = TRUE;                          /*  No function to close a dir       */
+#else
+
+    rc = FALSE;                         /*  Directory access not supported   */
+#endif
+
+    return (rc);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl231.htm">&lt;</A>
+ | <A href="sfl233.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

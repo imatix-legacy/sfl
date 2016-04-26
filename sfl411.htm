@@ -1,0 +1,69 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>cgi_parse_file_vars</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl410.htm">&lt;</A>
+ | <A href="sfl412.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="cgi_parse_file_vars">&nbsp;</A>
+<H3><A NAME="TOC424"><TT>cgi_parse_file_vars</TT></A></H3>
+<PRE>
+#include "sflhttp.h"
+int
+cgi_parse_file_vars (
+    SYMTAB *symtab,
+    FILE   *file,
+    const char *prefix,
+    size_t size)
+</PRE>
+<H4>Synopsis</H4>
+<P>Parses a CGI query string stored in a file, and loads the
+   resulting variables into an existing symbol table, optionally
+   prefixing each name with a string. Returns the number of
+   variables loaded. The prefix can be NULL or empty if not
+   required. The file data is assumed to be escaped (see
+   <A href="sfl398.htm#http_escape">http escape</A>()); the data should not contain line breaks,
+   spaces, or other unescaped chars. The file should already have
+   been opened: a typical use for this function is to parse the
+   values supplied in stdin. The maximum size for the file is
+   CGI_QUERY_FILE_MAX characters.
+<H4>Source Code - (sflhttp.c)</H4>
+<PRE>
+{
+    /*  Maximum size of a stream of HTTP query data coming from a file       */
+#   define CGI_QUERY_FILE_MAX  65535U
+    char
+        *query;                         /*  Data loaded from file            */
+    size_t
+        read_size;                      /*  Amount of data read from file    */
+    int
+        variables = 0;                  /*  Number of variables loaded       */
+
+    ASSERT (file);
+    ASSERT (symtab);
+    ASSERT (size &lt;= CGI_QUERY_FILE_MAX);
+
+    if ((query = mem_alloc (size + 1)) == NULL)
+        return (0);
+
+    read_size = fread (query, 1, size, file);
+    query [read_size] = '\0';
+    variables = <A href="sfl410.htm#cgi_parse_query_vars">cgi parse query vars</A> (symtab, query, prefix);
+    mem_free (query);
+    return (variables);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl410.htm">&lt;</A>
+ | <A href="sfl412.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,78 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>process_kill</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl256.htm">&lt;</A>
+ | <A href="sfl258.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="process_kill">&nbsp;</A>
+<H3><A NAME="TOC270"><TT>process_kill</TT></A></H3>
+<PRE>
+#include "sflproc.h"
+int
+process_kill (
+    PROCESS process)
+</PRE>
+<H4>Synopsis</H4>
+<P>Ends a process specified by a process id. The current process
+   must have the appropriate authority to stop the specified
+   process. Returns zero if the process was killed, -1 if there
+   was an error.
+<H4>Source Code - (sflproc.c)</H4>
+<PRE>
+{
+#if (defined (__UNIX__) || defined (__OS2__))
+    int count = 5;
+
+    ASSERT (process);
+
+    /*  First give it a chance to gracefully exit...                         */
+    kill (process, SIGTERM);
+    while (<A href="sfl256.htm#process_status">process status</A> (process) == PROCESS_RUNNING &amp;&amp; count--)
+        sleep (1);
+
+    /*  Then get brutal if neccessary.                                       */
+    if (<A href="sfl256.htm#process_status">process status</A> (process) == PROCESS_RUNNING)
+      {
+        kill (process, SIGKILL);
+        while (<A href="sfl256.htm#process_status">process status</A> (process) == PROCESS_RUNNING)
+            sleep (1);
+      }
+    return (0);
+
+#elif (defined (WIN32))
+    ASSERT (process);
+
+    TerminateProcess (process-&gt; process, 1);
+    while (<A href="sfl256.htm#process_status">process status</A> (process) == PROCESS_RUNNING)
+        Sleep (100);
+
+    <A href="sfl258.htm#process_close">process close</A> (process);
+    return (0);
+
+#elif (defined (__VMS__))
+    ASSERT (process);
+
+    sys$delprc (process-&gt; id);
+    <A href="sfl258.htm#process_close">process close</A> (process);
+    return (0);
+
+#else
+    return (-1);                        /*  Not supported on this system     */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl256.htm">&lt;</A>
+ | <A href="sfl258.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

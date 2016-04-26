@@ -1,0 +1,64 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>date_to_days</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl65.htm">&lt;</A>
+ | <A href="sfl67.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="date_to_days">&nbsp;</A>
+<H3><A NAME="TOC79"><TT>date_to_days</TT></A></H3>
+<PRE>
+#include "sfldate.h"
+long
+date_to_days (long date)
+</PRE>
+<H4>Synopsis</H4>
+<P>Converts the date into a number of days since a distant but
+   unspecified epoch. You can use this function to calculate
+   differences between dates, and forward dates. Use
+   <A href="sfl67.htm#days_to_date">days to date</A>() to calculate the reverse function. Author:
+   Robert G. Tantzen, translated from the Algol original in
+   Collected Algorithms of the CACM (algorithm 199). Original
+   translation into C by Nat Howard, posted to Usenet 5 Jul 1985.
+<H4>Source Code - (sfldate.c)</H4>
+<PRE>
+{
+    long
+        year    = GET_YEAR    (date),
+        century = GET_CENTURY (date),
+        month   = GET_MONTH   (date),
+        day     = GET_DAY     (date);
+
+    if (month &gt; 2)
+        month -= 3;
+    else
+      {
+        month += 9;
+        if (year)
+            year--;
+        else
+          {
+            year = 99;
+            century--;
+          }
+      }
+    return ((146097L * century)    / 4L +
+            (1461L   * year)       / 4L +
+            (153L    * month + 2L) / 5L +
+                       day   + 1721119L);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl65.htm">&lt;</A>
+ | <A href="sfl67.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

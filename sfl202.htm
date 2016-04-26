@@ -1,0 +1,72 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>mem_free_</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl201.htm">&lt;</A>
+ | <A href="sfl203.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="mem_free_">&nbsp;</A>
+<H3><A NAME="TOC215"><TT>mem_free_</TT></A></H3>
+<PRE>
+#include "sflmem.h"
+void
+mem_free_ (
+    void *client_ptr,                   /*  Block of memory to free          */
+    const char *filename,               /*  Name of source file making call  */
+    size_t lineno                       /*  Line number in calling source    */
+)
+</PRE>
+<H4>Synopsis</H4>
+<P>Releases memory previously allocated by <A href="sfl198.htm#mem_alloc_">mem alloc </A>(),
+   <A href="sfl199.htm#mem_realloc_">mem realloc </A>(), or <A href="sfl200.htm#mem_strdup_">mem strdup </A>(). Use the mem_free()
+   macro to call this function! If the specified block was not
+   correctly allocated, dumps the memory allocation list and
+   exits. If you specify a null address, does nothing.
+<H4>Source Code - (sflmem.c)</H4>
+<PRE>
+{
+    MEMHDR
+       *ptr;
+
+    if (client_ptr == NULL)             /*  Do nothing if address is null    */
+        return;
+
+    /*  Check for valid block                                                */
+    ptr = CLIENT_2_HDR (client_ptr);
+    if (ptr-&gt; tag != MEMTAG)
+        mem_tag_err (ptr, filename, lineno);
+
+#   if (defined (MEM_TRACE))
+    <A href="sfl458.htm#trace">trace</A> ("%s (%ld): free=%p",
+           filename? filename: "-", (long) lineno, ptr);
+#   endif
+#   if (defined (DEBUG))
+    memset (client_ptr, 0, ptr-&gt; size);
+#   endif
+
+    /*  Invalidate header                                                    */
+    ptr-&gt; tag = MEMUNTAG;
+    mem_total -= ptr-&gt; size;
+    mem_free_count += 1;
+
+    /*  Remove block from list, inlining code from <A href="sfl180.htm#list_unlink">list unlink</A>()             */
+    ((LIST *) ((LIST *) ptr)-&gt; prev)-&gt; next = ((LIST *) ptr)-&gt; next;
+    ((LIST *) ((LIST *) ptr)-&gt; next)-&gt; prev = ((LIST *) ptr)-&gt; prev;
+
+    free (ptr);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl201.htm">&lt;</A>
+ | <A href="sfl203.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

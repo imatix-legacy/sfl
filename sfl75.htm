@@ -1,0 +1,70 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>future_date</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl74.htm">&lt;</A>
+ | <A href="sfl76.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="future_date">&nbsp;</A>
+<H3><A NAME="TOC88"><TT>future_date</TT></A></H3>
+<PRE>
+#include "sfldate.h"
+void
+future_date (long *date, long *time, long days, long csecs)
+</PRE>
+<H4>Synopsis</H4>
+<P>Calculates a future date and time from the date and time
+   specified, plus an interval specified in days and 1/100th
+   seconds. The date can be any date since some distant epoch
+   (around 1600). If the date and time arguments are both zero,
+   the current date and time are used. Either date and time
+   arguments may be null.
+<H4>Source Code - (sfldate.c)</H4>
+<PRE>
+{
+    long
+        dummy_date = 0,
+        dummy_time = 0;
+
+    if (date == NULL)
+        date = &amp;dummy_date;
+    if (time == NULL)
+        time = &amp;dummy_time;
+
+    /*  Set date and time to NOW if necessary                                */
+    if (*date == 0 &amp;&amp; *time == 0)
+      {
+        *date = <A href="sfl52.htm#date_now">date now</A> ();
+        *time = <A href="sfl53.htm#time_now">time now</A> ();
+      }
+
+    /*  Get future date in days and centiseconds                             */
+    days  = <A href="sfl66.htm#date_to_days">date to days</A>  (*date) + days;
+    csecs = <A href="sfl73.htm#time_to_csecs">time to csecs</A> (*time) + csecs;
+
+    /*  Normalise overflow in centiseconds                                   */
+    while (csecs &gt;= INTERVAL_DAY)
+      {
+        days++;
+        csecs -= INTERVAL_DAY;
+      }
+
+    /*  Convert date and time back into organised values                     */
+    *date = <A href="sfl67.htm#days_to_date">days to date</A>  (days);
+    *time = <A href="sfl74.htm#csecs_to_time">csecs to time</A> (csecs);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl74.htm">&lt;</A>
+ | <A href="sfl76.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,78 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>cgi_get_input</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl415.htm">&lt;</A>
+ | <A href="sfl417.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="cgi_get_input">&nbsp;</A>
+<H3><A NAME="TOC429"><TT>cgi_get_input</TT></A></H3>
+<PRE>
+#include "sflhttp.h"
+char *
+cgi_get_input (
+    int iMethod)
+</PRE>
+<H4>Synopsis</H4>
+<P>Gets CGI data input from stdin or the enviorment vairable
+   QUERY_STRING, to form a stream to be used by cgi_fld_by_name,
+   cgi_fld_by_index and cgi_fld_len_by_index functions. After you
+   have finshed with the input stream from this function you
+   should call, cgi_free_input to free it up. Submitted by Scott
+   Beasley <A
+   HREF=mailto:"jscottb@infoave.com">jscottb@infoave.com</A>
+<H4>Source Code - (sflhttp.c)</H4>
+<PRE>
+{
+    int iStdinLen = 0, iMethodWas = 0;
+    char *strHead, *strRetBuf;
+
+    if (iMethod == CGIPOST
+    ||  iMethod == CGIETHER)
+      {
+        if (getenv ("CONTENT_LENGTH"))
+          {
+            iStdinLen = atoi (getenv ("CONTENT_LENGTH"));
+            iMethodWas = 1;
+          }
+      }
+    if (iMethod == CGIGET
+    || (iMethod == CGIETHER &amp;&amp; !iStdinLen))
+      {
+        if (getenv ("QUERY_STRING"))
+          {
+            iStdinLen = strlen (getenv ("QUERY_STRING"));
+            iMethodWas = 0;
+          }
+      }
+    if (!iStdinLen)
+        return (NULL);
+
+    strHead = strRetBuf = (char *) malloc (sizeof (char) *
+                                           iStdinLen + 1);
+    if (strHead == NULL)
+        return (NULL);
+
+    memset (strRetBuf, 0, iStdinLen + 1);
+    if (iMethodWas == CGIPOST)
+        fread (strRetBuf, sizeof (char), iStdinLen, stdin);
+    else
+        strncpy (strRetBuf, getenv ("QUERY_STRING"), (iStdinLen + 1));
+
+    return (*strHead? strHead: NULL);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl415.htm">&lt;</A>
+ | <A href="sfl417.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

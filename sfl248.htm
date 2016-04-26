@@ -1,0 +1,64 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>dir_usage</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl247.htm">&lt;</A>
+ | <A href="sfl249.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="dir_usage">&nbsp;</A>
+<H3><A NAME="TOC261"><TT>dir_usage</TT></A></H3>
+<PRE>
+#include "sfldir.h"
+qbyte
+dir_usage (const char *path, Bool recurse)
+</PRE>
+<H4>Synopsis</H4>
+<P>Calculates the amount of disk space used by a directory, and
+   optionally all directories below that. If the total size is
+   greater than 4Gb, returns an unspecified value. Returns 0 if
+   there was an error.
+<H4>Source Code - (sfldir.c)</H4>
+<PRE>
+{
+    DIRST
+        dir;
+    qbyte
+        usage = 0;
+    char
+        *full_dir;
+
+    if (<A href="sfl230.htm#open_dir">open dir</A> (&amp;dir, path))
+    do
+      {
+        if ((dir.file_attrs &amp; ATTR_HIDDEN) != 0)
+            ;   /*  Do nothing                                               */
+        else
+        if (recurse
+        &amp;&amp; (dir.file_attrs &amp; ATTR_SUBDIR) != 0)
+          {
+            full_dir = <A href="sfl241.htm#locate_path">locate path</A> (path, dir.file_name);
+            usage += <A href="sfl248.htm#dir_usage">dir usage</A> (full_dir, TRUE);
+            mem_free (full_dir);
+          }
+        else
+            usage += dir.file_size;
+      }
+    while (<A href="sfl231.htm#read_dir">read dir</A> (&amp;dir));
+    <A href="sfl232.htm#close_dir">close dir</A> (&amp;dir);
+    return (usage);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl247.htm">&lt;</A>
+ | <A href="sfl249.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

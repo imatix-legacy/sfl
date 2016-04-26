@@ -1,0 +1,76 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>tok_push</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl424.htm">&lt;</A>
+ | <A href="sfl426.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.10
+</TABLE>
+<HR>
+<A NAME="tok_push">&nbsp;</A>
+<H3><A NAME="TOC438"><TT>tok_push</TT></A></H3>
+<PRE>
+#include "sfltok.h"
+char **
+tok_push (
+    char **token_list,
+    const char *string)
+</PRE>
+<H4>Synopsis</H4>
+<P>Prepends a string to the specified token table. Reallocates the
+   table as required to make room for the new string. Returns the
+   new token table -- the supplied token table is automatically
+   freed by a call to <A href="sfl424.htm#tok_free">tok free</A>().
+<H4>Source Code - (sfltok.c)</H4>
+<PRE>
+{
+    char
+        *new_buffer,                    /*  Newly-allocated buffer           */
+        **new_list,                     /*  Returned token list              */
+        *new_bufptr;                    /*  Pointer into new buffer          */
+    int
+        word_count,                     /*  Number of words in string        */
+        word_nbr;
+    size_t
+        buffer_size;
+
+    buffer_size = <A href="sfl427.htm#tok_text_size">tok text size</A> (token_list);
+    word_count  = <A href="sfl426.htm#tok_size">tok size</A>      (token_list);
+
+    /*  New list has one entry for each in old list, plus header, plus null
+     *  entry at end, plus one for the new string -- makes 3 more.
+     */
+    new_list   = mem_alloc (sizeof (char *) * (word_count + 3));
+    new_buffer = mem_alloc (buffer_size + strlen (string));
+    if (new_list == NULL || new_buffer == NULL)
+        return (NULL);
+
+    word_count++;                       /*  We add one word                  */
+    strcpy (new_buffer, string);
+    memcpy (new_buffer + strlen (string) + 1, token_list [-1], buffer_size);
+    new_list [0] = new_buffer;          /*  Store buffer address             */
+    new_list++;                         /*    and bump starting address      */
+
+    new_bufptr = new_buffer;
+    for (word_nbr = 0; word_nbr &lt; word_count; word_nbr++)
+      {
+        new_list [word_nbr] = new_bufptr;
+        new_bufptr += strlen (new_bufptr) + 1;
+      }
+    new_list [word_count] = NULL;       /*  Store final null pointer         */
+    <A href="sfl424.htm#tok_free">tok free</A> (token_list);              /*  Free old list                    */
+    return (new_list);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl424.htm">&lt;</A>
+ | <A href="sfl426.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-99 iMatix Corporation</TABLE>
+</BODY></HTML>

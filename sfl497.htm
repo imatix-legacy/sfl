@@ -1,0 +1,61 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>xml_save_file</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl496.htm">&lt;</A>
+ | <A href="sfl498.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="xml_save_file">&nbsp;</A>
+<H3><A NAME="TOC510"><TT>xml_save_file</TT></A></H3>
+<PRE>
+#include "sflxmll.h"
+int
+xml_save_file (
+    XML_ITEM   *item,
+    const char *filename)
+</PRE>
+<H4>Synopsis</H4>
+<P>Saves an XML tree to the specified file. Returns XML_NOERROR or
+   XML_FILEERROR.
+<H4>Source Code - (sflxmll.c)</H4>
+<PRE>
+{
+    FILE
+        *xmlfile;                       /*  XML output stream                */
+    int
+        count;                          /*  How many symbols did we save?    */
+
+    ASSERT (item);
+    ASSERT (filename);
+    init_charmaps ();                   /*  Initialise character maps        */
+
+    if ((xmlfile = <A href="sfl100.htm#file_open">file open</A> (filename, 'w')) == NULL)
+        return XML_FILEERROR;           /*  No permission to write file      */
+
+    /*  Write XML file header                                                */
+    fprintf (xmlfile, "&lt;?xml version=\"1.0\"?&gt;\n");
+
+    /*  Output XML root                                                      */
+    count = xml_save_file_item (xmlfile, item, 0);
+
+    /*  Output a final carriage return  */
+    fprintf (xmlfile, "\n");
+
+    <A href="sfl102.htm#file_close">file close</A> (xmlfile);
+    return XML_NOERROR;
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl496.htm">&lt;</A>
+ | <A href="sfl498.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

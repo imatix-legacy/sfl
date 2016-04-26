@@ -1,0 +1,106 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>process_setinfo</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl252.htm">&lt;</A>
+ | <A href="sfl254.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="process_setinfo">&nbsp;</A>
+<H3><A NAME="TOC266"><TT>process_setinfo</TT></A></H3>
+<PRE>
+#include "sflproc.h"
+int
+process_setinfo (
+    PROCESS_DATA *procinfo,
+    const char *std_in,                 /*  Stdin device, or NULL            */
+    const char *std_out,                /*  Stdout device, or NULL           */
+    Bool  scratch_out,                  /*  Scratch stdout file?             */
+    const char *std_err,                /*  Stderr device, or NULL           */
+    Bool  scratch_err                   /*  Scratch stderr file?             */
+)
+</PRE>
+<H4>Synopsis</H4>
+<P>Accepts a pointer to a PROC_INFO block, and resets the fields
+   in this block to default values as specified below (other
+   fields are not changed): <TABLE BORDER NOWRAP> <TR><TD
+   ALIGN="LEFT"><B>searchpath</B>  <TD ALIGN="LEFT">True unless
+   filename already contains a slash <TR><TD
+   ALIGN="LEFT"><B>in</B>  <TD ALIGN="LEFT">Std_in filename, or
+   NULL <TR><TD ALIGN="LEFT"><B>out</B>  <TD ALIGN="LEFT">Std_out
+   filename, or NULL <TR><TD ALIGN="LEFT"><B>err</B>  <TD
+   ALIGN="LEFT">Std_err filename, or NULL <TR><TD
+   ALIGN="LEFT"><B>preserveroot</B>  <TD ALIGN="LEFT">True if
+   we're running as root now </TABLE> Returns 0 if the PROC_INFO
+   block was correctly initialised; returns -1 if there was an
+   error opening one of the i/o streams. Before calling this
+   function you should have declared the PROC_INFO block using the
+   syntax: PROCESS_DATA myproc = PROCESS_DATA_INIT;
+<H4>Source Code - (sflproc.c)</H4>
+<PRE>
+{
+    const char
+        *spacepos,
+        *slashpos;
+    char
+        stdout_mode,
+        stderr_mode;
+
+    /*  Figure out if it is permissable to search the path                   */
+    /*  It's permissable if the filename to be run doesn't contain a slash   */
+    /*  of its own already.                                                  */
+    procinfo-&gt; searchpath = FALSE;
+    if (procinfo-&gt; filename)
+      {
+        spacepos = strchr (procinfo-&gt; filename, ' ');
+        if (spacepos == NULL)
+            spacepos = procinfo-&gt; filename + strlen (procinfo-&gt; filename);
+        slashpos = strchr (procinfo-&gt; filename, '/');
+#if (defined (MSDOS_FILESYSTEM))
+        if (!slashpos)
+            slashpos = strchr (procinfo-&gt; filename, '\\');
+#endif
+        if (slashpos == NULL || slashpos &gt; spacepos)
+            procinfo-&gt; searchpath = TRUE;
+      }
+    /*  Figure out if root privilege should be retained.  If the real user   */
+    /*  is root and effective user is root, then we retain root privilege    */
+    /*  for the executed program.  Otherwise we want to discard it (default) */
+    procinfo-&gt; preserveroot = FALSE;
+#if (defined (__UNIX__))
+    if (getuid () == 0 &amp;&amp; geteuid () == 0)
+        procinfo-&gt; preserveroot = TRUE;
+#endif
+
+    /*  Open the i/o streams if requested.  Note that process_set_io
+     *  returns NULL_HANDLE if the supplied filename is null or empty.
+     */
+    stdout_mode = scratch_out? 'w': 'a';
+    stderr_mode = scratch_err? 'w': 'a';
+    procinfo-&gt; in  = <A href="sfl254.htm#process_open_io">process open io</A> (std_in,  'r');
+    procinfo-&gt; out = <A href="sfl254.htm#process_open_io">process open io</A> (std_out, stdout_mode);
+    procinfo-&gt; err = <A href="sfl254.htm#process_open_io">process open io</A> (std_err, stderr_mode);
+    if (procinfo-&gt; in  == -1
+    ||  procinfo-&gt; out == -1
+    ||  procinfo-&gt; err == -1)
+      {
+        <A href="sfl255.htm#process_close_io">process close io</A> (procinfo);
+        return (-1);
+      }
+    else
+        return (0);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl252.htm">&lt;</A>
+ | <A href="sfl254.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

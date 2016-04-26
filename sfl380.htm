@@ -1,0 +1,63 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>sym_assume_symbol_</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl379.htm">&lt;</A>
+ | <A href="sfl381.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="sym_assume_symbol_">&nbsp;</A>
+<H3><A NAME="TOC393"><TT>sym_assume_symbol_</TT></A></H3>
+<PRE>
+#include "sflsymb.h"
+SYMBOL *
+sym_assume_symbol_ (
+    SYMTAB *table,                      /*  Symbol table to search           */
+    const char *name,                   /*  Name of symbol to find/create    */
+    const char *value,                  /*  Value of symbol to create        */
+    const char *filename,               /*  Name of source file making call  */
+    size_t      lineno)                 /*  Line number in calling source    */
+</PRE>
+<H4>Synopsis</H4>
+<P>Searches for a symbol, by name, in the specified symbol table.
+   If the symbol does not exist, creates the symbol as specified.
+   Returns a SYMBOL pointer to the existing or new symbol, or NULL
+   if a new symbol could not be created. The lookup and creation
+   follow the same rules as <A href="sfl378.htm#sym_lookup_symbol">sym lookup symbol</A>() and
+   <A href="sfldoc.htm#sym_create_symbol">sym create symbol</A>(). The symbol's value is set to the
+   supplied value in all cases. Do not call this function
+   directly; pass through the sym_assume_symbol macro.
+<H4>Source Code - (sflsymb.c)</H4>
+<PRE>
+{
+    SYMBOL
+        *symbol;                        /*  Allocated or found symbol        */
+
+    ASSERT (table);
+
+    symbol = <A href="sfl378.htm#sym_lookup_symbol">sym lookup symbol</A> (table, name);
+    if (symbol)
+      {
+        /*  Update the symbol value, if it has changed                       */
+        if (symbol-&gt; value &amp;&amp; strneq (symbol-&gt; value, value))
+            <A href="sfl388.htm#sym_set_value">sym set value</A> (symbol, value);
+      }
+    else
+        symbol = <A href="sfl379.htm#sym_create_symbol_">sym create symbol </A> (table, name, value, filename, lineno);
+
+    return (symbol);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl379.htm">&lt;</A>
+ | <A href="sfl381.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

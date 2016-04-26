@@ -1,0 +1,63 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>free_dir</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl234.htm">&lt;</A>
+ | <A href="sfl236.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="free_dir">&nbsp;</A>
+<H3><A NAME="TOC248"><TT>free_dir</TT></A></H3>
+<PRE>
+#include "sfldir.h"
+int
+free_dir (DIRST *dir)
+</PRE>
+<H4>Synopsis</H4>
+<P> Frees all strings used in the DIRST. You should call this
+   function to free space allocated by <A href="sfl234.htm#fix_dir">fix dir</A>(). If you try
+   to call <A href="sfl235.htm#free_dir">free dir</A>() for a DIRST that was not fixed, you will
+   get an error feedback, and (if you compiled with DEBUG defined)
+   an assertion fault. Returns 0 if okay, -1 if there was an
+   error. After a call to <A href="sfl235.htm#free_dir">free dir</A>(), do not try to access the
+   strings in DIRST; they are all set to point to an empty string.
+<H4>Source Code - (sfldir.c)</H4>
+<PRE>
+{
+    static char
+        *empty = "";
+
+    ASSERT (dir-&gt; _fixed);
+    if (dir-&gt; _fixed)
+      {
+        /*  Free allocated strings                                           */
+        mem_free (dir-&gt; owner);
+        mem_free (dir-&gt; group);
+        mem_free (dir-&gt; file_name);
+
+        /*  Now point the strings to an empty string                         */
+        dir-&gt; owner     = empty;
+        dir-&gt; group     = empty;
+        dir-&gt; file_name = empty;
+
+        /*  And mark the DIRST as no longer 'fixed'                          */
+        dir-&gt; _fixed    = FALSE;
+        return (0);
+      }
+    else
+        return (-1);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl234.htm">&lt;</A>
+ | <A href="sfl236.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

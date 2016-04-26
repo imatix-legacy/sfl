@@ -1,0 +1,88 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>decode_base64</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl218.htm">&lt;</A>
+ | <A href="sfl220.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="decode_base64">&nbsp;</A>
+<H3><A NAME="TOC232"><TT>decode_base64</TT></A></H3>
+<PRE>
+#include "sflmime.h"
+size_t
+decode_base64 (const byte *source, byte *target, size_t source_size)
+</PRE>
+<H4>Synopsis</H4>
+<P>Decodes a block of Base 64 data and stores the resulting binary
+   data in a target buffer. The target buffer must be at least 3/4
+   the size of the base 64 data. Returns the number of characters
+   output into the target buffer.
+<H4>Source Code - (sflmime.c)</H4>
+<PRE>
+{
+    size_t
+        target_size = 0;                /*  Length of target buffer          */
+    int
+        nb_block;                       /*  Total number of block            */
+    byte
+        value,                          /*  Value of Base64 byte             */
+        *p_source,                      /*  Pointer in source buffer         */
+        *p_target;                      /*  Pointer in target buffer         */
+
+    ASSERT (source);
+    ASSERT (target);
+
+    if (source_size == 0)
+        return (0);
+
+    if (!tables_initialised)
+        init_conversion_tables ();
+
+    /*  Bit positions
+                  | byte 1 | byte 2 | byte 3 | byte 4 |
+    Encoded block  654321   654321   654321   654321  -&gt; 4 bytes of 6 bits
+                  | byte 1 | byte 2 | byte 3 |
+    Decoded block  65432165 43216543 21654321         -&gt; 3 bytes of 8 bits
+    */
+
+    nb_block    = source_size / 4;
+    target_size = (size_t) nb_block * 3;
+    target [target_size] = '\0';
+
+    p_source = (byte *) source;         /*  Point to start of buffers        */
+    p_target = target;
+
+    while (nb_block--)
+      {
+        /*  Byte 1                                                           */
+        *p_target    = char_to_base64 [(byte) *p_source++] &lt;&lt; 2;
+        value        = char_to_base64 [(byte) *p_source++];
+        *p_target++ += ((value &amp; 0x30) &gt;&gt; 4);
+
+        /*  Byte 2                                                           */
+        *p_target    = ((value &amp; 0x0F) &lt;&lt; 4);
+        value        = char_to_base64 [(byte) *p_source++];
+        *p_target++ += ((value &amp; 0x3C) &gt;&gt; 2);
+
+        /*  Byte 3                                                           */
+        *p_target    = (value &amp; 0x03) &lt;&lt; 6;
+        value        = char_to_base64 [(byte) *p_source++];
+        *p_target++ += value;
+      }
+   return (target_size);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl218.htm">&lt;</A>
+ | <A href="sfl220.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

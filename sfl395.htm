@@ -1,0 +1,66 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>sys_assert</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl394.htm">&lt;</A>
+ | <A href="sfl396.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="sys_assert">&nbsp;</A>
+<H3><A NAME="TOC408"><TT>sys_assert</TT></A></H3>
+<PRE>
+#include "prelude.h"
+void
+sys_assert (const char *File, unsigned Line)
+</PRE>
+<H4>Synopsis</H4>
+<P>Displays an 'assertion failed' message and aborts the program.
+   This function is required by prelude.h if you compile with the
+   DEBUG symbol.
+<H4>Source Code - (sflsyst.c)</H4>
+<PRE>
+{
+#if (defined (__WINDOWS__))
+    char
+        line_str [10],
+        *buffer;                        /*  Formatted error message          */
+    MSG
+        msg;
+    Bool
+        quit;
+    int
+        rc;                             /*  MessageBox return code           */
+
+    snprintf (line_str, sizeof (line_str), "%u", Line);
+    buffer = <A href="sfl296.htm#xstrcpy">xstrcpy</A> (NULL, "Module ", File, ", line ", line_str, NULL);
+
+    /*  If WM_QUIT is in the queue the message box won't show                */
+    quit = PeekMessage (&amp;msg, NULL, WM_QUIT, WM_QUIT, PM_REMOVE);
+    rc   = MessageBox  (NULL, buffer, "Assertion failed!",
+                        MB_TASKMODAL | MB_ICONHAND | MB_ABORTRETRYIGNORE);
+    mem_free (buffer);
+    if (quit)
+        PostQuitMessage (msg.wParam);
+    if (rc != IDABORT)
+        return;
+#else
+    fflush  (stdout);
+    fprintf (stderr, "\nAssertion failed: %s, line %u\n", File, Line);
+    fflush  (stderr);
+#endif
+    abort   ();
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl394.htm">&lt;</A>
+ | <A href="sfl396.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,96 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>http_decode_meta</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl407.htm">&lt;</A>
+ | <A href="sfl409.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="http_decode_meta">&nbsp;</A>
+<H3><A NAME="TOC421"><TT>http_decode_meta</TT></A></H3>
+<PRE>
+#include "sflhttp.h"
+size_t
+http_decode_meta (
+    char  *output,
+    char **input,
+    size_t outmax)
+</PRE>
+<H4>Synopsis</H4>
+<P>Translates special characters from HTML/SGML metacharacters.
+   The input buffer is not modified; you supply an output buffer
+   and specify the maximum size of this buffer. The input buffer
+   must end in a null. The two buffers may be the same, since
+   decoding reduces the size of the data. Returns the final size
+   of the translated data excluding the final null byte. If the
+   resulting data is too long, it is brutally truncated. Invalid
+   meta-characters are left as-is. Normally the input pointer
+   points to the final null; however if the input string runs out
+   in the middle of a meta-character, the input pointer is left
+   pointing at the start of that meta-character (the '&amp;'). If
+   the two buffers are the same, it may be the case that this
+   character has been overwritten with the terminating null.
+<H4>Source Code - (sflhttp.c)</H4>
+<PRE>
+{
+    char
+        *dest,                          /*  Pointer to result string         */
+        *end,                           /*  Next character after meta-char   */
+        code;                           /*  Decoded metachar string          */
+    size_t
+        space_left;                     /*  Space left in destination        */
+
+    ASSERT (input);
+    ASSERT (*input);
+    ASSERT (output);
+
+    if (outmax == 0)                    /*  Special case for zero space      */
+        return (0);
+
+    space_left = outmax - 1;            /*  Allow for final null byte        */
+    dest = output;
+    for (; **input; (*input)++)
+      {
+        if (**input == '&amp;')
+          {
+            end = strchr (*input, ';');
+            if (end)
+              {
+                code = <A href="sfl409.htm#decode_meta_charn">decode meta charn</A> ((*input) + 1, end - (*input) - 1);
+                if (code)
+                    *input = end;       /*  Skip past decoded metachar       */
+                else
+                    code = **input;     /*  Ignore the &amp;, no valid metachar  */
+              }
+            else                        /*  The string ends before the ';'   */
+            if (strlen (*input) &gt; 10)
+                code = **input;         /*  Ignore the &amp;, no valid metachar  */
+            else
+                break;
+          }
+        else
+            code = **input;
+
+        if (space_left &gt; 0)
+          {
+            *dest++ = code;
+            space_left --;
+          }
+      }
+    *dest = '\0';
+    return ((size_t) (dest - output));
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl407.htm">&lt;</A>
+ | <A href="sfl409.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

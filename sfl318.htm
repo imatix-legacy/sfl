@@ -1,0 +1,85 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>getstrfld</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl317.htm">&lt;</A>
+ | <A href="sfl319.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="getstrfld">&nbsp;</A>
+<H3><A NAME="TOC331"><TT>getstrfld</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+char *
+getstrfld (
+    char *strbuf,
+    int fldno,
+    int ofset,
+    char *sep,
+    char *retstr)
+</PRE>
+<H4>Synopsis</H4>
+<P>Gets a sub-string from a formated string. nice strtok
+   replacement. usage: char strarray[] = { "123,456,789,abc" };
+   char strretbuff[4]; <A href="sfl318.htm#getstrfld">getstrfld</A> (strarray, 2, 0, ",",
+   strretbuff); This would return the string "789" and place it
+   also in strretbuff. Returns a NULL if fldno is out of range,
+   else returns a pointer to head of the buffer. Submitted by
+   Scott Beasley <A
+   HREF=mailto:"jscottb@infoave.com">jscottb@infoave.com</A>
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+   char *offset, *strptr;
+   int curfld;
+
+   ASSERT (strbuf);
+   ASSERT (sep);
+   ASSERT (retstr);
+
+   offset = strptr = (char *)NULL;
+   curfld = 0;
+
+   strbuf += ofset;
+
+   while (*strbuf)
+     {
+       strptr = !offset ? strbuf : offset;
+       offset = strpbrk ((!offset ? strbuf : offset), sep);
+
+       if (offset)
+          offset++;
+       else if (curfld != fldno)
+         {
+           *retstr = (char)NULL;
+           break;
+         }
+
+       if (curfld == fldno)
+         {
+           strncpy (retstr, strptr,
+              (int)(!offset ? strlen (strptr)+ 1 :
+              (int)(offset - strptr)));
+           if (offset)
+              retstr[offset - strptr - 1] = 0;
+
+           break;
+         }
+       curfld++;
+     }
+   return retstr;
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl317.htm">&lt;</A>
+ | <A href="sfl319.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

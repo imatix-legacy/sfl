@@ -1,0 +1,52 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>calculate_crc</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl49.htm">&lt;</A>
+ | <A href="sfl51.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="calculate_crc">&nbsp;</A>
+<H3><A NAME="TOC63"><TT>calculate_crc</TT></A></H3>
+<PRE>
+#include "sflcryp.h"
+qbyte
+calculate_crc (byte *block, size_t length)
+</PRE>
+<H4>Synopsis</H4>
+<P>Calculates the 32-bit CCITT CRC for a memory block. The CRC
+   calculation is rapid, since the function uses a pre-calculated
+   table. Returns the 32-bit CRC.
+<H4>Source Code - (sflcryp.c)</H4>
+<PRE>
+{
+    size_t
+        offset;
+    word
+        this_word;
+    qbyte
+        crc_value;                      /*  Running CRC value                */
+
+    crc_value = 0xFFFFFFFFL;
+    for (offset = 0; offset &lt; length; offset++)
+    {
+        this_word = block [offset];
+        this_word = this_word ^ (dbyte) (crc_value &amp; 255);
+        crc_value = (crc_value &gt;&gt; 8) ^ crc_table [this_word];
+    }
+    return (crc_value ^ 0xFFFFFFFFL);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl49.htm">&lt;</A>
+ | <A href="sfl51.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

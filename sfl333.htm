@@ -1,0 +1,116 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>isoneoftokens</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl332.htm">&lt;</A>
+ | <A href="sfl334.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="isoneoftokens">&nbsp;</A>
+<H3><A NAME="TOC346"><TT>isoneoftokens</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+int
+isoneoftokens (
+    char **strbuf,
+    char *strmat,
+    char *strsep,
+    int *iWasToken)
+</PRE>
+<H4>Synopsis</H4>
+<P> Eats strToEat from strBuff only if it begins with contents of
+   strToEat, and returns a 0 or 1 to tell what it did. Returns 0
+   if nothing found, and &gt;= 1 which is an index of the one
+   found.
+<H4>Examples</H4>
+<PRE>
+       char strBuff[] = { "select * from mytbl;" };
+       int iWasToken;
+       isoneoftokens (&strBuff, "INSERT|SELECT|DELETE", "|", &iWasToken);
+
+       On return here iWasToken would == 1, and strBuff would be:
+       " * from mytbl;" and the return value would be 2.
+
+    If the token is not found, then strBuff will not be affected, and
+    a 0 will be returned.
+    Submitted by Scott Beasley &lt;jscottb@infoave.com&gt;
+</PRE>
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+   int nstate = 0, cnt = 0, icmpres;
+   int iLen;
+   char *strtemp, cChar;
+
+   ASSERT (strbuf);
+   ASSERT (strmat);
+   ASSERT (strsep);
+   ASSERT (iWasToken);
+
+   while (1)
+     {
+       iLen = <A href="sfl320.htm#getstrfldlen">getstrfldlen</A> (strmat, cnt, 0, strsep);
+       strtemp = (char *) malloc (iLen + 1);
+       <A href="sfl318.htm#getstrfld">getstrfld</A> (strmat, cnt, 0, strsep, strtemp);
+       if (*strtemp)
+         {
+           <A href="sfl314.htm#trim">trim</A> (strtemp);
+           icmpres = <A href="sfl298.htm#lexncmp">lexncmp</A> (*strbuf, strtemp, strlen (strtemp));
+
+           if (!icmpres)
+             {
+               cChar = *(*strbuf + strlen (strtemp));
+               if (!isalpha ((int)cChar)&amp;&amp; cChar != '_')
+                 {
+                   *iWasToken = cnt + 1;
+                   strcpy (*strbuf, (*strbuf + strlen (strtemp)));
+
+                   nstate = cnt + 1;
+                 }
+               break;
+             }
+
+            else
+              {
+                if (!<A href="sfl298.htm#lexncmp">lexncmp</A> (*strbuf, strtemp, strlen (strtemp)))
+                  {
+                    cChar = *(*strbuf + strlen (strtemp));
+                    if (!isalpha ((int)cChar)&amp;&amp; cChar != '_')
+                      {
+                        *iWasToken = cnt + 1;
+                        strcpy (*strbuf, (*strbuf + strlen (strtemp)));
+
+                        nstate = cnt + 1;
+                      }
+                    break;
+                  }
+              }
+         }
+
+       else
+         {
+           *iWasToken = 0;
+           nstate = 0;
+           break;
+         }
+
+       cnt++;
+       free (strtemp);
+     }
+
+   return nstate;
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl332.htm">&lt;</A>
+ | <A href="sfl334.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

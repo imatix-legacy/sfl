@@ -1,0 +1,123 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>HTTP and CGI Support functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl396.htm">&lt;</A>
+ | <A href="sfl398.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC410">HTTP and CGI Support functions</A></H2>
+<P>Filename: sflhttp.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1996/05/31 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 1999/06/16
+<BR>Copyright: Copyright (c) 1996-2000 iMatix Corporation
+<H3>Synopsis</H3>
+<P>Provides various functions that support HTTP and CGI
+   programming, including escaping/unescaping, and CGI data
+   manipulation.
+<H4>List of Functions</H4>
+<UL>
+<LI>char * <A href="sfl398.htm#http_escape">http escape</A><BR>
+   (const char *string, char *result, size_t outmax);
+</LI>
+<LI>char * <A href="sfl400.htm#http_escape_hex">http escape hex</A><BR>
+   (const char *string, char *result, size_t outmax);
+</LI>
+<LI>size_t <A href="sfl399.htm#http_escape_size">http escape size</A><BR>
+   (const char *string);
+</LI>
+<LI>char * <A href="sfl401.htm#http_unescape">http unescape</A><BR>
+   (char *string, char *result);
+</LI>
+<LI>char * <A href="sfl402.htm#http_unescape_hex">http unescape hex</A><BR>
+   (char *string, char *result);
+</LI>
+<LI>char * <A href="sfl403.htm#http_query2strt">http query2strt</A><BR>
+   (const char *query);
+</LI>
+<LI>SYMTAB * <A href="sfl404.htm#http_query2symb">http query2symb</A><BR>
+   (const char *query);
+</LI>
+<LI>DESCR * <A href="sfl405.htm#http_query2descr">http query2descr</A><BR>
+   (const char *query);
+</LI>
+<LI>size_t <A href="sfl406.htm#http_encode_meta">http encode meta</A><BR>
+   (char *output, char **input, size_t outmax, Bool html);
+</LI>
+<LI>size_t <A href="sfl407.htm#encode_meta_char">encode meta char</A><BR>
+   (char *output, char meta_char, size_t outmax, Bool html);
+</LI>
+<LI>size_t <A href="sfl408.htm#http_decode_meta">http decode meta</A><BR>
+   (char *output, char **input, size_t outmax);
+</LI>
+<LI>char <A href="sfl409.htm#decode_meta_charn">decode meta charn</A><BR>
+   (const char *meta_char, size_t length);
+</LI>
+<LI>int <A href="sfl410.htm#cgi_parse_query_vars">cgi parse query vars</A><BR>
+   (SYMTAB *symtab, const char *query, const char *prefix);
+</LI>
+<LI>int <A href="sfl411.htm#cgi_parse_file_vars">cgi parse file vars</A><BR>
+   (SYMTAB *symtab, FILE *file, const char *prefix, size_t size);
+</LI>
+<LI>DESCR * <A href="sfl412.htm#http_multipart_decode">http multipart decode</A><BR>
+   (const char *mime_file, const char *store_path, const char
+   *local_format);
+</LI>
+<LI>Bool <A href="sfl413.htm#is_full_url">is full url</A><BR>
+   (const char *string);
+</LI>
+<LI>char * <A href="sfl414.htm#build_full_url">build full url</A><BR>
+   (const char *uri, const char *base_uri);
+</LI>
+<LI>char * <A href="sfl415.htm#http_time_str">http time str</A><BR>
+   (void);
+</LI>
+<LI>char * <A href="sfl416.htm#cgi_get_input">cgi get input</A><BR>
+   (int iMethod);
+</LI>
+<LI>char * <A href="sfl417.htm#cgi_fld_by_name">cgi fld by name</A><BR>
+   (char *strFld, char *strIn, char *strRetBuf);
+</LI>
+<LI>char * <A href="sfl418.htm#cgi_fld_by_index">cgi fld by index</A><BR>
+   (int iPos, char *strIn, char *strRetBuf, char *strFldName);
+</LI>
+<LI>int <A href="sfl419.htm#cgi_fld_len_by_index">cgi fld len by index</A><BR>
+   (int iPos, char *strIn, int *iDataLen, int *iNameLen);
+</LI>
+<LI>int <A href="sfl420.htm#displayform">displayform</A><BR>
+   (char *strformfile, char *strvalues);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sflhttp.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>CGIETHER</B>  </TT>
+<TD ALIGN="LEFT">2
+<TR><TD ALIGN="LEFT"><TT><B>CGIGET</B>  </TT>
+<TD ALIGN="LEFT">0
+<TR><TD ALIGN="LEFT"><TT><B>CGIPOST</B>  </TT>
+<TD ALIGN="LEFT">1
+<TR><TD ALIGN="LEFT"><TT><B>SFLHTTP_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>cgi_free_input(strBuf)</B>  </TT>
+<TD ALIGN="LEFT">free((strBuf))
+<TR><TD ALIGN="LEFT"><TT><B>decode_meta_char(string)</B>  </TT>
+<TD ALIGN="LEFT">decode_meta_charn (string, sizeof (string))
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl396.htm">&lt;</A>
+ | <A href="sfl398.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

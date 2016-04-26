@@ -1,0 +1,69 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>env2symb</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl426.htm">&lt;</A>
+ | <A href="sfl428.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="env2symb">&nbsp;</A>
+<H3><A NAME="TOC440"><TT>env2symb</TT></A></H3>
+<PRE>
+#include "sflenv.h"
+SYMTAB *
+env2symb (void)
+</PRE>
+<H4>Synopsis</H4>
+<P>Creates a symbol table containing the processes environment
+   variables. Each variable is stored as a name plus value. The
+   names of the variables are converted to upper case prior to
+   being put into the symbol table. You can destroy the symbol
+   table using <A href="sfl375.htm#sym_delete_table">sym delete table</A>() when you are finished with
+   it.
+<H4>Source Code - (sflenv.c)</H4>
+<PRE>
+{
+    SYMTAB
+        *symtab;                        /*  Allocated symbol table           */
+    char
+        *next_entry,                    /*  Environment variable + value     */
+        *equals;                        /*  Position of '=' in string        */
+    int
+        string_nbr;                     /*  Index into string table          */
+
+    /*  We create the table here, instead of passing through <A href="sfldoc.htm#strt2symb">strt2symb</A>(),
+        since we have to ensure that environment variable names are stored
+        in uppercase.  Some systems (NT) return mixed-case names.            */
+
+    symtab = <A href="sfldoc.htm#sym_create_table">sym create table</A> ();
+    if (symtab)
+      {
+        for (string_nbr = 0; environ [string_nbr]; string_nbr++)
+          {
+            next_entry = mem_strdup (environ [string_nbr]);
+            equals = strchr (next_entry, '=');
+            if (equals)
+              {
+                *equals = '\0';         /*  Cut into two strings             */
+                <A href="sfl284.htm#strupc">strupc</A> (next_entry);
+                <A href="sfldoc.htm#sym_assume_symbol">sym assume symbol</A> (symtab, next_entry, equals + 1);
+              }
+            mem_free (next_entry);
+          }
+      }
+    return (symtab);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl426.htm">&lt;</A>
+ | <A href="sfl428.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

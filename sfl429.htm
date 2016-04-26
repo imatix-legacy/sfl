@@ -1,0 +1,83 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>env_copy</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl428.htm">&lt;</A>
+ | <A href="sfl430.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="env_copy">&nbsp;</A>
+<H3><A NAME="TOC442"><TT>env_copy</TT></A></H3>
+<PRE>
+#include "sflenv.h"
+char **
+env_copy (
+    char **environment)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns an environment block which is a copy of the supplied
+   environment block, in all new memory. If no environment block
+   is supplied the current process environment is copied. The
+   returned block is an array of strings, terminated by a null
+   pointer. Each string is allocated independently using
+   mem_alloc(). Returns NULL if there was not enough memory to
+   allocate the block. No changes are made to the strings during
+   copying. To free the array, use <A href="sfl304.htm#strtfree">strtfree</A>().
+<H4>Source Code - (sflenv.c)</H4>
+<PRE>
+{
+    MEMTRN
+        *memtrn;                        /*  Memory transation                */
+    char
+        **env = environment,            /*  Environment to copy              */
+        **newenv = NULL;                /*  Copy of environment              */
+    int
+        size  = 0,
+        pos = 0;
+
+    if (env == NULL)
+        env = environ;        /*  Default is to copy the process environment */
+
+    /*  Count the size of the environment                                    */
+    for (size = 0; env [size] != NULL; env++)
+        ;  /* EMPTY BODY */
+
+    memtrn = <A href="sfldoc.htm#mem_new_trans">mem new trans</A> ();
+    if (!memtrn)
+        return NULL;
+
+    newenv = memt_alloc (memtrn, ((size+1) * sizeof(char *)));
+    if (!newenv)
+      {
+      	<A href="sfldoc.htm#mem_rollback">mem rollback</A> (memtrn);
+        return NULL;
+      }
+
+    for (pos = 0; pos &lt; size; pos++)
+      {
+        newenv [pos] = memt_strdup (memtrn, env [pos]);
+        if (newenv [pos] == NULL)
+          {
+            <A href="sfldoc.htm#mem_rollback">mem rollback</A> (memtrn);
+            return NULL;
+          }
+      }
+    newenv [pos] = NULL;               /*  Terminate the array               */
+    <A href="sfldoc.htm#mem_commit">mem commit</A> (memtrn);               /*  Commit the memory allocations     */
+
+    return newenv;
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl428.htm">&lt;</A>
+ | <A href="sfl430.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

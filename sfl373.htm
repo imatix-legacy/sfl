@@ -1,0 +1,155 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>Symbol-table functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl372.htm">&lt;</A>
+ | <A href="sfl374.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC386">Symbol-table functions</A></H2>
+<P>Filename: sflsymb.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1993/12/27 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 1999/08/07
+<BR>Copyright: Copyright (c) 1996-2000 iMatix Corporation
+<H3>Synopsis</H3>
+<P>Symbol lookup is by name. Symbols contain a string value and a
+   pointer to an caller-defined memory block. The symbol-table
+   functions let you create and manage symbol tables. The
+   functions are designed to be as general as possible (to support
+   a wide variety of applications), but at the same time fast. The
+   symbol table data structure is based on a combined linked list
+   &amp; hash table representation. The file sflsymb.h contains
+   definitions for the various structures and external functions
+   used in the sflsymb.c. Both the linked-list and hash-table
+   representations have a guaranteed order. In the linked-list,
+   new symbols are pushed on to the head of the list. In the hash
+   table each bucket just contains a pointer to a linked-list of
+   symbols. When a new symbol is created, it is pushed onto the
+   front of this list. The reason that both data structures are
+   used is to make the algorithm faster. Each representation has
+   its stengths and weaknesses. For instance, if you wanted to
+   lookup a symbol table entry for a given name using the hash
+   table you could find it immediately, whereas with the linked-
+   list, you would need to traverse most of the table to find the
+   symbol. Some of these functions are called through macros that
+   add the filename and line number of the call, for tracing. Do
+   NOT call these functions directly.
+<H4>List of Functions</H4>
+<UL>
+<LI>SYMTAB * <A href="sfl374.htm#sym_create_table_">sym create table </A><BR>
+   (const char *source_file, size_t source_line);
+</LI>
+<LI>void <A href="sfl375.htm#sym_delete_table">sym delete table</A><BR>
+   (SYMTAB *symtab);
+</LI>
+<LI>void <A href="sfl376.htm#sym_empty_table">sym empty table</A><BR>
+   (SYMTAB *symtab);
+</LI>
+<LI>int <A href="sfl377.htm#sym_merge_tables">sym merge tables</A><BR>
+   (SYMTAB *symtab, const SYMTAB *import);
+</LI>
+<LI>SYMBOL * <A href="sfl378.htm#sym_lookup_symbol">sym lookup symbol</A><BR>
+   (const SYMTAB *symtab, const char *name);
+</LI>
+<LI>SYMBOL * <A href="sfl379.htm#sym_create_symbol_">sym create symbol </A><BR>
+   (SYMTAB *symtab, const char *name, const char *val, const char
+   *source_file, size_t source_line);
+</LI>
+<LI>SYMBOL * <A href="sfl380.htm#sym_assume_symbol_">sym assume symbol </A><BR>
+   (SYMTAB *symtab, const char *name, const char *val, const char
+   *source_file, size_t source_line);
+</LI>
+<LI>SYMBOL * <A href="sfl381.htm#sym_delete_symbol">sym delete symbol</A><BR>
+   (SYMTAB *symtab, SYMBOL *symbol);
+</LI>
+<LI>const char * <A href="sfl384.htm#sym_get_name">sym get name</A><BR>
+   (const SYMBOL *sym);
+</LI>
+<LI>char * <A href="sfl385.htm#sym_get_value">sym get value</A><BR>
+   (const SYMTAB *symtab, const char *name, const char
+   *default_value);
+</LI>
+<LI>long <A href="sfl386.htm#sym_get_number">sym get number</A><BR>
+   (const SYMTAB *symtab, const char *key, const long
+   default_value);
+</LI>
+<LI>Bool <A href="sfl387.htm#sym_get_boolean">sym get boolean</A><BR>
+   (const SYMTAB *symtab, const char *key, const Bool
+   default_value);
+</LI>
+<LI>void <A href="sfl388.htm#sym_set_value">sym set value</A><BR>
+   (SYMBOL *symbol, const char *value);
+</LI>
+<LI>int <A href="sfl382.htm#sym_exec_all">sym exec all</A><BR>
+   (const SYMTAB *symtab, symfunc handler, ...);
+</LI>
+<LI>int <A href="sfl383.htm#sym_hash">sym hash</A><BR>
+   (const char *name);
+</LI>
+<LI>void <A href="sfl389.htm#sym_sort_table">sym sort table</A><BR>
+   (SYMTAB *symtab, symsort sort_function);
+</LI>
+<LI>char * <A href="sfl390.htm#symb2strt_">symb2strt </A><BR>
+   (const SYMTAB *symtab, const char *source_file, size_t
+   source_line);
+</LI>
+<LI>SYMTAB * <A href="sfl391.htm#strt2symb_">strt2symb </A><BR>
+   (char **strings, const char *source_file, size_t source_line);
+</LI>
+<LI>DESCR * <A href="sfl392.htm#symb2descr_">symb2descr </A><BR>
+   (const SYMTAB *symtab, const char *source_file, size_t
+   source_line);
+</LI>
+<LI>SYMTAB * <A href="sfl393.htm#descr2symb_">descr2symb </A><BR>
+   (const DESCR *descr, const char *source_file, size_t
+   source_line);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sflsymb.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>SFLSYMB_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>SYM_HASH_SIZE</B>  </TT>
+<TD ALIGN="LEFT">256 /* Assumed by sym_hash () */
+<TR><TD ALIGN="LEFT"><TT><B>descr2symb(d)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>strt2symb(s)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>sym_assume_symbol(t,n,v)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>sym_create_symbol(t,n,v)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>sym_create_table()</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>symb2descr(t)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>symb2strt(t)</B>  </TT>
+<TD ALIGN="LEFT">(various)
+</TABLE>
+<H4>List of Type Definitions</H4>
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Type name:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>symfunc</B>  </TT>
+<TD ALIGN="LEFT">Bool (*) (SYMBOL *, ...)
+<TR><TD ALIGN="LEFT"><TT><B>symsort</B>  </TT>
+<TD ALIGN="LEFT">int (*) (const void *symb1, const void *symb2)
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl372.htm">&lt;</A>
+ | <A href="sfl374.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

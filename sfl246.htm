@@ -1,0 +1,96 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>make_dir</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl245.htm">&lt;</A>
+ | <A href="sfl247.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="make_dir">&nbsp;</A>
+<H3><A NAME="TOC259"><TT>make_dir</TT></A></H3>
+<PRE>
+#include "sfldir.h"
+int
+make_dir (
+    const char *path_to_create)
+</PRE>
+<H4>Synopsis</H4>
+<P>Create a new directory. Returns 0 if the directory was created;
+   -1 if there was an error. Under Windows and OpenVMS, accepts
+   directory names with '/'. Will create multiple levels of
+   directory if required.
+<H4>Source Code - (sfldir.c)</H4>
+<PRE>
+{
+    char
+        *path,
+        *slash;
+    int
+        rc = 0;
+
+    path = mem_strdup (path_to_create); /*  Working copy                     */
+#if (defined (MSDOS_FILESYSTEM))
+    <A href="sfl294.htm#strconvch">strconvch</A> (path, '/', '\\');
+
+    /*  Handle \\system\drive specially                                      */
+    if (<A href="sfl290.htm#strprefixed">strprefixed</A> (path, "\\\\"))     /*  Network drive name?              */
+      {
+        slash = strchr (path + 2, '\\');
+        if (slash)
+            slash = strchr (slash + 1, '\\');
+      }
+    else
+#endif
+    slash = strchr (path + 1, PATHEND);
+
+    /*  Create each component of directory as required                       */
+    FOREVER                             /*  Create any parent directories    */
+      {
+        if (slash)
+            *slash = '\0';              /*  Cut at slash                     */
+
+        if (!<A href="sfl128.htm#file_is_directory">file is directory</A> (path))
+          {
+#if (defined (__UNIX__) || defined (__VMS_XOPEN) || defined (__OS2__))
+            rc = mkdir (path, 0775);    /*  User RWE Group RWE World RE      */
+
+#elif (defined (WIN32))
+            if (CreateDirectory (path, NULL))
+                rc = 0;
+            else
+                rc = -1;
+
+#elif (defined (MSDOS_FILESYSTEM))
+#   if (defined (__DJGPP__))
+            rc = mkdir (path, 0775);    /*  User RWE Group RWE World RE      */
+#   else
+            rc = mkdir (path);          /*  Protection?  What's that?        */
+#   endif
+#else
+            rc = -1;                    /*  Not a known system               */
+#endif
+            if (rc)                     /*  End if error                     */
+                break;
+          }
+        if (slash == NULL)              /*  End if last directory            */
+            break;
+       *slash = PATHEND;                /*  Restore path name                */
+        slash = strchr (slash + 1, PATHEND);
+      }
+    mem_strfree (&amp;path);
+    return (rc);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl245.htm">&lt;</A>
+ | <A href="sfl247.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

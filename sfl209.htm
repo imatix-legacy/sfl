@@ -1,0 +1,56 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>mem_rollback_</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl208.htm">&lt;</A>
+ | <A href="sfl210.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="mem_rollback_">&nbsp;</A>
+<H3><A NAME="TOC222"><TT>mem_rollback_</TT></A></H3>
+<PRE>
+#include "sflmem.h"
+void
+mem_rollback_ (
+    MEMTRN *trn,
+    const char *filename,               /*  Name of source file making call  */
+    size_t lineno                       /*  Line number in calling source    */
+)
+</PRE>
+<H4>Synopsis</H4>
+<P>Rolls back allocations for a particular transaction. This frees
+   up all blocks allocated by calls to mem_alloc, mem_realloc and
+   mem_strdup since the last call to mem_commit. Note that for
+   blocks allocated with mem_realloc, this is not really a
+   rollback but a free. The <A href="sfldoc.htm#mem_rollback">mem rollback</A>() function must be
+   used with some care... if you forget to do a <A href="sfldoc.htm#mem_commit">mem commit</A>(),
+   a later <A href="sfldoc.htm#mem_rollback">mem rollback</A>() will do damage to your memory space.
+   The general rule is to start your processing with
+   <A href="sfldoc.htm#mem_commit">mem commit</A>(), then do work, and call <A href="sfldoc.htm#mem_rollback">mem rollback</A>()
+   when there is an error. Finally, call <A href="sfldoc.htm#mem_commit">mem commit</A>() at the
+   end.
+<H4>Source Code - (sflmem.c)</H4>
+<PRE>
+{
+#   if (defined (MEM_TRACE))
+    <A href="sfl458.htm#trace">trace</A> ("%s (%ld): rollback transaction",
+           filename? filename: "-", (long) lineno);
+#   endif
+
+    mem_free_list ((MEMHDR *) &amp;trn-&gt; memhdr);
+    mem_del_trans (trn);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl208.htm">&lt;</A>
+ | <A href="sfl210.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

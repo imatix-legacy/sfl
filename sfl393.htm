@@ -1,0 +1,60 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>descr2symb_</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl392.htm">&lt;</A>
+ | <A href="sfl394.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="descr2symb_">&nbsp;</A>
+<H3><A NAME="TOC406"><TT>descr2symb_</TT></A></H3>
+<PRE>
+#include "sflsymb.h"
+SYMTAB *
+descr2symb_ (
+    const DESCR  *descr,                /*  Descriptor to convert            */
+    const char   *filename,             /*  Name of source file making call  */
+    size_t        lineno)               /*  Line number in calling source    */
+</PRE>
+<H4>Synopsis</H4>
+<P>Converts a DESCR block into a symbol table. The descriptor
+   consists of a block of null-terminated strings, terminated in a
+   double null byte. Ignores any strings that don't look like:
+   "name=value". If the block contains multiple strings with the
+   same name, the last instance is stored in the symbol table.
+   Returns NULL if there was not enough memory to allocate the
+   symbol table, or if the input argument was null. Do not call
+   this function directly: pass through the descr2symb macro.
+<H4>Source Code - (sflsymb.c)</H4>
+<PRE>
+{
+    SYMTAB
+        *symtab;                        /*  Allocated symbol table           */
+    char
+        **strings;                      /*  Formatted string array           */
+
+    if (!descr)
+        return (NULL);                  /*  Return NULL if argument is null  */
+
+    if (!descr-&gt; data)
+        return (<A href="sfldoc.htm#sym_create_table">sym create table</A> ());   /*  Create new symtab if no data     */
+
+    strings = <A href="sfl303.htm#descr2strt">descr2strt</A> (descr);       /*  Convert descriptor to strings    */
+    symtab  = <A href="sfl391.htm#strt2symb_">strt2symb </A> (strings, filename, lineno);
+    <A href="sfl304.htm#strtfree">strtfree</A> (strings);
+    return (symtab);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl392.htm">&lt;</A>
+ | <A href="sfl394.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

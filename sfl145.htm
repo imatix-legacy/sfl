@@ -1,0 +1,76 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>Initialisation file access functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl144.htm">&lt;</A>
+ | <A href="sfl146.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC158">Initialisation file access functions</A></H2>
+<P>Filename: sflini.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1994/01/08 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 1999/10/26
+<BR>Copyright: Copyright (c) 1996-2000 iMatix Corporation
+<H3>Synopsis</H3>
+<P>Provides functions to read an initialisation file that follows
+   the MS-Windows style, i.e. consists of [Sections] followed by
+   keyword = value lines.
+<H4>List of Functions</H4>
+<UL>
+<LI>Bool <A href="sfl146.htm#ini_find_section">ini find section</A><BR>
+   (FILE *inifile, char *section, Bool top);
+</LI>
+<LI>Bool <A href="sfl147.htm#ini_scan_section">ini scan section</A><BR>
+   (FILE *inifile, char **keyword, char **value);
+</LI>
+<LI>SYMTAB * <A href="sfl148.htm#ini_dyn_load">ini dyn load</A><BR>
+   (SYMTAB *symtab, const char *filename);
+</LI>
+<LI>SYMTAB * <A href="sfl149.htm#ini_dyn_loade">ini dyn loade</A><BR>
+   (SYMTAB *symtab, const char *filename);
+</LI>
+<LI>int <A href="sfl150.htm#ini_dyn_save">ini dyn save</A><BR>
+   (SYMTAB *symtab, const char *filename);
+</LI>
+<LI>Bool <A href="sfl151.htm#ini_dyn_changed">ini dyn changed</A><BR>
+   (SYMTAB *symtab);
+</LI>
+<LI>Bool <A href="sfl152.htm#ini_dyn_refresh">ini dyn refresh</A><BR>
+   (SYMTAB *symtab);
+</LI>
+<LI>char * <A href="sfl153.htm#ini_dyn_value">ini dyn value</A><BR>
+   (SYMTAB *symtab, const char *section, const char *keyword,
+   const char *default_value);
+</LI>
+<LI>char * <A href="sfl154.htm#ini_dyn_values">ini dyn values</A><BR>
+   (SYMTAB *symtab, const char *section, const char *keyword,
+   const char *default_value);
+</LI>
+<LI>char * <A href="UNDEF">ini dyn assume</A><BR>
+   (SYMTAB *symtab, const char *section, const char *keyword,
+   const char *default_value);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sflini.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>SLFINI_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl144.htm">&lt;</A>
+ | <A href="sfl146.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

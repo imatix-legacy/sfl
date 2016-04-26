@@ -1,0 +1,53 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>timer_to_time</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl69.htm">&lt;</A>
+ | <A href="sfl71.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="timer_to_time">&nbsp;</A>
+<H3><A NAME="TOC83"><TT>timer_to_time</TT></A></H3>
+<PRE>
+#include "sfldate.h"
+long
+timer_to_time (time_t time_secs)
+</PRE>
+<H4>Synopsis</H4>
+<P>Converts the supplied timer value into a long time value. Times
+   are stored as long values: HHMMSS00. Since the timer value does
+   not hold centiseconds, these are set to zero. If the supplied
+   value was zero, returns zero. The timer value is assumed to be
+   UTC (GMT).
+<H4>Source Code - (sfldate.c)</H4>
+<PRE>
+{
+    struct tm
+        *time_struct;
+
+    if (time_secs == 0)
+        return (0);
+    else
+      {
+        /*  Convert into a long value HHMMSS00                               */
+        time_struct = <A href="sfl85.htm#safe_localtime">safe localtime</A> (&amp;time_secs);
+        return (MAKE_TIME (time_struct-&gt; tm_hour,
+                           time_struct-&gt; tm_min,
+                           time_struct-&gt; tm_sec,
+                           0));
+      }
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl69.htm">&lt;</A>
+ | <A href="sfl71.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

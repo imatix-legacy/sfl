@@ -1,0 +1,151 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>Directory access functions</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl228.htm">&lt;</A>
+ | <A href="sfl230.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<H2><A NAME="TOC242">Directory access functions</A></H2>
+<P>Filename: sfldir.h
+<BR>Package: Standard Function Library (SFL)
+<BR>Written: 1996/04/02 iMatix SFL project team <A
+   HREF=mailto:"sfl@imatix.com">sfl@imatix.com</A>
+<BR>Revised: 2000/01/18
+<BR>Copyright: Copyright (c) 1996-2000 iMatix Corporation
+<H3>Synopsis</H3>
+<P>The directory access functions provide a portable interface to
+   the system's file directory structure. In general these
+   functions are modelled around the UNIX opendir and readdir
+   functions, but they are also similar to the DOS interface.
+   These functions can fail on SVr4 if the &lt;dirent.h&gt; file
+   does not match the C library. Recompile with the switch -D
+   _USE_BSD_DIRENT and they should work a bit better. Tested on:
+   MS-DOS (Turbo-C), Windows (MSVC 4.0), UNIX (Linux, IBM AIX,
+   SunOS). OS/2 port was done by Ewen McNeill <A
+   HREF=mailto:"ewen@naos.co.nz">ewen@naos.co.nz</A>. DJGPP and
+   DRDOS LFN by Rob Judd <A
+   HREF=mailto:"judd@alphalink.com.au">judd@alphalink.com.au</A>.
+   Changes for Win32 by Will Menninger <A
+   HREF=mailto:"willus@netcom.com">willus@netcom.com</A>.
+<H4>List of Functions</H4>
+<UL>
+<LI>Bool <A href="sfl230.htm#open_dir">open dir</A><BR>
+   (DIRST *dir, const char *dir_name);
+</LI>
+<LI>Bool <A href="sfl231.htm#read_dir">read dir</A><BR>
+   (DIRST *dir);
+</LI>
+<LI>Bool <A href="sfl232.htm#close_dir">close dir</A><BR>
+   (DIRST *dir);
+</LI>
+<LI>char * <A href="sfl233.htm#format_dir">format dir</A><BR>
+   (DIRST *dir, Bool full);
+</LI>
+<LI>int <A href="sfl234.htm#fix_dir">fix dir</A><BR>
+   (DIRST *dir);
+</LI>
+<LI>int <A href="sfl235.htm#free_dir">free dir</A><BR>
+   (DIRST *dir);
+</LI>
+<LI>char * <A href="sfl240.htm#resolve_path">resolve path</A><BR>
+   (const char *path);
+</LI>
+<LI>char * <A href="sfl241.htm#locate_path">locate path</A><BR>
+   (const char *root, const char *path);
+</LI>
+<LI>char * <A href="sfl242.htm#clean_path">clean path</A><BR>
+   (const char *path);
+</LI>
+<LI>NODE * <A href="sfl236.htm#load_dir_list">load dir list</A><BR>
+   (const char *dir_name, const char *sort);
+</LI>
+<LI>void <A href="sfl238.htm#sort_dir_list">sort dir list</A><BR>
+   (NODE *filelist, const char *sort);
+</LI>
+<LI>FILEINFO * <A href="sfl239.htm#add_dir_list">add dir list</A><BR>
+   (NODE *filelist, const DIRST *dir);
+</LI>
+<LI>void <A href="sfl237.htm#free_dir_list">free dir list</A><BR>
+   (NODE *filelist);
+</LI>
+<LI>char * <A href="sfl243.htm#get_curdir">get curdir</A><BR>
+   (void);
+</LI>
+<LI>int <A href="sfl244.htm#set_curdir">set curdir</A><BR>
+   (const char *path);
+</LI>
+<LI>Bool <A href="sfl245.htm#file_matches">file matches</A><BR>
+   (const char *filename, const char *pattern);
+</LI>
+<LI>int <A href="sfl246.htm#make_dir">make dir</A><BR>
+   (const char *path);
+</LI>
+<LI>int <A href="sfl247.htm#remove_dir">remove dir</A><BR>
+   (const char *path);
+</LI>
+<LI>qbyte <A href="sfl248.htm#dir_usage">dir usage</A><BR>
+   (const char *path, Bool recurse);
+</LI>
+<LI>qbyte <A href="sfl249.htm#dir_files">dir files</A><BR>
+   (const char *path, Bool recurse);
+</LI>
+</UL>
+<H4>List of Symbol Definitions</H4>
+<P>sfldir.h defines these symbols, possibly conditionally:
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Symbol:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>ATTR_HIDDEN</B>  </TT>
+<TD ALIGN="LEFT">0x02 /* Hidden file */
+<TR><TD ALIGN="LEFT"><TT><B>ATTR_MASK</B>  </TT>
+<TD ALIGN="LEFT">0x17 /* All bits together */
+<TR><TD ALIGN="LEFT"><TT><B>ATTR_RDONLY</B>  </TT>
+<TD ALIGN="LEFT">0x01 /* Read only file */
+<TR><TD ALIGN="LEFT"><TT><B>ATTR_SUBDIR</B>  </TT>
+<TD ALIGN="LEFT">0x10 /* Subdirectory */
+<TR><TD ALIGN="LEFT"><TT><B>ATTR_SYSTEM</B>  </TT>
+<TD ALIGN="LEFT">0x04 /* System file */
+<TR><TD ALIGN="LEFT"><TT><B>DEFAULT_DIR</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>Dirent</B>  </TT>
+<TD ALIGN="LEFT">dirent /* We'll always refer to Dirent */
+<TR><TD ALIGN="LEFT"><TT><B>GID_CACHE_MAX</B>  </TT>
+<TD ALIGN="LEFT">10 /* Max. different gid's we cache */
+<TR><TD ALIGN="LEFT"><TT><B>MAXNAMLEN</B>  </TT>
+<TD ALIGN="LEFT">(various)
+<TR><TD ALIGN="LEFT"><TT><B>NAME_MAX</B>  </TT>
+<TD ALIGN="LEFT">MAXNAMLEN
+<TR><TD ALIGN="LEFT"><TT><B>SFLDIR_INCLUDED</B>  </TT>
+<TD ALIGN="LEFT">TRUE
+<TR><TD ALIGN="LEFT"><TT><B>S_IEXEC</B>  </TT>
+<TD ALIGN="LEFT">00100 /* Owner may execute */
+<TR><TD ALIGN="LEFT"><TT><B>UID_CACHE_MAX</B>  </TT>
+<TD ALIGN="LEFT">10 /* Max. different uid's we cache */
+<TR><TD ALIGN="LEFT"><TT><B>stat</B>  </TT>
+<TD ALIGN="LEFT">_stat
+</TABLE>
+<H4>List of Type Definitions</H4>
+<TABLE BORDER NOWRAP>
+<TR><TH ALIGN="LEFT">Type name:  </TH>
+    <TH ALIGN="LEFT">Defined as:</TH>
+<TR><TD ALIGN="LEFT"><TT><B>mode_t</B>  </TT>
+<TD ALIGN="LEFT">unsigned short
+<TR><TD ALIGN="LEFT"><TT><B>nlink_t</B>  </TT>
+<TD ALIGN="LEFT">unsigned short
+<TR><TD ALIGN="LEFT"><TT><B>off_t</B>  </TT>
+<TD ALIGN="LEFT">long
+</TABLE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl228.htm">&lt;</A>
+ | <A href="sfl230.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

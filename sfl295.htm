@@ -1,0 +1,59 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>xstrcat</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl294.htm">&lt;</A>
+ | <A href="sfl296.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="xstrcat">&nbsp;</A>
+<H3><A NAME="TOC308"><TT>xstrcat</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+char *
+xstrcat (
+    char *dest,
+    const char *src, ...)
+</PRE>
+<H4>Synopsis</H4>
+<P>Concatenates multiple strings into a single result. Eg.
+   <A href="sfl295.htm#xstrcat">xstrcat</A> (buffer, "A", "B", NULL) stores "AB" in buffer.
+   Returns dest. Append the string to any existing contents of
+   dest. From DDJ Nov 1992 p. 155, with adaptions.
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+    char
+        *feedback = dest;
+    va_list
+        va;
+
+    ASSERT (dest);
+    while (*dest)                       /*  Find end of dest string          */
+        dest++;
+
+    va_start (va, src);
+    while (src)
+      {
+        while (*src)
+            *dest++ = *src++;
+        src = va_arg (va, char *);
+      }
+    *dest = '\0';                       /*  Append a null character          */
+    va_end (va);
+    return (feedback);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl294.htm">&lt;</A>
+ | <A href="sfl296.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

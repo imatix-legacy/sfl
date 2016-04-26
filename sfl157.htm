@@ -1,0 +1,93 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>set_userlang</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl156.htm">&lt;</A>
+ | <A href="sfl158.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="set_userlang">&nbsp;</A>
+<H3><A NAME="TOC170"><TT>set_userlang</TT></A></H3>
+<PRE>
+#include "sfllang.h"
+int
+set_userlang (int language)
+</PRE>
+<H4>Synopsis</H4>
+<P>Sets language used for date and numeric translation. The valid
+   user languages are: <TABLE BORDER NOWRAP> <TR><TD
+   ALIGN="LEFT"><B>USERLANG DEFAULT</B>  <TD ALIGN="LEFT">Default
+   language (use hard-coded values) <TR><TD
+   ALIGN="LEFT"><B>USERLANG DA</B>  <TD ALIGN="LEFT">Danish
+   <TR><TD ALIGN="LEFT"><B>USERLANG DE</B>  <TD
+   ALIGN="LEFT">German <TR><TD ALIGN="LEFT"><B>USERLANG EN</B>
+   <TD ALIGN="LEFT">English <TR><TD ALIGN="LEFT"><B>USERLANG
+   ES</B>  <TD ALIGN="LEFT">Castillian Spanish <TR><TD
+   ALIGN="LEFT"><B>USERLANG FB</B>  <TD ALIGN="LEFT">Belgian or
+   Swiss French <TR><TD ALIGN="LEFT"><B>USERLANG FR</B>  <TD
+   ALIGN="LEFT">French <TR><TD ALIGN="LEFT"><B>USERLANG IS</B>
+   <TD ALIGN="LEFT">Icelandic <TR><TD ALIGN="LEFT"><B>USERLANG
+   IT</B>  <TD ALIGN="LEFT">Italian <TR><TD
+   ALIGN="LEFT"><B>USERLANG NL</B>  <TD ALIGN="LEFT">Dutch <TR><TD
+   ALIGN="LEFT"><B>USERLANG NO</B>  <TD ALIGN="LEFT">Norwegian
+   <TR><TD ALIGN="LEFT"><B>USERLANG PO</B>  <TD
+   ALIGN="LEFT">Portuguese <TR><TD ALIGN="LEFT"><B>USERLANG SV</B>
+   <TD ALIGN="LEFT">Swedish </TABLE> Returns 0 if okay, -1 if an
+   unsupported language was specified.
+<H4>Source Code - (sfllang.c)</H4>
+<PRE>
+{
+    /*  Order of this table is not critical                                  */
+    static struct {
+        int  language;
+        char **units;
+        char **tens;
+        char **days;
+        char **months;
+    } languages [] =
+    {
+        { USERLANG_DEFAULT, EN_units, EN_tens, EN_days, EN_months },
+        { USERLANG_DA,      DA_units, DA_tens, EN_days, DA_months },
+        { USERLANG_DE,      DE_units, DE_tens, EN_days, DE_months },
+        { USERLANG_EN,      EN_units, EN_tens, EN_days, EN_months },
+        { USERLANG_ES,      ES_units, ES_tens, EN_days, ES_months },
+        { USERLANG_FB,      FR_units, FB_tens, FR_days, FR_months },
+        { USERLANG_FR,      FR_units, FR_tens, FR_days, FR_months },
+        { USERLANG_IS,      IS_units, IS_tens, EN_days, IS_months },
+        { USERLANG_IT,      IT_units, IT_tens, EN_days, IT_months },
+        { USERLANG_NL,      NL_units, NL_tens, NL_days, NL_months },
+        { USERLANG_NO,      NO_units, NO_tens, EN_days, NO_months },
+        { USERLANG_PO,      PO_units, PO_tens, EN_days, PO_months },
+        { USERLANG_SV,      SV_units, SV_tens, EN_days, SV_months },
+        { -1,               NULL,     NULL,    NULL,    NULL      }
+    };
+
+    int
+        index;
+
+    for (index = 0; languages [index].language != -1; index++)
+        if (languages [index].language == language)
+          {
+            user_language = language;
+            units_table   = languages [index].units;
+            tens_table    = languages [index].tens;
+            day_table     = languages [index].days;
+            month_table   = languages [index].months;
+            return (0);
+          }
+    return (-1);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl156.htm">&lt;</A>
+ | <A href="sfl158.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

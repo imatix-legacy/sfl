@@ -1,0 +1,73 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>sock_select</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl362.htm">&lt;</A>
+ | <A href="sfl364.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="sock_select">&nbsp;</A>
+<H3><A NAME="TOC376"><TT>sock_select</TT></A></H3>
+<PRE>
+#include "sflsock.h"
+int
+sock_select (int nfds, fd_set *readfds, fd_set *writefds,
+             fd_set *errorfds, struct timeval *timeout)
+</PRE>
+<H4>Synopsis</H4>
+<P>Performs the standard select() call. Use this in preference to
+   select(), as some systems may not be 100% compatible with BSD
+   sockets, Uses the same arguments as the select() call, and
+   gives the same return codes. If sockets are not supported,
+   always returns 0.
+<H4>Source Code - (sflsock.c)</H4>
+<PRE>
+{
+#if (defined (DOES_SOCKETS))
+    int
+        rc = 0;                         /*  Return code from select()        */
+    ASSERT (timeout);
+
+#   if (defined (__UTYPE_BEOS))
+    /*  BeOS only supports the readfds argument                              */
+    rc = select (nfds, FD_SETTYPE readfds, NULL, NULL, timeout);
+    if (rc == -1)
+        <A href="sfl32.htm#coprintf">coprintf</A> ("Error after select(): %s", strerror (errno));
+    return (rc);
+
+#   elif (defined (WIN32))
+    /*  Windows occasionally aborts during the select call...                */
+    __try {
+        rc = select (nfds, FD_SETTYPE readfds, FD_SETTYPE writefds,
+                           FD_SETTYPE errorfds, timeout);
+    }
+    __except (1) {
+        <A href="sfl32.htm#coprintf">coprintf</A> ("select() aborted - arguments: %d, %p, %p, %p, %p",
+                     nfds, FD_SETTYPE readfds, FD_SETTYPE writefds,
+                           FD_SETTYPE errorfds, timeout);
+    }
+    return (rc);
+
+#   else
+    rc = select (nfds, FD_SETTYPE readfds, FD_SETTYPE writefds,
+                       FD_SETTYPE errorfds, timeout);
+    return (rc);
+#   endif
+#else
+    return (0);
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl362.htm">&lt;</A>
+ | <A href="sfl364.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

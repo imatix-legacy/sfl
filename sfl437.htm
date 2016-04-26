@@ -1,0 +1,115 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>tok_subst</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl436.htm">&lt;</A>
+ | <A href="sfl438.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="tok_subst">&nbsp;</A>
+<H3><A NAME="TOC450"><TT>tok_subst</TT></A></H3>
+<PRE>
+#include "sfltok.h"
+char *
+tok_subst (const char *string, SYMTAB *symbols)
+</PRE>
+<H4>Synopsis</H4>
+<P>Performs symbol substitution into the specified string. Returns
+   a newly-allocated string containing the result, or NULL if
+   there was not enough memory. The symbol table holds the set of
+   symbols that may be inserted. Undefined symbols are inserted as
+   an empty value. Symbols are specified in the string using this
+   syntax: $(name), where 'name' is case-sensitive. This version
+   does not allow embedded symbols.
+<H4>Source Code - (sfltok.c)</H4>
+<PRE>
+{
+    char
+        *sym_start,
+        *sym_end,
+        *sym_name,                      /*  Symbol name to look for          */
+        *copied_to,                     /*  Up to where we copied so far     */
+        *cur_result,                    /*  Current result buffer            */
+        *new_result;                    /*  After adding next symbol         */
+    int
+        sym_length;                     /*  Length of symbol name            */
+    SYMBOL
+        *symbol;                        /*  Symbol in symbol table           */
+
+    ASSERT (string);
+    ASSERT (symbols);
+
+    /*  Parse from left to right, looking for $(...) patterns                */
+    cur_result = mem_strdup ("");       /*  Result buffer is empty           */
+    sym_start  = strchr (string, '$');
+    copied_to  = (char *) string;
+    while (sym_start)
+      {
+        sym_end = strchr (++sym_start, ')');
+        if (*sym_start == '('
+        &amp;&amp;   sym_end
+        &amp;&amp;  *sym_end   == ')')
+          {
+            /*  First, copy string up to sym_start                           */
+            size_t cur_len = strlen (cur_result);
+            ASSERT ((sym_start - copied_to) &gt;= 0);
+
+            new_result = mem_alloc (cur_len + (sym_start - copied_to));
+            if (new_result == NULL)
+              {
+                mem_free (cur_result);
+                return (NULL);
+              }
+
+            strncpy (new_result, cur_result, (cur_len + 1));
+            strncat (new_result, copied_to, sym_start - 1 - copied_to);
+            mem_free (cur_result);
+            cur_result = new_result;
+            copied_to  = sym_end + 1;
+
+            /*  Now translate and insert symbol                              */
+            sym_length = sym_end - sym_start - 1;
+            sym_name   = mem_alloc (sym_length + 1);
+            if (sym_name == NULL)
+              {
+                mem_free (cur_result);
+                return (NULL);
+              }
+
+            memcpy (sym_name, sym_start + 1, sym_length);
+            sym_name [sym_length] = 0;
+            symbol = <A href="sfl378.htm#sym_lookup_symbol">sym lookup symbol</A> (symbols, sym_name);
+            mem_free (sym_name);
+            if (symbol)
+              {
+                xstrcpy_debug ();
+                new_result = <A href="sfl296.htm#xstrcpy">xstrcpy</A> (NULL, cur_result, symbol-&gt; value, NULL);
+                mem_free (cur_result);
+                cur_result = new_result;
+              }
+          }
+        else
+            sym_end = sym_start + 1;
+
+        sym_start = strchr (sym_end, '$');
+      }
+    /*  Copy anything remaining in the string                                */
+    xstrcpy_debug ();
+    new_result = <A href="sfl296.htm#xstrcpy">xstrcpy</A> (NULL, cur_result, copied_to, NULL);
+    mem_free (cur_result);
+    return (new_result);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl436.htm">&lt;</A>
+ | <A href="sfl438.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

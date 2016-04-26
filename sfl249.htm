@@ -1,0 +1,64 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>dir_files</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl248.htm">&lt;</A>
+ | <A href="sfl250.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="dir_files">&nbsp;</A>
+<H3><A NAME="TOC262"><TT>dir_files</TT></A></H3>
+<PRE>
+#include "sfldir.h"
+qbyte
+dir_files (const char *path, Bool recurse)
+</PRE>
+<H4>Synopsis</H4>
+<P>Calculates the number of files in a directory and optionally
+   all directories below that. Excludes directories from the count
+   (thus, a directory containing only '.' and '..' contains 0
+   files. Returns 0 if there was an error. Excludes hidden files.
+<H4>Source Code - (sfldir.c)</H4>
+<PRE>
+{
+    DIRST
+        dir;
+    qbyte
+        files = 0;
+    char
+        *full_dir;
+
+    if (<A href="sfl230.htm#open_dir">open dir</A> (&amp;dir, path))
+    do
+      {
+        if ((dir.file_attrs &amp; ATTR_HIDDEN) != 0)
+            ;   /*  Do nothing                                               */
+        else
+        if (recurse
+        &amp;&amp; (dir.file_attrs &amp; ATTR_SUBDIR) != 0)
+          {
+            full_dir = <A href="sfl241.htm#locate_path">locate path</A> (path, dir.file_name);
+            files += <A href="sfl249.htm#dir_files">dir files</A> (full_dir, TRUE);
+            mem_free (full_dir);
+          }
+        else
+            files++;
+      }
+    while (<A href="sfl231.htm#read_dir">read dir</A> (&amp;dir));
+    <A href="sfl232.htm#close_dir">close dir</A> (&amp;dir);
+    return (files);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl248.htm">&lt;</A>
+ | <A href="sfl250.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

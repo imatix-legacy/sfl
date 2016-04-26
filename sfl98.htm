@@ -1,0 +1,117 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>txtfind</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl97.htm">&lt;</A>
+ | <A href="sfl99.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="txtfind">&nbsp;</A>
+<H3><A NAME="TOC111"><TT>txtfind</TT></A></H3>
+<PRE>
+#include "sflfind.h"
+char *
+txtfind (const char *string,            /*  String containing data           */
+         const char *pattern)           /*  Pattern to search for            */
+</PRE>
+<H4>Synopsis</H4>
+<P>Searches for a case-insensitive text pattern in a string using
+   the Boyer-Moore-Horspool-Sunday algorithm. The string and
+   pattern are null-terminated strings. Returns a pointer to the
+   pattern if found within the string, or NULL if the pattern was
+   not found. Will match strings irrespective of case. To match
+   exact strings, use <A href="sfl92.htm#strfind">strfind</A>(). Will not work on multibyte
+   characters.
+<H4>Examples</H4>
+<PRE>
+    char *result;
+
+    result = txtfind ("AbracaDabra", "cad");
+    if (result)
+        puts (result);
+</PRE>
+<H4>Source Code - (sflfind.c)</H4>
+<PRE>
+{
+    size_t
+        shift [256];                    /*  Shift distance for each value    */
+    size_t
+        string_size,
+        pattern_size,
+        byte_nbr,                       /*  Index into byte array            */
+        match_size;                     /*  Size of matched part             */
+    const char
+        *match_base = NULL,             /*  Base of match of pattern         */
+        *match_ptr  = NULL,             /*  Point within current match       */
+        *limit      = NULL;             /*  Last potiental match point       */
+
+    ASSERT (string);                    /*  Expect non-NULL pointers, but    */
+    ASSERT (pattern);                   /*  fail gracefully if not debugging */
+    if (string == NULL || pattern == NULL)
+        return (NULL);
+
+    string_size  = strlen (string);
+    pattern_size = strlen (pattern);
+
+    /*  Pattern must be smaller or equal in size to string                   */
+    if (string_size &lt; pattern_size)
+        return (NULL);                  /*  Otherwise it cannot be found     */
+
+    if (pattern_size == 0)              /*  Empty string matches at start    */
+        return (char *) string;
+
+    /*  Build the shift table                                                */
+
+    /*  The shift table determines how far to shift before trying to match   */
+    /*  again, if a match at this point fails.  If the byte after where the  */
+    /*  end of our pattern falls is not in our pattern, then we start to     */
+    /*  match again after that byte; otherwise we line up the last occurence */
+    /*  of that byte in our pattern under that byte, and try match again.    */
+
+    for (byte_nbr = 0; byte_nbr &lt; 256; byte_nbr++)
+        shift [byte_nbr] = pattern_size + 1;
+
+    for (byte_nbr = 0; byte_nbr &lt; pattern_size; byte_nbr++)
+        shift [(byte) tolower (pattern [byte_nbr])] = pattern_size - byte_nbr;
+
+    /*  Search for the string.  If we don't find a match, move up by the     */
+    /*  amount we computed in the shift table above, to find location of     */
+    /*  the next potiental match.                                            */
+
+    limit = string + (string_size - pattern_size + 1);
+    ASSERT (limit &gt; string);
+
+    for (match_base = string;
+         match_base &lt; limit;
+         match_base += shift [(byte) tolower (*(match_base + pattern_size))])
+      {
+        match_ptr  = match_base;
+        match_size = 0;
+
+        /*  Compare pattern until it all matches, or we find a difference    */
+        while (tolower (*match_ptr++) == tolower (pattern [match_size++]))
+          {
+            ASSERT (match_size &lt;= pattern_size &amp;&amp;
+                    match_ptr == (match_base + match_size));
+
+            /*  If we found a match, return the start address                */
+            if (match_size &gt;= pattern_size)
+                return ((char *)(match_base));
+          }
+      }
+    return (NULL);                      /*  Found nothing                    */
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl97.htm">&lt;</A>
+ | <A href="sfl99.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

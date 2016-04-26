@@ -1,0 +1,60 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>mem_assert_</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl202.htm">&lt;</A>
+ | <A href="sfl204.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="mem_assert_">&nbsp;</A>
+<H3><A NAME="TOC216"><TT>mem_assert_</TT></A></H3>
+<PRE>
+#include "sflmem.h"
+void
+mem_assert_ (
+    const char *filename,               /*  Name of source file making call  */
+    size_t lineno                       /*  Line number in calling source    */
+)
+</PRE>
+<H4>Synopsis</H4>
+<P>Checks that all allocated memory was freed. Use the mem_assert
+   macro to call this function! If any memory is still left
+   allocated, displays the memory list on stderr and aborts.
+   Generally we use this function at the end of a program, after
+   deallocating all memory. If any memory has not been allocated,
+   we get a nice list and an abort. Our principle is that any
+   memory allocation must be matched by a free somewhere in the
+   code.
+<H4>Source Code - (sflmem.c)</H4>
+<PRE>
+{
+    FILE
+        *trace_file;
+
+    if (mem_total != 0
+    ||  !list_empty (&amp;tr_list))
+      {
+        fflush  (stdout);
+        fprintf (stderr, "Clean-memory assertion failed - %s (%ld)\n",
+                          filename? filename: "&lt;Unknown&gt;", (long) lineno);
+        fprintf (stderr, "Details are in memtrace.lst\n");
+        trace_file = fopen ("memtrace.lst", "w");
+        <A href="sfl214.htm#mem_display">mem display</A> (trace_file);
+        fclose (trace_file);
+        abort ();
+      }
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl202.htm">&lt;</A>
+ | <A href="sfl204.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

@@ -1,0 +1,65 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>stricstr</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl325.htm">&lt;</A>
+ | <A href="sfl327.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="stricstr">&nbsp;</A>
+<H3><A NAME="TOC339"><TT>stricstr</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+char *
+stricstr (
+    const char *str1,
+    const char *str2)
+</PRE>
+<H4>Synopsis</H4>
+<P> A case insensitive strstr. Returns a pointer to head of the
+   str1. Submitted by Scott Beasley <A
+   HREF=mailto:"jscottb@infoave.com">jscottb@infoave.com</A>
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+   char *strtmp = (char *)str1;
+   int iret = 1;
+
+   ASSERT (str1);
+   ASSERT (str2);
+
+   while (*strtmp)
+     {
+       if (strlen (strtmp)&gt;= strlen (str2))
+         {
+           iret = <A href="sfl298.htm#lexncmp">lexncmp</A> (strtmp, str2, strlen (str2));
+         }
+       else
+         {
+           break;
+         }
+
+       if (!iret)
+         {
+           break;
+         }
+
+       strtmp++;
+     }
+
+   return !iret ? strtmp : (char *)NULL;
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl325.htm">&lt;</A>
+ | <A href="sfl327.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

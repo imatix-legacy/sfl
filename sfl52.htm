@@ -1,0 +1,40 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>date_now</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl51.htm">&lt;</A>
+ | <A href="sfl53.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.10
+</TABLE>
+<HR>
+<A NAME="date_now">&nbsp;</A>
+<H3><A NAME="TOC65"><TT>date_now</TT></A></H3>
+<PRE>
+#include "sfldate.h"
+long
+date_now (void)
+</PRE>
+<H4>Synopsis</H4>
+<P>Returns the current date as a long value (CCYYMMDD). Since most
+   system clocks do not return a century, this function assumes
+   that all years 80 and above are in the 20th century, and all
+   years 00 to 79 are in the 21st century. For best results,
+   consume before 1 Jan 2080.
+<H4>Source Code - (sfldate.c)</H4>
+<PRE>
+{
+    return (<A href="sfl69.htm#timer_to_date">timer to date</A> (time (NULL)));
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl51.htm">&lt;</A>
+ | <A href="sfl53.htm">&gt;</A> | <A href="sfl483.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-99 iMatix Corporation</TABLE>
+</BODY></HTML>

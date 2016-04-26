@@ -1,0 +1,51 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>set_trace_file</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl456.htm">&lt;</A>
+ | <A href="sfl458.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="set_trace_file">&nbsp;</A>
+<H3><A NAME="TOC470"><TT>set_trace_file</TT></A></H3>
+<PRE>
+#include "sfltron.h"
+void
+set_trace_file (const char *filename, char mode)
+</PRE>
+<H4>Synopsis</H4>
+<P> Sends trace output to the specified file. If set_trace_file is
+   not used, traces go to the console. If filename is null, any
+   open trace file is close. Only one trace file can be open at
+   any time. If mode is 'a', output is appended to the trace file;
+   if 'w' the trace file is reset at open time. The caller can
+   check for errors in this function by looking at the value of
+   trace_file, which is left null if errors occur.
+<H4>Source Code - (sfltron.c)</H4>
+<PRE>
+{
+    if (trace_file)
+      {
+        <A href="sfl102.htm#file_close">file close</A> (trace_file);
+        trace_file = NULL;
+      }
+    if (filename)
+      {
+        ASSERT (mode == 'w' || mode == 'a');
+        trace_file = <A href="sfl100.htm#file_open">file open</A> (filename, mode);
+      }
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl456.htm">&lt;</A>
+ | <A href="sfl458.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

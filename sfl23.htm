@@ -1,0 +1,94 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>expand_nulls</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl22.htm">&lt;</A>
+ | <A href="sfl24.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="expand_nulls">&nbsp;</A>
+<H3><A NAME="TOC36"><TT>expand_nulls</TT></A></H3>
+<PRE>
+#include "sflcomp.h"
+word
+expand_nulls (
+    const byte *src,
+    byte *dst,
+    word src_size)
+</PRE>
+<H4>Synopsis</H4>
+<P>Expands a block of data previously compressed using the
+   <A href="sfl22.htm#compress_nulls">compress nulls</A>() function. The compressed block is passed
+   in src; the expanded result in dst. Dst must be large enough to
+   accomodate the largest possible decompressed block. Returns the
+   size of the expanded data.
+<H4>Source Code - (sflcomp.c)</H4>
+<PRE>
+{
+    word
+        dst_size,                       /*  Size of expanded data            */
+        src_scan,                       /*  Scan through source data         */
+        length;                         /*  Size of the run or string        */
+    byte
+        cur_byte;                       /*  Next byte to process             */
+
+    src_scan = 0;
+    dst_size = 0;
+    while (src_scan &lt; src_size)
+      {
+        cur_byte = src [src_scan++];
+
+        /*  1 to 127 is uncompressed string of 1 to 127 bytes                */
+        if (cur_byte &gt; 0 &amp;&amp; cur_byte &lt; 128)
+          {
+            length = (word) cur_byte;
+            memcpy (dst + dst_size, src + src_scan, length);
+            src_scan += length;
+            dst_size += length;
+          }
+        else                            /*  Run of 2 or more bytes           */
+          {
+            switch (cur_byte)
+              {
+                case 0x00:              /*  Run of non-zero bytes            */
+                    length = src [src_scan++];
+                    if (length == 0)    /*  Stored as double-byte            */
+                      {
+                        length   = src [src_scan++];
+                        length  += src [src_scan++] &lt;&lt; 8;
+                      }
+                    cur_byte = src [src_scan++];
+                    break;
+                case 0x80:              /*  256-2^16 zeroes                  */
+                    length   = src [src_scan++];
+                    length  += src [src_scan++] &lt;&lt; 8;
+                    cur_byte = 0;
+                    break;
+                case 0x81:              /*  128 to 255 zeroes                */
+                    length   = src [src_scan++];
+                    cur_byte = 0;
+                    break;
+                default:                /*  2 to 127 zeroes                  */
+                    length   = cur_byte &amp; 127;
+                    cur_byte = 0;
+              }
+            memset (dst + dst_size, cur_byte, length);
+            dst_size += length;
+          }
+      }
+    return (dst_size);                  /*  Return expanded data size        */
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl22.htm">&lt;</A>
+ | <A href="sfl24.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

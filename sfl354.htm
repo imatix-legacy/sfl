@@ -1,0 +1,77 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>accept_socket</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl353.htm">&lt;</A>
+ | <A href="sfl355.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="accept_socket">&nbsp;</A>
+<H3><A NAME="TOC367"><TT>accept_socket</TT></A></H3>
+<PRE>
+#include "sflsock.h"
+sock_t
+accept_socket (
+    sock_t master_socket)
+</PRE>
+<H4>Synopsis</H4>
+<P>Accepts a connection on a specified master socket. If you do
+   not want to wait on this call, use select() to poll the socket
+   until there is an incoming request, then call accept_socket.
+   Returns the number of the new slave socket, or INVALID_SOCKET
+   if there was an error on the accept call. You can handle errors
+   as fatal except for EAGAIN which indicates that the operation
+   would cause a non-blocking socket to block (treat EWOULDBLOCK
+   in the same way).
+<H4>Source Code - (sflsock.c)</H4>
+<PRE>
+{
+#if (defined (DOES_SOCKETS))
+    sock_t
+        slave_socket;                   /*  Connected slave socket           */
+    struct sockaddr_in
+        sin;                            /*  Address of connecting party      */
+    argsize_t
+        sin_length;                     /*  Length of address                */
+
+    connect_error_value = IP_NOERROR;   /*  Assume no errors                 */
+
+    sin_length = (int) sizeof (sin);
+    slave_socket = accept ((SOCKET) master_socket,
+                          (struct sockaddr *) &amp;sin, &amp;sin_length);
+
+    /*  On non-Windows systems, accept returns -1 in case of error, which    */
+    /*  is the same as INVALID_SOCKET.                                       */
+#   if (defined (__WINDOWS__))
+    if (slave_socket == INVALID_SOCKET)
+      {
+        int sock_errno = WSAGetLastError ();
+        if (sock_errno == WSAEWOULDBLOCK || sock_errno == WSAEINPROGRESS)
+            errno = EAGAIN;
+      }
+#   endif
+    if (slave_socket != INVALID_SOCKET)
+      {
+        prepare_socket (slave_socket);
+        ip_sockets++;
+      }
+    return (slave_socket);
+#else
+    connect_error_value = IP_NOSOCKETS;
+    return (INVALID_SOCKET);            /*  Sockets not supported            */
+#endif
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl353.htm">&lt;</A>
+ | <A href="sfl355.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

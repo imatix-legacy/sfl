@@ -1,0 +1,71 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>file_set_eoln</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl135.htm">&lt;</A>
+ | <A href="sfl137.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="file_set_eoln">&nbsp;</A>
+<H3><A NAME="TOC149"><TT>file_set_eoln</TT></A></H3>
+<PRE>
+#include "sflfile.h"
+dbyte
+file_set_eoln (char *dst, const char *src, dbyte src_size, Bool add_cr)
+</PRE>
+<H4>Synopsis</H4>
+<P>Formats any end-of-line sequences in the buffer according to
+   the value of the add_cr argument. If this is TRUE, all end-of-
+   lines (LF or CRLF or LFCR) are represented by a CRLF sequence.
+   If FALSE, all end-of-lines are represented by LF by itself. The
+   target buffer must be large enough to accomodate the resulting
+   line (twice the size of the source data). Returns the size of
+   the resulting data in the target buffer not counting the final
+   trailing null byte. The input data does not need to be null-
+   terminated, but the output data is terminated with an extra
+   null in any case.
+<H4>Source Code - (sflfile.c)</H4>
+<PRE>
+{
+    char
+        *srcptr,                        /*  Current character in src         */
+        *dstptr,                        /*  Current character in dst         */
+        *last;                          /*  Last character in src            */
+
+    ASSERT (src);
+    ASSERT (dst);
+
+    srcptr = (char *) src;
+    dstptr = dst;
+    last   = (char *) src + src_size;
+
+    while (*srcptr &amp;&amp; srcptr &lt; last)
+      {
+        if (*srcptr == '\n')
+          {
+            if (add_cr)
+                *dstptr++ = '\r';
+            *dstptr++ = '\n';
+          }
+        else
+        if (*srcptr != '\r' &amp;&amp; *srcptr != 26)
+            *dstptr++ = *srcptr;
+        srcptr++;
+      }
+    *dstptr = '\0';
+    return ((dbyte) (dstptr - dst));
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl135.htm">&lt;</A>
+ | <A href="sfl137.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

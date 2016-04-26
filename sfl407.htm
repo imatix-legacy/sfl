@@ -1,0 +1,297 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>encode_meta_char</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl406.htm">&lt;</A>
+ | <A href="sfl408.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="encode_meta_char">&nbsp;</A>
+<H3><A NAME="TOC420"><TT>encode_meta_char</TT></A></H3>
+<PRE>
+#include "sflhttp.h"
+size_t
+encode_meta_char (
+    char  *output,
+    char   code,
+    size_t outmax,
+    Bool   html)
+</PRE>
+<H4>Synopsis</H4>
+<P>Translates one character into HTML/SGML metacharacters. You
+   supply an output buffer and specify the maximum size of this
+   buffer. Returns the final size of the translated data excluding
+   the final null byte. If the resulting data is too long,
+   translation does not occur and the returned value is zero. If
+   html is TRUE then the metacharacters cr, amp, lt, gt and quot
+   are not translated - this allows you to encode accented
+   characters within HTML; otherwise they are translated and the
+   output doesn't look like HTML.
+<H4>Source Code - (sflhttp.c)</H4>
+<PRE>
+{
+    static char
+        *meta [256];                    /*  Metacharacter translation table  */
+    static Bool
+        first_time = TRUE;              /*  First time flag                  */
+    size_t
+        length;                         /*  Length of translation            */
+    char
+        *meta_char,                     /*  Pointer through metachar string  */
+        buffer [10];                    /*  Buffer for conversions           */
+
+    /*  Initialise translation table first time through                      */
+    if (first_time)
+      {
+        first_time = FALSE;
+        memset (meta, 0, sizeof (meta));
+
+#if (defined (__UNIX__) || defined (__WINDOWS__))
+        /*  UNIX and Windows generally use ISO-8859-1 (Latin-1)              */
+        meta [0x91] = "lsquo";
+        meta [0x92] = "rsquo";
+        meta [0xA1] = "iexcl";
+        meta [0xA2] = "cent";
+        meta [0xA3] = "pound";
+        meta [0xA4] = "curren";
+        meta [0xA5] = "yen";
+        meta [0xA6] = "brvbar";
+        meta [0xA7] = "sect";
+        meta [0xA8] = "uml";
+        meta [0xA9] = "copy";
+        meta [0xAA] = "ordf";
+        meta [0xAB] = "laquo";
+        meta [0xAC] = "not";
+        meta [0xAD] = "shy";
+        meta [0xAE] = "reg";
+        meta [0xAF] = "macr";
+        meta [0xB0] = "deg";
+        meta [0xB1] = "plusmn";
+        meta [0xB2] = "sup2";
+        meta [0xB3] = "sup3";
+        meta [0xB4] = "acute";
+        meta [0xB5] = "micro";
+        meta [0xB6] = "para";
+        meta [0xB7] = "middot";
+        meta [0xB8] = "cedil";
+        meta [0xB9] = "sup1";
+        meta [0xBA] = "ordm";
+        meta [0xBB] = "raquo";
+        meta [0xBC] = "frac14";
+        meta [0xBD] = "frac12";
+        meta [0xBE] = "frac34";
+        meta [0xBF] = "iquest";
+        meta [0xC0] = "Agrave";
+        meta [0xC1] = "Aacute";
+        meta [0xC2] = "Acirc";
+        meta [0xC3] = "Atilde";
+        meta [0xC4] = "Auml";
+        meta [0xC5] = "Aring";
+        meta [0xC6] = "AElig";
+        meta [0xC7] = "Ccedil";
+        meta [0xC8] = "Egrave";
+        meta [0xC9] = "Eacute";
+        meta [0xCA] = "Ecirc";
+        meta [0xCB] = "Euml";
+        meta [0xCC] = "Igrave";
+        meta [0xCD] = "Iacute";
+        meta [0xCE] = "Icirc";
+        meta [0xCF] = "Iuml";
+        meta [0xD0] = "ETH";
+        meta [0xD1] = "Ntilde";
+        meta [0xD2] = "Ograve";
+        meta [0xD3] = "Oacute";
+        meta [0xD4] = "Ocirc";
+        meta [0xD5] = "Otilde";
+        meta [0xD6] = "Ouml";
+        meta [0xD7] = "times";
+        meta [0xD8] = "Oslash";
+        meta [0xD9] = "Ugrave";
+        meta [0xDA] = "Uacute";
+        meta [0xDB] = "Ucirc";
+        meta [0xDC] = "Uuml";
+        meta [0xDD] = "Yacute";
+        meta [0xDE] = "THORN";
+        meta [0xDF] = "szlig";
+        meta [0xE0] = "agrave";
+        meta [0xE1] = "aacute";
+        meta [0xE2] = "acirc";
+        meta [0xE3] = "atilde";
+        meta [0xE4] = "auml";
+        meta [0xE5] = "aring";
+        meta [0xE6] = "aelig";
+        meta [0xE7] = "ccedil";
+        meta [0xE8] = "egrave";
+        meta [0xE9] = "eacute";
+        meta [0xEA] = "ecirc";
+        meta [0xEB] = "euml";
+        meta [0xEC] = "igrave";
+        meta [0xED] = "iacute";
+        meta [0xEE] = "icirc";
+        meta [0xEF] = "iuml";
+        meta [0xF0] = "eth";
+        meta [0xF1] = "ntilde";
+        meta [0xF2] = "ograve";
+        meta [0xF3] = "oacute";
+        meta [0xF4] = "ocirc";
+        meta [0xF5] = "otilde";
+        meta [0xF6] = "ouml";
+        meta [0xF7] = "divide";
+        meta [0xF8] = "oslash";
+        meta [0xF9] = "ugrave";
+        meta [0xFA] = "uacute";
+        meta [0xFB] = "ucirc";
+        meta [0xFC] = "uuml";
+        meta [0xFD] = "yacute";
+        meta [0xFE] = "thorn";
+        meta [0xFF] = "yuml";
+
+#elif (defined (__MSDOS__))
+        /*  DOS generally uses the PC-1 alphabet                             */
+        meta [0x80] = "Ccedil";
+        meta [0x81] = "uuml";
+        meta [0x82] = "eacute";
+        meta [0x83] = "acirc";
+        meta [0x84] = "auml";
+        meta [0x85] = "agrave";
+        meta [0x86] = "aring";
+        meta [0x87] = "ccedil";
+        meta [0x88] = "ecirc";
+        meta [0x89] = "euml";
+        meta [0x8B] = "iuml";
+        meta [0x8C] = "icirc";
+        meta [0x8D] = "igrave";
+        meta [0x8E] = "Auml";
+        meta [0x8F] = "Aring";
+        meta [0x90] = "Eacute";
+        meta [0x91] = "aelig";
+        meta [0x92] = "AElig";
+        meta [0x93] = "ocirc";
+        meta [0x94] = "ouml";
+        meta [0x95] = "ograve";
+        meta [0x96] = "ucirc";
+        meta [0x97] = "ugrave";
+        meta [0x98] = "yuml";
+        meta [0x99] = "Ouml";
+        meta [0x9A] = "Uuml";
+        meta [0x9B] = "oslash";
+        meta [0x9C] = "pound";
+        meta [0x9D] = "Oslash";
+        meta [0x9E] = "times";
+        meta [0xA0] = "aacute";
+        meta [0xA1] = "iacute";
+        meta [0xA2] = "otilde";
+        meta [0xA3] = "uacute";
+        meta [0xA4] = "ntilde";
+        meta [0xA5] = "Ntilde";
+        meta [0xA6] = "ordf";
+        meta [0xA7] = "ordm";
+        meta [0xA8] = "iquest";
+        meta [0xA9] = "reg";
+        meta [0xAA] = "not";
+        meta [0xAB] = "frac14";
+        meta [0xAC] = "frac12";
+        meta [0xAD] = "iexcl";
+        meta [0xAE] = "laquo";
+        meta [0xAF] = "raquo";
+        meta [0xB0] = "shy";
+        meta [0xB5] = "Aacute";
+        meta [0xB6] = "Acirc";
+        meta [0xB7] = "Agrave";
+        meta [0xB8] = "copy";
+        meta [0xC6] = "atilde";
+        meta [0xC7] = "Atilde";
+        meta [0xCA] = "egrave";
+        meta [0xCF] = "curren";
+        meta [0xD1] = "ETH";
+        meta [0xD2] = "Ecirc";
+        meta [0xD3] = "Euml";
+        meta [0xD4] = "Egrave";
+        meta [0xD6] = "Iacute";
+        meta [0xD7] = "Icirc";
+        meta [0xD8] = "Iuml";
+        meta [0xDD] = "brvbar";
+        meta [0xDE] = "Igrave";
+        meta [0xE0] = "Oacute";
+        meta [0xE1] = "szlig";
+        meta [0xE2] = "Ocirc";
+        meta [0xE3] = "Ograve";
+        meta [0xE5] = "Otilde";
+        meta [0xE6] = "THORN";
+        meta [0xE9] = "Uacute";
+        meta [0xEA] = "Ucirc";
+        meta [0xEB] = "Ugrave";
+        meta [0xEC] = "yacute";
+        meta [0xED] = "Yacute";
+        meta [0xEE] = "macr";
+        meta [0xEF] = "acute";
+        meta [0xF1] = "plusmn";
+        meta [0xF3] = "frac34";
+        meta [0xF4] = "para";
+        meta [0xF5] = "sect";
+        meta [0xF6] = "divide";
+        meta [0xF8] = "deg";
+        meta [0xFA] = "middot";
+        meta [0xFB] = "sup1";
+        meta [0xFC] = "sup3";
+        meta [0xFD] = "sup2";
+#endif
+      }
+
+    meta_char = meta [(int) code &amp; 255];
+    if (meta_char == 0)
+      {
+        if (html)
+          {
+            output [0] = code;
+            return (1);
+          }
+        else
+          {
+            switch (code)
+              {
+                case  '&amp;':
+                    meta_char = "amp";
+                    break;
+                case  '&lt;':
+                    meta_char = "lt";
+                    break;
+                case  '&gt;':
+                    meta_char = "gt";
+                    break;
+                case  '"':
+                    meta_char = "quot";
+                    break;
+                default:
+                    output [0] = code;
+                    return (1);
+              }
+          }
+      }
+    snprintf (buffer, sizeof (buffer), "&amp;%s;", meta_char);
+    length = strlen (buffer);
+    if (length &lt; outmax)
+      {
+        strncpy (output, buffer, outmax);
+        return length;
+      }
+    else
+      {
+        output [0] = 0;
+        return (0);
+      }
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl406.htm">&lt;</A>
+ | <A href="sfl408.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

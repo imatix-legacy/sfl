@@ -1,0 +1,86 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>xstrcpy</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl295.htm">&lt;</A>
+ | <A href="sfl297.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="xstrcpy">&nbsp;</A>
+<H3><A NAME="TOC309"><TT>xstrcpy</TT></A></H3>
+<PRE>
+#include "sflstr.h"
+char *
+xstrcpy (
+    char *dest,
+    const char *src, ...)
+</PRE>
+<H4>Synopsis</H4>
+<P>Concatenates multiple strings into a single result. Eg.
+   <A href="sfl296.htm#xstrcpy">xstrcpy</A> (buffer, "A", "B", NULL) stores "AB" in buffer.
+   Returns dest. Any existing contents of dest are cleared. If the
+   dest buffer is NULL, allocates a new buffer with the required
+   length and returns that. The buffer is allocated using
+   mem_alloc(), and should eventually be freed using mem_free() or
+   mem_strfree(). Returns NULL if there was too little memory to
+   allocate the new string. We can't define macros with variable
+   argument lists, so we pass the file and line number through two
+   globals, xstrcpy_file and xstrcpy_line, which are reset to
+   empty values after each call to xstrcpy.
+<H4>Source Code - (sflstr.c)</H4>
+<PRE>
+{
+    const char
+        *src_ptr;
+    va_list
+        va;
+    size_t
+        dest_size;                      /*  Size of concatenated strings     */
+
+    /*  Allocate new buffer if necessary                                     */
+    if (dest == NULL)
+      {
+        va_start (va, src);             /*  Start variable args processing   */
+        src_ptr   = src;
+        dest_size = 1;                  /*  Allow for trailing null char     */
+        while (src_ptr)
+          {
+            dest_size += strlen (src_ptr);
+            src_ptr = va_arg (va, char *);
+          }
+        va_end (va);                    /*  End variable args processing     */
+
+        /*  Allocate by going directly to mem_alloc_ function                */
+        dest = <A href="sfl198.htm#mem_alloc_">mem alloc </A> (NULL, dest_size, xstrcpy_file, xstrcpy_line);
+        xstrcpy_file = "";
+        xstrcpy_line = 0;
+        if (dest == NULL)
+            return (NULL);              /*  Not enough memory                */
+      }
+
+    /*  Now copy strings into destination buffer                             */
+    va_start (va, src);                 /*  Start variable args processing   */
+    src_ptr  = src;
+    dest [0] = '\0';
+    while (src_ptr)
+      {
+        strcat (dest, src_ptr);
+        src_ptr = va_arg (va, char *);
+      }
+    va_end (va);                        /*  End variable args processing     */
+    return (dest);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl295.htm">&lt;</A>
+ | <A href="sfl297.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

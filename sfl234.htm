@@ -1,0 +1,72 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>fix_dir</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl233.htm">&lt;</A>
+ | <A href="sfl235.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="fix_dir">&nbsp;</A>
+<H3><A NAME="TOC247"><TT>fix_dir</TT></A></H3>
+<PRE>
+#include "sfldir.h"
+int
+fix_dir (DIRST *dir)
+</PRE>
+<H4>Synopsis</H4>
+<P> Converts all strings in the DIRST into permenant values, by
+   allocating heap memory for each string. You must call this
+   function if you intend to keep a set of DIRSTs, for searching
+   or sorting. You do not need to call <A href="sfl234.htm#fix_dir">fix dir</A>() if you handle
+   each call to <A href="sfl231.htm#read_dir">read dir</A>() independently. If you use
+   <A href="sfl234.htm#fix_dir">fix dir</A>(), you must call <A href="sfl235.htm#free_dir">free dir</A>() for each DIRST when
+   you terminate. Returns 0 if okay, -1 if there was insufficient
+   memory or another fatal error.
+<H4>Source Code - (sfldir.c)</H4>
+<PRE>
+{
+    char
+        *owner,
+        *group,
+        *file_name;
+
+    /*  Allocate each string                                                 */
+    owner     = mem_strdup (dir-&gt; owner);
+    group     = mem_strdup (dir-&gt; group);
+    file_name = mem_strdup (dir-&gt; file_name);
+
+    /*  If all okay, assign new strings and indicate everything okay         */
+    if (owner &amp;&amp; group &amp;&amp; file_name)
+      {
+        dir-&gt; owner     = owner;
+        dir-&gt; group     = group;
+        dir-&gt; file_name = file_name;
+        dir-&gt; _fixed    = TRUE;
+        return (0);
+      }
+    else
+      {
+        /*  Otherwise patch things back the way they were                    */
+        if (owner)
+            mem_free (owner);
+        if (group)
+            mem_free (group);
+        if (file_name)
+            mem_free (file_name);
+        return (-1);
+      }
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl233.htm">&lt;</A>
+ | <A href="sfl235.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

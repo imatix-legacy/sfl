@@ -1,0 +1,261 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>conv_date_pict</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl36.htm">&lt;</A>
+ | <A href="sfl38.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="conv_date_pict">&nbsp;</A>
+<H3><A NAME="TOC50"><TT>conv_date_pict</TT></A></H3>
+<PRE>
+#include "sflconv.h"
+char *
+conv_date_pict (
+    long date,
+    const char *picture)
+</PRE>
+<H4>Synopsis</H4>
+<P>Converts a date to a string using a picture. The picture is
+   composed of any combination of these formats: <TABLE BORDER
+   NOWRAP> <TR><TD ALIGN="LEFT"><B>cc</B>  <TD
+   ALIGN="LEFT">century 2 digits, 01-99 <TR><TD
+   ALIGN="LEFT"><B>y</B>  <TD ALIGN="LEFT">day of year, 1-366
+   <TR><TD ALIGN="LEFT"><B>yy</B>  <TD ALIGN="LEFT">year 2 digits,
+   00-99 <TR><TD ALIGN="LEFT"><B>yyyy</B>  <TD ALIGN="LEFT">year 4
+   digits, 100-9999 <TR><TD ALIGN="LEFT"><B>m</B>  <TD
+   ALIGN="LEFT">month, 1-12 <TR><TD ALIGN="LEFT"><B>mm</B>  <TD
+   ALIGN="LEFT">month, 01-12 <TR><TD ALIGN="LEFT"><B>mmm</B>  <TD
+   ALIGN="LEFT">month, 3 letters <TR><TD ALIGN="LEFT"><B>mmmm</B>
+   <TD ALIGN="LEFT">month, full name <TR><TD
+   ALIGN="LEFT"><B>MMM</B>  <TD ALIGN="LEFT">month, 3 letters,
+   ucase <TR><TD ALIGN="LEFT"><B>MMMM</B>  <TD ALIGN="LEFT">month,
+   full name, ucase <TR><TD ALIGN="LEFT"><B>d</B>  <TD
+   ALIGN="LEFT">day, 1-31 <TR><TD ALIGN="LEFT"><B>dd</B>  <TD
+   ALIGN="LEFT">day, 01-31 <TR><TD ALIGN="LEFT"><B>ddd</B>  <TD
+   ALIGN="LEFT">day of week, Sun-Sat <TR><TD
+   ALIGN="LEFT"><B>dddd</B>  <TD ALIGN="LEFT">day of week, Sunday-
+   Saturday <TR><TD ALIGN="LEFT"><B>DDD</B>  <TD ALIGN="LEFT">day
+   of week, SUN-SAT <TR><TD ALIGN="LEFT"><B>DDDD</B>  <TD
+   ALIGN="LEFT">day of week, SUNDAY-SATURDAY <TR><TD
+   ALIGN="LEFT"><B>w</B>  <TD ALIGN="LEFT">day of week, 1-7
+   (1=Sunday) <TR><TD ALIGN="LEFT"><B>ww</B>  <TD
+   ALIGN="LEFT">week of year, 1-53 <TR><TD ALIGN="LEFT"><B>q</B>
+   <TD ALIGN="LEFT">year quarter, 1-4 <TR><TD
+   ALIGN="LEFT"><B>\x</B>  <TD ALIGN="LEFT">literal character x
+   <TR><TD ALIGN="LEFT"><B>other</B>  <TD ALIGN="LEFT">literal
+   character </TABLE> Returns the formatted result. This is a
+   static string, of at most 80 characters, that is overwritten by
+   each call. If date is zero, returns an empty string. The 'm'
+   and 'd' formats output a leading space when used at the start
+   of the picture. This is to improve alignment of columns of
+   dates. The 'm' and 'd' formats also output a space when the
+   previous character was a digit; otherwise the date components
+   stick together and are illegible.
+<H4>Examples</H4>
+<PRE>
+    puts (conv_date_pict (19951202, "mm d, yy"));
+        Dec 2, 95
+    puts (conv_date_pict (19951202, "d mmm, yy"));
+        2 Dec, 95
+</PRE>
+<H4>Source Code - (sflcvdp.c)</H4>
+<PRE>
+{
+    static char
+        *month_name [] =
+          {
+            "January", "February", "March", "April", "May", "June", "July",
+            "August", "September", "October", "November", "December"
+          },
+        *day_name [] =
+          {
+            "Sunday", "Monday", "Tuesday", "Wednesday",
+            "Thursday", "Friday", "Saturday"
+          },
+        formatted [FORMAT_MAX + 1];     /*  Formatted return string          */
+    int
+        century,                        /*  Century component of date        */
+        year,                           /*  Year component of date           */
+        month,                          /*  Month component of date          */
+        day,                            /*  Day component of date            */
+        cursize;                        /*  Size of current component        */
+    char
+       *dest,                           /*  Store formatted data here        */
+        ch,                             /*  Next character in picture        */
+        lastch = '0';                   /*  Last character we output         */
+    long
+        full_date = date;
+
+    conv_reason = 0;                    /*  No conversion errors so far      */
+
+    /*  Zero date is returned as empty string                                */
+    if (date == 0)
+      {
+        strclr (formatted);
+        return (formatted);
+      }
+
+    <A href="sfl61.htm#default_century">default century</A> (&amp;full_date);
+    century = GET_CENTURY (full_date);
+    year    = GET_YEAR    (full_date);
+    month   = GET_MONTH   (full_date);
+    day     = GET_DAY     (full_date);
+
+    ASSERT (month &gt; 0 &amp;&amp; month &lt;= 12);
+    ASSERT (day   &gt; 0 &amp;&amp; day   &lt;= 31);
+
+    /*  Scan through picture, converting each component                      */
+    dest = formatted;
+    *dest = 0;                          /*  string is empty                  */
+    while (*picture)
+      {
+        /*  Get character and count number of occurences                     */
+        ch = *picture++;
+        for (cursize = 1; *picture == ch; cursize++)
+            picture++;
+
+        switch (ch)
+          {
+            /*  cc        century 2 digits, 01-99                            */
+            case 'c':
+                if (cursize == 2)
+                    sprintf (dest, "%02d", century);
+                break;
+
+            /*  y         day of year, 1-366                                 */
+            /*  yy        year 2 digits, 00-99                               */
+            /*  yyyy      year 4 digits, 0100-9999                           */
+            case 'y':                   /*  y = day of year                  */
+                if (cursize == 1)
+                    sprintf (dest, "%d", <A href="sfl55.htm#julian_date">julian date</A> (full_date));
+                else
+                if (cursize == 2)
+                    sprintf (dest, "%02d", year);
+                else
+                if (cursize == 4)
+                    sprintf (dest, "%02d%02d", century, year);
+                break;
+
+            /*  m         month, 1-12                                        */
+            /*  mm        month, 01-12                                       */
+            /*  mmm       month, 3 letters                                   */
+            /*  mmmm      month, full name                                   */
+            case 'm':
+                if (cursize == 1)
+                    sprintf (dest, (isdigit (lastch)? "%2d": "%d"), month);
+                else
+                if (cursize == 2)
+                    sprintf (dest, "%02d", month);
+                else
+                if (cursize == 3)
+                  {
+                    memcpy (dest, month_name [month - 1], 3);
+                    dest [3] = 0;
+                  }
+                else
+                if (cursize == 4)
+                    strcpy (dest, month_name [month - 1]);
+                break;
+
+            /*  MMM       month, 3-letters, ucase                            */
+            /*  MMMM      month, full name, ucase                            */
+            case 'M':
+                if (cursize == 3)
+                  {
+                    memcpy (dest, month_name [month - 1], 3);
+                    dest [3] = 0;
+                    <A href="sfl284.htm#strupc">strupc</A> (dest);
+                  }
+                else
+                if (cursize == 4)
+                  {
+                    strcpy (dest, month_name [month - 1]);
+                    <A href="sfl284.htm#strupc">strupc</A> (dest);
+                  }
+                break;
+
+            /*  d         day, 1-31                                          */
+            /*  dd        day, 01-31                                         */
+            /*  ddd       day of week, Sun-Sat                               */
+            /*  dddd      day of week, Sunday-Saturday                       */
+            case 'd':
+                if (cursize == 1)
+                    sprintf (dest, (isdigit (lastch)? "%2d": "%d"), day);
+                else
+                if (cursize == 2)
+                    sprintf (dest, "%02d", day);
+                else
+                if (cursize == 3)
+                  {
+                    memcpy (dest, day_name [<A href="sfl56.htm#day_of_week">day of week</A> (full_date)], 3);
+                    dest [3] = 0;
+                  }
+                else
+                if (cursize == 4)
+                    strcpy (dest, day_name [<A href="sfl56.htm#day_of_week">day of week</A> (full_date)]);
+                break;
+
+            /*  DDD       day of week, SUN-SAT                               */
+            /*  DDDD      day of week, SUNDAY-SATURDAY                       */
+            case 'D':
+                if (cursize == 3)
+                  {
+                    memcpy (dest, day_name [<A href="sfl56.htm#day_of_week">day of week</A> (full_date)], 3);
+                    dest [3] = 0;
+                    <A href="sfl284.htm#strupc">strupc</A> (dest);
+                  }
+                else
+                if (cursize == 4)
+                  {
+                    strcpy (dest, day_name [<A href="sfl56.htm#day_of_week">day of week</A> (full_date)]);
+                    <A href="sfl284.htm#strupc">strupc</A> (dest);
+                  }
+                break;
+
+            /*  w         day of week, 1-7 (1=Sunday)                        */
+            /*  ww        week of year, 1-53                                 */
+            case 'w':
+                if (cursize == 1)
+                    sprintf (dest, "%d", <A href="sfl56.htm#day_of_week">day of week</A> (full_date) + 1);
+                else
+                if (cursize == 2)
+                    sprintf (dest, "%d", <A href="sfl59.htm#week_of_year">week of year</A> (full_date));
+                break;
+
+            /*  q         year quarter, 1-4                                  */
+            case 'q':
+                if (cursize == 1)
+                    sprintf (dest, "%d", <A href="sfl60.htm#year_quarter">year quarter</A> (full_date));
+                break;
+
+            /*  \x        literal character x                                */
+            case '\\':
+                ch = *picture++;
+        }
+        if (*dest)                      /*  If something was output,         */
+            while (*dest)               /*    skip to end of string          */
+                dest++;
+        else
+            while (cursize--)           /*  Else output ch once or more      */
+                *dest++ = ch;           /*    and bump dest pointer          */
+
+        lastch = *(dest - 1);           /*  Get previous character           */
+        *dest = 0;                      /*  Terminate the string nicely      */
+    }
+    return (formatted);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl36.htm">&lt;</A>
+ | <A href="sfl38.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>

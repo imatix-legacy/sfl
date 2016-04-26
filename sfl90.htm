@@ -1,0 +1,180 @@
+<HTML><HEAD><!--Revised: 1 Jan 1999 By: Pieter Hintjens-->
+<TITLE>exdr_read</TITLE></HEAD>
+<BODY BACKGROUND="newstone.gif">
+<TABLE WIDTH=100%><TR><TD ALIGN=LEFT>
+ | <A HREF="/index.htm"> iMatix home page</A><BR>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl89.htm">&lt;</A>
+ | <A href="sfl91.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT>
+<IMG SRC="sfl80c.gif" ALT="SFL Logo" WIDTH=80 HEIGHT=60 ALIGN=RIGHT HSPACE=10>
+<FONT SIZE=5><B>SFL</B><BR><FONT SIZE=2>Version 2.11
+</TABLE>
+<HR>
+<A NAME="exdr_read">&nbsp;</A>
+<H3><A NAME="TOC103"><TT>exdr_read</TT></A></H3>
+<PRE>
+#include "sflexdr.h"
+int
+exdr_read (const byte *buffer, const char *format, ...)
+</PRE>
+<H4>Synopsis</H4>
+<P>Unpacks a buffer prepared by <A href="sfl88.htm#exdr_write">exdr write</A>() into as set of
+   data items as specified by a format string. See
+   <A href="sfl88.htm#exdr_write">exdr write</A>() for the syntax of the format string. Each
+   format sequence corresponds to one item in in the list which
+   must be specified as an address. Target strings and memory
+   blocks must be large enough to hold the returned data: target
+   strings and blocks can also be null, in which case the function
+   calls mem_alloc to allocate heap memory. Note that you must
+   supply a pointer to the string or memory block address, not the
+   address itself. It is a common error to pass the address of a
+   static block - see the example below for the *right* way to do
+   it. Any of the argument addresses can be NULL, in which case
+   that field is ignored. This is useful to get a few selected
+   fields out of a message. Errors in the argument list can cause
+   memory corruption and unpredictable program results. If a
+   memory allocation fails, all previous memory allocations are
+   "rolled back" and the function returns the value -1. Return
+   codes: 0 - normal -1 - memory allocation failed
+<H4>Examples</H4>
+<PRE>
+    char *string = NULL;
+    byte buffer [1000];
+    byte *buffaddr = buffer;
+    int value, length;
+    exdr_read (buffer, "qdsmM", NULL, &value, &string, &length, &buffaddr);
+</PRE>
+<H4>Source Code - (sflexdr.c)</H4>
+<PRE>
+{
+    MEMTRN
+        *memtrn;                        /*  Memory transaction               */
+    va_list
+        argptr;                         /*  Argument list pointer            */
+    void
+        *target;                        /*  Source data item address         */
+    dbyte
+        string_size,                    /*  String size                      */
+        dbyte_value;                    /*  Network format dbyte value       */
+    qbyte
+        memory_size = 0,                /*  Memory descriptor size value     */
+        qbyte_value;                    /*  Network format qbyte value       */
+
+    ASSERT (buffer);
+    ASSERT (format);
+    memtrn = <A href="sfldoc.htm#mem_new_trans">mem new trans</A> ();
+
+    va_start (argptr, format);          /*  Start variable arguments list    */
+    while (*format)
+      {
+        target = va_arg (argptr, void *);
+        switch (*format++)
+          {
+            case 'c':                   /*  Character                        */
+            case 'b':                   /*  Single byte                      */
+                if (target)
+                    *(byte *) target = *(byte *) buffer;
+                buffer += 1;
+                break;
+
+            case 'd':                   /*  Signed short integer             */
+            case 'w':                   /*  Unsigned short integer           */
+            case 'B':                   /*  Bool                             */
+                *((byte *) &amp;dbyte_value)     = *(byte *) buffer++;
+                *((byte *) &amp;dbyte_value + 1) = *(byte *) buffer++;
+                if (target)
+                    *(dbyte *) target = ntohs (dbyte_value);
+                break;
+
+            case 'l':                   /*  Signed long (32-bit)             */
+            case 'q':                   /*  4-byte unsigned value            */
+                *((byte *) &amp;qbyte_value)     = *(byte *) buffer++;
+                *((byte *) &amp;qbyte_value + 1) = *(byte *) buffer++;
+                *((byte *) &amp;qbyte_value + 2) = *(byte *) buffer++;
+                *((byte *) &amp;qbyte_value + 3) = *(byte *) buffer++;
+                if (target)
+                    *(qbyte *) target = ntohl (qbyte_value);
+                break;
+
+            case 's':                   /*  Null-terminated string           */
+                string_size = strlen ((char *) buffer) + 1;
+                if (target)
+                  {
+                    if (*(byte **) target == NULL)
+                        *(byte **) target = mem_alloc (string_size);
+                    if (*(byte **) target)
+                        memcpy (*(byte **) target, buffer, string_size);
+                    else
+                      {
+                        <A href="sfldoc.htm#mem_rollback">mem rollback</A> (memtrn);
+                        return (-1);
+                      }
+                  }
+                buffer += string_size;
+                break;
+
+            case 'm':                   /*  Memory descriptor size           */
+                *((byte *) &amp;dbyte_value)     = *(byte *) buffer++;
+                *((byte *) &amp;dbyte_value + 1) = *(byte *) buffer++;
+                memory_size = ntohs (dbyte_value);
+                if (target)
+                    *(dbyte *) target = (dbyte) memory_size;
+                break;
+            case 'M':                   /*  Memory descriptor body           */
+                if (target &amp;&amp; memory_size &gt; 0)
+                  {
+                    if (*(byte **) target == NULL)
+                        *(byte **) target = mem_alloc ((size_t) memory_size);
+                    if (*(byte **) target)
+                        memcpy (*(byte **) target, buffer,
+                                 (size_t) memory_size);
+                    else
+                      {
+                        <A href="sfldoc.htm#mem_rollback">mem rollback</A> (memtrn);
+                        return (-1);
+                      }
+                  }
+                buffer += (size_t) memory_size;
+                break;
+
+            case 'h':                   /*  Huge memory descriptor size      */
+                *((byte *) &amp;qbyte_value)     = *(byte *) buffer++;
+                *((byte *) &amp;qbyte_value + 1) = *(byte *) buffer++;
+                *((byte *) &amp;qbyte_value + 2) = *(byte *) buffer++;
+                *((byte *) &amp;qbyte_value + 3) = *(byte *) buffer++;
+                memory_size = ntohl (qbyte_value);
+                if (target)
+                    *(qbyte *) target = memory_size;
+                break;
+            case 'H':                   /*  Huge memory descriptor body      */
+                if (target &amp;&amp; memory_size &gt; 0)
+                  {
+                    if (*(byte **) target == NULL)
+                        *(byte **) target = mem_alloc ((size_t) memory_size);
+                    if (*(byte **) target)
+                        memcpy (*(byte **) target, buffer,
+                                 (size_t) memory_size);
+                    else
+                      {
+                        <A href="sfldoc.htm#mem_rollback">mem rollback</A> (memtrn);
+                        return (-1);
+                      }
+                  }
+                buffer += (size_t) memory_size;
+                break;
+          }
+      }
+    va_end (argptr);                    /*  End variable arguments list      */
+    <A href="sfldoc.htm#mem_commit">mem commit</A> (memtrn);
+    return (0);
+}
+</PRE>
+<HR><TABLE WIDTH=100%><TR><TD ALIGN=LEFT WIDTH=60%>
+ | <A href="index.htm">&lt;&lt;</A> | <A href="sfl89.htm">&lt;</A>
+ | <A href="sfl91.htm">&gt;</A> | <A href="sfl502.htm">&gt;&gt;</A>
+<TD ALIGN=RIGHT NOWRAP>
+<A HREF="/index.htm">
+<IMG SRC="im0096c.gif" WIDTH=96 HEIGHT=36 ALT="iMatix" BORDER=0 ALIGN=RIGHT>
+</A>
+<FONT SIZE=2>Copyright &#169; 1996-2000 iMatix Corporation</TABLE>
+</BODY></HTML>
