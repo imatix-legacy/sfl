@@ -15,7 +15,7 @@ it allows usage under the GNU General Public License, the Perl Artistic
 License, or with a advertising clause.  See [src/license.txt](src/license.txt)
 for details.
 
-This repository contains the last Libero source, binaries,and documentation
+This repository contains the last SFL source, binaries,and documentation
 released in a stand alone version, retrieved from:
 
 *  http://legacy.imatix.com/pub/sfl
