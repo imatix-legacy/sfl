@@ -24,6 +24,8 @@ released in a stand alone version, retrieved from:
 
 on 2016-04-27.
 
+See the [documentation](website/index.html) for more information.
+
 ## `pub`
 
 The `pub` directory contains the released artefacts (binaries, source
